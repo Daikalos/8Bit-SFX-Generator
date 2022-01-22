@@ -35,6 +35,9 @@ namespace Interactive_Evolution_SFX {
 			}
 		}
 
+
+	protected:
+
 	protected:
 
 	private:
@@ -54,14 +57,29 @@ namespace Interactive_Evolution_SFX {
 			// 
 			// MainForm
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(12, 24);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(966, 593);
+			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
+			this->BackColor = System::Drawing::Color::Gray;
+			this->ClientSize = System::Drawing::Size(1064, 761);
+			this->DoubleBuffered = true;
+			this->Font = (gcnew System::Drawing::Font(L"Consolas", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->ForeColor = System::Drawing::Color::White;
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->ImeMode = System::Windows::Forms::ImeMode::On;
+			this->Margin = System::Windows::Forms::Padding(6, 6, 6, 6);
+			this->MaximizeBox = false;
 			this->Name = L"MainForm";
-			this->Text = L"MainForm";
+			this->RightToLeftLayout = true;
+			this->ShowIcon = false;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+			this->Text = L"Interactive Evolution SFX";
+			this->TopMost = true;
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
+
 	};
 }
