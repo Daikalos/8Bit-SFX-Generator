@@ -1,7 +1,9 @@
 #pragma once
 
-namespace Interactive_Evolution_SFX {
+#include "SoundUC.h"
 
+namespace Interactive_Evolution_SFX 
+{
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -9,96 +11,85 @@ namespace Interactive_Evolution_SFX {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for Form1
-	/// </summary>
 	public ref class MainForm : public System::Windows::Forms::Form
 	{
 	public:
 		MainForm(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			initialize_sounds();
 		}
 
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		~MainForm()
 		{
-			if (components)
-			{
-				delete components;
-			}
+			delete components;
+			delete[] sounds;
 		}
-	private: System::Windows::Forms::Button^ btn_play;
-	private: System::Windows::Forms::MenuStrip^ menuStrip1;
-	private: System::Windows::Forms::StatusStrip^ strip_status;
-
+	private: System::Windows::Forms::Button^ btnPlay;
+	private: System::Windows::Forms::MenuStrip^ menuStrip;
+	private: System::Windows::Forms::StatusStrip^ statusStrip;
 	private: System::Windows::Forms::ToolStripStatusLabel^ toolStripStatusLabel1;
-	private: System::Windows::Forms::TableLayoutPanel^ table;
+	private: System::Windows::Forms::FlowLayoutPanel^ pnlItems;
+	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ loadToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ helpToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ creditsToolStripMenuItem;
 
 
-	protected:
+	private: System::ComponentModel::Container ^components;
 
+	private: 
+		array<SoundUC^>^ sounds;
 
-	protected:
-
-	protected:
-
-	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		System::ComponentModel::Container ^components;
+		bool initialize_sounds();
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->btn_play = (gcnew System::Windows::Forms::Button());
-			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
-			this->strip_status = (gcnew System::Windows::Forms::StatusStrip());
+			this->btnPlay = (gcnew System::Windows::Forms::Button());
+			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
+			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
-			this->table = (gcnew System::Windows::Forms::TableLayoutPanel());
-			this->strip_status->SuspendLayout();
+			this->pnlItems = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->loadToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->creditsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuStrip->SuspendLayout();
+			this->statusStrip->SuspendLayout();
 			this->SuspendLayout();
 			// 
-			// btn_play
+			// btnPlay
 			// 
-			this->btn_play->Location = System::Drawing::Point(177, 652);
-			this->btn_play->Margin = System::Windows::Forms::Padding(2, 5, 2, 5);
-			this->btn_play->Name = L"btn_play";
-			this->btn_play->Size = System::Drawing::Size(134, 50);
-			this->btn_play->TabIndex = 0;
-			this->btn_play->Text = L"Play";
-			this->btn_play->UseVisualStyleBackColor = true;
+			this->btnPlay->Location = System::Drawing::Point(149, 658);
+			this->btnPlay->Margin = System::Windows::Forms::Padding(2, 5, 2, 5);
+			this->btnPlay->Name = L"btnPlay";
+			this->btnPlay->Size = System::Drawing::Size(134, 50);
+			this->btnPlay->TabIndex = 0;
+			this->btnPlay->Text = L"Play";
+			this->btnPlay->UseVisualStyleBackColor = true;
 			// 
-			// menuStrip1
+			// menuStrip
 			// 
-			this->menuStrip1->Location = System::Drawing::Point(0, 0);
-			this->menuStrip1->Name = L"menuStrip1";
-			this->menuStrip1->Size = System::Drawing::Size(1008, 24);
-			this->menuStrip1->TabIndex = 1;
-			this->menuStrip1->Text = L"menuStrip1";
+			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->optionsToolStripMenuItem });
+			this->menuStrip->Location = System::Drawing::Point(0, 0);
+			this->menuStrip->Name = L"menuStrip";
+			this->menuStrip->Size = System::Drawing::Size(1008, 24);
+			this->menuStrip->TabIndex = 1;
+			this->menuStrip->Text = L"menuStrip1";
 			// 
-			// strip_status
+			// statusStrip
 			// 
-			this->strip_status->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->toolStripStatusLabel1 });
-			this->strip_status->Location = System::Drawing::Point(0, 733);
-			this->strip_status->Name = L"strip_status";
-			this->strip_status->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
-			this->strip_status->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->strip_status->Size = System::Drawing::Size(1008, 28);
-			this->strip_status->SizingGrip = false;
-			this->strip_status->TabIndex = 2;
-			this->strip_status->Text = L"statusStrip1";
+			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->toolStripStatusLabel1 });
+			this->statusStrip->Location = System::Drawing::Point(0, 733);
+			this->statusStrip->Name = L"statusStrip";
+			this->statusStrip->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
+			this->statusStrip->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
+			this->statusStrip->Size = System::Drawing::Size(1008, 28);
+			this->statusStrip->SizingGrip = false;
+			this->statusStrip->TabIndex = 2;
+			this->statusStrip->Text = L"statusStrip1";
 			// 
 			// toolStripStatusLabel1
 			// 
@@ -109,65 +100,40 @@ namespace Interactive_Evolution_SFX {
 			this->toolStripStatusLabel1->Size = System::Drawing::Size(96, 23);
 			this->toolStripStatusLabel1->Text = L"...Loading";
 			// 
-			// table
+			// pnlItems
 			// 
-			this->table->BackColor = System::Drawing::Color::DimGray;
-			this->table->CellBorderStyle = System::Windows::Forms::TableLayoutPanelCellBorderStyle::OutsetPartial;
-			this->table->ColumnCount = 4;
-			this->table->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent, 50)));
-			this->table->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Percent, 50)));
-			this->table->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->ColumnStyles->Add((gcnew System::Windows::Forms::ColumnStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->Location = System::Drawing::Point(177, 44);
-			this->table->Name = L"table";
-			this->table->RowCount = 4;
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 50)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 50)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Absolute, 20)));
-			this->table->Size = System::Drawing::Size(600, 600);
-			this->table->TabIndex = 3;
+			this->pnlItems->Location = System::Drawing::Point(149, 86);
+			this->pnlItems->Name = L"pnlItems";
+			this->pnlItems->Size = System::Drawing::Size(664, 512);
+			this->pnlItems->TabIndex = 3;
+			// 
+			// optionsToolStripMenuItem
+			// 
+			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->loadToolStripMenuItem,
+					this->creditsToolStripMenuItem, this->helpToolStripMenuItem
+			});
+			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(61, 20);
+			this->optionsToolStripMenuItem->Text = L"Options";
+			// 
+			// loadToolStripMenuItem
+			// 
+			this->loadToolStripMenuItem->Name = L"loadToolStripMenuItem";
+			this->loadToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+			this->loadToolStripMenuItem->Text = L"Load";
+			// 
+			// helpToolStripMenuItem
+			// 
+			this->helpToolStripMenuItem->Name = L"helpToolStripMenuItem";
+			this->helpToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+			this->helpToolStripMenuItem->Text = L"Help";
+			// 
+			// creditsToolStripMenuItem
+			// 
+			this->creditsToolStripMenuItem->Name = L"creditsToolStripMenuItem";
+			this->creditsToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+			this->creditsToolStripMenuItem->Text = L"Credits";
 			// 
 			// MainForm
 			// 
@@ -176,10 +142,10 @@ namespace Interactive_Evolution_SFX {
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->ClientSize = System::Drawing::Size(1008, 761);
-			this->Controls->Add(this->table);
-			this->Controls->Add(this->strip_status);
-			this->Controls->Add(this->btn_play);
-			this->Controls->Add(this->menuStrip1);
+			this->Controls->Add(this->pnlItems);
+			this->Controls->Add(this->statusStrip);
+			this->Controls->Add(this->btnPlay);
+			this->Controls->Add(this->menuStrip);
 			this->DoubleBuffered = true;
 			this->Font = (gcnew System::Drawing::Font(L"Arial Black", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -187,7 +153,7 @@ namespace Interactive_Evolution_SFX {
 				static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->ImeMode = System::Windows::Forms::ImeMode::On;
-			this->MainMenuStrip = this->menuStrip1;
+			this->MainMenuStrip = this->menuStrip;
 			this->Margin = System::Windows::Forms::Padding(8, 9, 8, 9);
 			this->MaximizeBox = false;
 			this->Name = L"MainForm";
@@ -196,14 +162,14 @@ namespace Interactive_Evolution_SFX {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Interactive Evolution SFX";
 			this->TopMost = true;
-			this->strip_status->ResumeLayout(false);
-			this->strip_status->PerformLayout();
+			this->menuStrip->ResumeLayout(false);
+			this->menuStrip->PerformLayout();
+			this->statusStrip->ResumeLayout(false);
+			this->statusStrip->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-
-
 };
 }
