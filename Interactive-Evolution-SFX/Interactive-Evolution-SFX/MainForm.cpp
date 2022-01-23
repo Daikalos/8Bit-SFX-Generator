@@ -4,15 +4,16 @@ using namespace Interactive_Evolution_SFX;
 
 bool MainForm::initialize_sounds()
 {
-	sounds = gcnew array<SoundUC^>(4);
+	sounds = gcnew array<SoundUC^>(row_count * column_count);
 
-	for (int i = 0; i < (sizeof(sounds) / sizeof(SoundUC^)); ++i)
+	for (int i = 0; i < sounds->Length; ++i)
 	{
-		sounds[i] = gcnew SoundUC();
+		SoundUC^ soundUC = sounds[i] = gcnew SoundUC();
+		pnlItems->Controls->Add(soundUC);
 
-		pnlItems->Controls->Add(sounds[i]);
+		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));
 	}
 
 
-	return false;
+	return true;
 }
