@@ -29,13 +29,16 @@ namespace Interactive_Evolution_SFX
 			delete components;
 			delete[] sounds;
 		}
-	private: System::Windows::Forms::Button^ btnPlay;
+	private: System::Windows::Forms::Button^ playButton;
+	protected:
+
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
 	private: System::Windows::Forms::StatusStrip^ statusStrip;
 	private: System::Windows::Forms::ToolStripStatusLabel^ toolStripStatusLabel1;
 
 	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^ loadToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
+
 
 
 
@@ -43,8 +46,11 @@ namespace Interactive_Evolution_SFX
 	private: System::ComponentModel::Container ^components;
 	private: System::Windows::Forms::Panel^ pnlItems;
 	private: System::Windows::Forms::ToolStripMenuItem^ otherToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^ creditsToolStripMenuItem1;
-	private: System::Windows::Forms::ToolStripMenuItem^ helpToolStripMenuItem1;
+	private: System::Windows::Forms::ToolStripMenuItem^ creditsButton;
+	private: System::Windows::Forms::ToolStripMenuItem^ helpButton;
+
+
+
 
 
 
@@ -60,13 +66,13 @@ namespace Interactive_Evolution_SFX
 #pragma region Windows Form Designer generated code
 		void InitializeComponent(void)
 		{
-			this->btnPlay = (gcnew System::Windows::Forms::Button());
+			this->playButton = (gcnew System::Windows::Forms::Button());
 			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->loadToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->creditsToolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->helpToolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->creditsButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
@@ -74,18 +80,20 @@ namespace Interactive_Evolution_SFX
 			this->statusStrip->SuspendLayout();
 			this->SuspendLayout();
 			// 
-			// btnPlay
+			// playButton
 			// 
-			this->btnPlay->Location = System::Drawing::Point(149, 658);
-			this->btnPlay->Margin = System::Windows::Forms::Padding(2, 5, 2, 5);
-			this->btnPlay->Name = L"btnPlay";
-			this->btnPlay->Size = System::Drawing::Size(134, 50);
-			this->btnPlay->TabIndex = 0;
-			this->btnPlay->Text = L"Play";
-			this->btnPlay->UseVisualStyleBackColor = true;
+			this->playButton->Location = System::Drawing::Point(90, 632);
+			this->playButton->Margin = System::Windows::Forms::Padding(0);
+			this->playButton->Name = L"playButton";
+			this->playButton->Size = System::Drawing::Size(134, 40);
+			this->playButton->TabIndex = 0;
+			this->playButton->Text = L"Play";
+			this->playButton->UseVisualStyleBackColor = true;
 			// 
 			// menuStrip
 			// 
+			this->menuStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->menuStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
 				this->optionsToolStripMenuItem,
 					this->otherToolStripMenuItem
@@ -94,45 +102,48 @@ namespace Interactive_Evolution_SFX
 			this->menuStrip->Name = L"menuStrip";
 			this->menuStrip->Size = System::Drawing::Size(784, 24);
 			this->menuStrip->TabIndex = 1;
-			this->menuStrip->Text = L"menuStrip1";
+			this->menuStrip->Text = L"menuStrip";
 			// 
 			// optionsToolStripMenuItem
 			// 
-			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->loadToolStripMenuItem });
+			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->loadButton });
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
 			this->optionsToolStripMenuItem->Size = System::Drawing::Size(61, 20);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
-			// loadToolStripMenuItem
+			// loadButton
 			// 
-			this->loadToolStripMenuItem->Name = L"loadToolStripMenuItem";
-			this->loadToolStripMenuItem->Size = System::Drawing::Size(100, 22);
-			this->loadToolStripMenuItem->Text = L"Load";
+			this->loadButton->Name = L"loadButton";
+			this->loadButton->Size = System::Drawing::Size(180, 22);
+			this->loadButton->Text = L"Load";
+			this->loadButton->Click += gcnew System::EventHandler(this, &MainForm::loadButton_Click);
 			// 
 			// otherToolStripMenuItem
 			// 
 			this->otherToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
-				this->creditsToolStripMenuItem1,
-					this->helpToolStripMenuItem1
+				this->creditsButton,
+					this->helpButton
 			});
 			this->otherToolStripMenuItem->Name = L"otherToolStripMenuItem";
 			this->otherToolStripMenuItem->Size = System::Drawing::Size(49, 20);
 			this->otherToolStripMenuItem->Text = L"Other";
 			// 
-			// creditsToolStripMenuItem1
+			// creditsButton
 			// 
-			this->creditsToolStripMenuItem1->Name = L"creditsToolStripMenuItem1";
-			this->creditsToolStripMenuItem1->Size = System::Drawing::Size(111, 22);
-			this->creditsToolStripMenuItem1->Text = L"Credits";
+			this->creditsButton->Name = L"creditsButton";
+			this->creditsButton->Size = System::Drawing::Size(180, 22);
+			this->creditsButton->Text = L"Credits";
 			// 
-			// helpToolStripMenuItem1
+			// helpButton
 			// 
-			this->helpToolStripMenuItem1->Name = L"helpToolStripMenuItem1";
-			this->helpToolStripMenuItem1->Size = System::Drawing::Size(111, 22);
-			this->helpToolStripMenuItem1->Text = L"Help";
+			this->helpButton->Name = L"helpButton";
+			this->helpButton->Size = System::Drawing::Size(180, 22);
+			this->helpButton->Text = L"Help";
 			// 
 			// statusStrip
 			// 
+			this->statusStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->toolStripStatusLabel1 });
 			this->statusStrip->Location = System::Drawing::Point(0, 735);
 			this->statusStrip->Name = L"statusStrip";
@@ -157,11 +168,12 @@ namespace Interactive_Evolution_SFX
 			this->pnlItems->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Left)
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->pnlItems->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->pnlItems->Location = System::Drawing::Point(92, 90);
+			this->pnlItems->BackColor = System::Drawing::Color::Black;
+			this->pnlItems->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->pnlItems->Location = System::Drawing::Point(90, 88);
 			this->pnlItems->Margin = System::Windows::Forms::Padding(0);
 			this->pnlItems->Name = L"pnlItems";
-			this->pnlItems->Size = System::Drawing::Size(600, 540);
+			this->pnlItems->Size = System::Drawing::Size(604, 544);
 			this->pnlItems->TabIndex = 3;
 			// 
 			// MainForm
@@ -172,7 +184,7 @@ namespace Interactive_Evolution_SFX
 			this->ClientSize = System::Drawing::Size(784, 761);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
-			this->Controls->Add(this->btnPlay);
+			this->Controls->Add(this->playButton);
 			this->Controls->Add(this->menuStrip);
 			this->DoubleBuffered = true;
 			this->Font = (gcnew System::Drawing::Font(L"Arial Black", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
@@ -200,5 +212,17 @@ namespace Interactive_Evolution_SFX
 		}
 #pragma endregion
 
+		private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			SaveFileDialog saveFileDialog;
+			saveFileDialog.Filter = "WAV File|*.wav";
+			saveFileDialog.Title = "Load a sound file";
+			saveFileDialog.ShowDialog();
+
+			if (saveFileDialog.FileName != "")
+			{
+
+			}
+		}
 };
 }

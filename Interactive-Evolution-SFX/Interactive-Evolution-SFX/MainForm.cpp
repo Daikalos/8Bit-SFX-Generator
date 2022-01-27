@@ -14,6 +14,5 @@ bool MainForm::initialize_sounds()
 		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));
 	}
 
-
 	return true;
 }
