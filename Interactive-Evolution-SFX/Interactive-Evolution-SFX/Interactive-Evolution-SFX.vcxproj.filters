@@ -37,13 +37,13 @@
     <Image Include="playButton.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\..\..\Desktop\playButton.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="playButton.Image.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Resources\pauseButton.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\playButton.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

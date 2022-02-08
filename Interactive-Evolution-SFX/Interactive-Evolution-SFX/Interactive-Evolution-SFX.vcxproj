@@ -155,10 +155,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\..\Desktop\playButton.png" />
     <Image Include="playButton.Image.png" />
     <Image Include="playButton.png" />
     <Image Include="Resources\pauseButton.png" />
+    <Image Include="Resources\playButton.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

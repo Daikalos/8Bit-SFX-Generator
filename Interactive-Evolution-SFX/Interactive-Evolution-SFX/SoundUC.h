@@ -24,28 +24,10 @@ namespace Interactive_Evolution_SFX
 		}
 	private: System::Windows::Forms::ToolStrip^ stripTool;
 	private: System::Windows::Forms::ToolStripButton^ pauseButton;
-
-
-	protected:
-
-	protected:
-
-
-
-
-
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
 	private: System::Windows::Forms::ToolStripButton^ saveButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
-
-
-
-
-
-
-
-	protected:
 
 	private:
 		/// <summary>
@@ -191,8 +173,6 @@ namespace Interactive_Evolution_SFX
 			this->soundWave->Series->Add(series1);
 			this->soundWave->Size = System::Drawing::Size(150, 155);
 			this->soundWave->TabIndex = 2;
-			this->soundWave->Click += gcnew System::EventHandler(this, &SoundUC::soundWave_Click);
-			this->soundWave->MouseEnter += gcnew System::EventHandler(this, &SoundUC::soundWave_MouseEnter);
 			// 
 			// SoundUC
 			// 
@@ -211,14 +191,6 @@ namespace Interactive_Evolution_SFX
 		}
 #pragma endregion
 
-	private: System::Void soundWave_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-
-	}
-	private: System::Void soundWave_MouseEnter(System::Object^ sender, System::EventArgs^ e) 
-	{
-
-	}
 	private: System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		DialogResult dialogueResult = MessageBox::Show("Are you sure you want to mutate this SFX?", "Mutate?", MessageBoxButtons::YesNo);
