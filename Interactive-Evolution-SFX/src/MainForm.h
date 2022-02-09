@@ -4,6 +4,9 @@
 #include <iostream>
 #include <tchar.h>
 
+#include <cppsid.h>
+#include <libcsid.h>
+
 namespace Interactive_Evolution_SFX 
 {
 	using namespace System;
@@ -52,6 +55,9 @@ namespace Interactive_Evolution_SFX
 	private: System::Windows::Forms::Label^ mutationRateTextLabel;
 	private: System::Windows::Forms::Label^ mutationRateLabel;
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
+	private: System::Windows::Forms::TrackBar^ trackBar1;
+	private: System::Windows::Forms::Label^ label1;
+	private: System::Windows::Forms::Label^ label2;
 
 	private: 
 		array<SoundUC^>^ sounds;
@@ -79,8 +85,8 @@ namespace Interactive_Evolution_SFX
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->creditsButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->creditsButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->statusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
@@ -95,12 +101,16 @@ namespace Interactive_Evolution_SFX
 			this->mutationRateTextLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationSizeLabel = (gcnew System::Windows::Forms::Label());
+			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
 			this->botStripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -134,24 +144,24 @@ namespace Interactive_Evolution_SFX
 			// otherToolStripMenuItem
 			// 
 			this->otherToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
-				this->creditsButton,
-					this->helpButton
+				this->helpButton,
+					this->creditsButton
 			});
 			this->otherToolStripMenuItem->Name = L"otherToolStripMenuItem";
 			this->otherToolStripMenuItem->Size = System::Drawing::Size(44, 20);
 			this->otherToolStripMenuItem->Text = L"Help";
 			// 
-			// creditsButton
-			// 
-			this->creditsButton->Name = L"creditsButton";
-			this->creditsButton->Size = System::Drawing::Size(127, 22);
-			this->creditsButton->Text = L"Credits";
-			// 
 			// helpButton
 			// 
 			this->helpButton->Name = L"helpButton";
-			this->helpButton->Size = System::Drawing::Size(127, 22);
-			this->helpButton->Text = L"View Help";
+			this->helpButton->Size = System::Drawing::Size(111, 22);
+			this->helpButton->Text = L"Help";
+			// 
+			// creditsButton
+			// 
+			this->creditsButton->Name = L"creditsButton";
+			this->creditsButton->Size = System::Drawing::Size(111, 22);
+			this->creditsButton->Text = L"Credits";
 			// 
 			// statusStrip
 			// 
@@ -333,12 +343,53 @@ namespace Interactive_Evolution_SFX
 			this->mutationSizeLabel->TabIndex = 9;
 			this->mutationSizeLabel->Text = L"- 4%";
 			// 
+			// trackBar1
+			// 
+			this->trackBar1->Location = System::Drawing::Point(700, 79);
+			this->trackBar1->Maximum = 25;
+			this->trackBar1->Name = L"trackBar1";
+			this->trackBar1->Orientation = System::Windows::Forms::Orientation::Vertical;
+			this->trackBar1->Size = System::Drawing::Size(45, 350);
+			this->trackBar1->TabIndex = 10;
+			this->trackBar1->TickStyle = System::Windows::Forms::TickStyle::Both;
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->label1->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->label1->Location = System::Drawing::Point(700, 423);
+			this->label1->Margin = System::Windows::Forms::Padding(0);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(40, 25);
+			this->label1->TabIndex = 11;
+			this->label1->Text = L"Off";
+			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->label2->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->label2->Location = System::Drawing::Point(693, 57);
+			this->label2->Margin = System::Windows::Forms::Padding(0);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(55, 25);
+			this->label2->TabIndex = 12;
+			this->label2->Text = L"High";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->ClientSize = System::Drawing::Size(764, 761);
+			this->Controls->Add(this->label2);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->trackBar1);
 			this->Controls->Add(this->mutationSizeLabel);
 			this->Controls->Add(this->mutationRateLabel);
 			this->Controls->Add(this->mutationRateTextLabel);
@@ -371,6 +422,7 @@ namespace Interactive_Evolution_SFX
 			this->botStripTool->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
