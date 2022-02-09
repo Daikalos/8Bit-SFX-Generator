@@ -6,6 +6,7 @@ bool MainForm::initialize_sounds()
 {
 	sounds = gcnew array<SoundUC^>(row_count * column_count);
 
+
 	for (int i = 0; i < sounds->Length; ++i)
 	{
 		SoundUC^ soundUC = sounds[i] = gcnew SoundUC();

@@ -19,7 +19,7 @@ namespace Interactive_Evolution_SFX
 		MainForm(void)
 		{
 			InitializeComponent();
-			
+
 			if (!initialize_sounds())
 				throw gcnew WarningException("sounds failed to load");
 		}
@@ -31,19 +31,11 @@ namespace Interactive_Evolution_SFX
 			delete[] sounds;
 		}
 
-	protected:
-
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
 	private: System::Windows::Forms::StatusStrip^ statusStrip;
-	private: System::Windows::Forms::ToolStripStatusLabel^ toolStripStatusLabel1;
-
+	private: System::Windows::Forms::ToolStripStatusLabel^ statusLabel;
 	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
-
-
-
-
-
 	private: System::ComponentModel::Container ^components;
 	private: System::Windows::Forms::Panel^ pnlItems;
 	private: System::Windows::Forms::ToolStripMenuItem^ otherToolStripMenuItem;
@@ -51,28 +43,15 @@ namespace Interactive_Evolution_SFX
 	private: System::Windows::Forms::ToolStripMenuItem^ helpButton;
 	private: System::Windows::Forms::ToolStrip^ botStripTool;
 	private: System::Windows::Forms::ToolStripButton^ showNextButton;
-
-
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ pauseButton;
-
 	private: System::Windows::Forms::ToolStripButton^ resetButton;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	private: System::Windows::Forms::TrackBar^ mutationSizeSlider;
+	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
+	private: System::Windows::Forms::Label^ mutationSizeTextLabel;
+	private: System::Windows::Forms::Label^ mutationRateTextLabel;
+	private: System::Windows::Forms::Label^ mutationRateLabel;
+	private: System::Windows::Forms::Label^ mutationSizeLabel;
 
 	private: 
 		array<SoundUC^>^ sounds;
@@ -81,7 +60,18 @@ namespace Interactive_Evolution_SFX
 		static const size_t row_count = 3;
 		static const size_t column_count = 4;
 
+	public:
+		double mutation_size()
+		{
+			return (mutationSizeSlider->Value * 4) / 100.0;
+		}
+		double mutation_rate()
+		{
+			return (mutationRateSlider->Value * 4) / 100.0;
+		}
+	
 #pragma region Windows Form Designer generated code
+	private:
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
@@ -92,17 +82,25 @@ namespace Interactive_Evolution_SFX
 			this->creditsButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
-			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->statusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
 			this->botStripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->pauseButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->showNextButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->resetButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->mutationSizeSlider = (gcnew System::Windows::Forms::TrackBar());
+			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
+			this->mutationSizeTextLabel = (gcnew System::Windows::Forms::Label());
+			this->mutationRateTextLabel = (gcnew System::Windows::Forms::Label());
+			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
+			this->mutationSizeLabel = (gcnew System::Windows::Forms::Label());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
 			this->botStripTool->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -115,7 +113,7 @@ namespace Interactive_Evolution_SFX
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(784, 24);
+			this->menuStrip->Size = System::Drawing::Size(764, 24);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip";
 			// 
@@ -159,24 +157,24 @@ namespace Interactive_Evolution_SFX
 			// 
 			this->statusStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->toolStripStatusLabel1 });
-			this->statusStrip->Location = System::Drawing::Point(0, 775);
+			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->statusLabel });
+			this->statusStrip->Location = System::Drawing::Point(0, 735);
 			this->statusStrip->Name = L"statusStrip";
 			this->statusStrip->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
 			this->statusStrip->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->statusStrip->Size = System::Drawing::Size(784, 26);
+			this->statusStrip->Size = System::Drawing::Size(764, 26);
 			this->statusStrip->SizingGrip = false;
 			this->statusStrip->TabIndex = 2;
-			this->statusStrip->Text = L"statusStrip1";
+			this->statusStrip->Text = L"statusStrip";
 			// 
-			// toolStripStatusLabel1
+			// statusLabel
 			// 
-			this->toolStripStatusLabel1->BackColor = System::Drawing::Color::White;
-			this->toolStripStatusLabel1->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->statusLabel->BackColor = System::Drawing::Color::White;
+			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->toolStripStatusLabel1->Name = L"toolStripStatusLabel1";
-			this->toolStripStatusLabel1->Size = System::Drawing::Size(75, 21);
-			this->toolStripStatusLabel1->Text = L"...Loading";
+			this->statusLabel->Name = L"statusLabel";
+			this->statusLabel->Size = System::Drawing::Size(75, 21);
+			this->statusLabel->Text = L"...Loading";
 			// 
 			// pnlItems
 			// 
@@ -186,7 +184,7 @@ namespace Interactive_Evolution_SFX
 			this->pnlItems->BackColor = System::Drawing::Color::Black;
 			this->pnlItems->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->pnlItems->Controls->Add(this->botStripTool);
-			this->pnlItems->Location = System::Drawing::Point(90, 62);
+			this->pnlItems->Location = System::Drawing::Point(80, 62);
 			this->pnlItems->Margin = System::Windows::Forms::Padding(0);
 			this->pnlItems->Name = L"pnlItems";
 			this->pnlItems->Size = System::Drawing::Size(604, 590);
@@ -241,7 +239,7 @@ namespace Interactive_Evolution_SFX
 			this->showNextButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
 			this->showNextButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"showNextButton.Image")));
 			this->showNextButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->showNextButton->Margin = System::Windows::Forms::Padding(0, 2, 2, 2);
+			this->showNextButton->Margin = System::Windows::Forms::Padding(6, 2, 0, 2);
 			this->showNextButton->Name = L"showNextButton";
 			this->showNextButton->Size = System::Drawing::Size(40, 41);
 			this->showNextButton->Text = L"Next";
@@ -261,12 +259,92 @@ namespace Interactive_Evolution_SFX
 			this->resetButton->ToolTipText = L"Reset";
 			this->resetButton->Click += gcnew System::EventHandler(this, &MainForm::resetButton_Click);
 			// 
+			// mutationSizeSlider
+			// 
+			this->mutationSizeSlider->Location = System::Drawing::Point(78, 687);
+			this->mutationSizeSlider->Maximum = 25;
+			this->mutationSizeSlider->Minimum = 1;
+			this->mutationSizeSlider->Name = L"mutationSizeSlider";
+			this->mutationSizeSlider->Size = System::Drawing::Size(300, 45);
+			this->mutationSizeSlider->TabIndex = 4;
+			this->mutationSizeSlider->Value = 1;
+			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
+			// 
+			// mutationRateSlider
+			// 
+			this->mutationRateSlider->Location = System::Drawing::Point(384, 687);
+			this->mutationRateSlider->Maximum = 25;
+			this->mutationRateSlider->Minimum = 1;
+			this->mutationRateSlider->Name = L"mutationRateSlider";
+			this->mutationRateSlider->Size = System::Drawing::Size(300, 45);
+			this->mutationRateSlider->TabIndex = 5;
+			this->mutationRateSlider->Value = 1;
+			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
+			// 
+			// mutationSizeTextLabel
+			// 
+			this->mutationSizeTextLabel->AutoSize = true;
+			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->mutationSizeTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationSizeTextLabel->Location = System::Drawing::Point(81, 659);
+			this->mutationSizeTextLabel->Margin = System::Windows::Forms::Padding(0);
+			this->mutationSizeTextLabel->Name = L"mutationSizeTextLabel";
+			this->mutationSizeTextLabel->Size = System::Drawing::Size(135, 25);
+			this->mutationSizeTextLabel->TabIndex = 6;
+			this->mutationSizeTextLabel->Text = L"Mutation Size";
+			// 
+			// mutationRateTextLabel
+			// 
+			this->mutationRateTextLabel->AutoSize = true;
+			this->mutationRateTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->mutationRateTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationRateTextLabel->Location = System::Drawing::Point(387, 659);
+			this->mutationRateTextLabel->Margin = System::Windows::Forms::Padding(0);
+			this->mutationRateTextLabel->Name = L"mutationRateTextLabel";
+			this->mutationRateTextLabel->Size = System::Drawing::Size(139, 25);
+			this->mutationRateTextLabel->TabIndex = 7;
+			this->mutationRateTextLabel->Text = L"Mutation Rate";
+			// 
+			// mutationRateLabel
+			// 
+			this->mutationRateLabel->AutoSize = true;
+			this->mutationRateLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->mutationRateLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationRateLabel->Location = System::Drawing::Point(523, 659);
+			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
+			this->mutationRateLabel->Name = L"mutationRateLabel";
+			this->mutationRateLabel->Size = System::Drawing::Size(52, 25);
+			this->mutationRateLabel->TabIndex = 8;
+			this->mutationRateLabel->Text = L"- 4%";
+			// 
+			// mutationSizeLabel
+			// 
+			this->mutationSizeLabel->AutoSize = true;
+			this->mutationSizeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->mutationSizeLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationSizeLabel->Location = System::Drawing::Point(213, 659);
+			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
+			this->mutationSizeLabel->Name = L"mutationSizeLabel";
+			this->mutationSizeLabel->Size = System::Drawing::Size(52, 25);
+			this->mutationSizeLabel->TabIndex = 9;
+			this->mutationSizeLabel->Text = L"- 4%";
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
-			this->ClientSize = System::Drawing::Size(784, 801);
+			this->ClientSize = System::Drawing::Size(764, 761);
+			this->Controls->Add(this->mutationSizeLabel);
+			this->Controls->Add(this->mutationRateLabel);
+			this->Controls->Add(this->mutationRateTextLabel);
+			this->Controls->Add(this->mutationSizeTextLabel);
+			this->Controls->Add(this->mutationRateSlider);
+			this->Controls->Add(this->mutationSizeSlider);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
 			this->Controls->Add(this->menuStrip);
@@ -284,7 +362,6 @@ namespace Interactive_Evolution_SFX
 			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"8-bit SFX Generator";
-			this->TopMost = true;
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
 			this->statusStrip->ResumeLayout(false);
@@ -292,6 +369,8 @@ namespace Interactive_Evolution_SFX
 			this->pnlItems->ResumeLayout(false);
 			this->botStripTool->ResumeLayout(false);
 			this->botStripTool->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -320,11 +399,24 @@ namespace Interactive_Evolution_SFX
 		}
 		private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			System::Windows::Forms::DialogResult dialogueResult = MessageBox::Show("Resetting will discard all progress and present new random candidates", "Reset?", MessageBoxButtons::YesNo);
 
+			if (dialogueResult == System::Windows::Forms::DialogResult::Yes)
+			{
+
+			}
 		}
 		private: System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 
+		}
+		private: System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+		}
+		private: System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
 		}
 };
 }
