@@ -107,7 +107,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>debug/cppsid.lib;debug/resid.lib;SDL2.lib;SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppsid-d.lib;resid-d.lib;SDL2.lib;SDL2main.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -132,7 +132,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>release/cppsid.lib;release/resid.lib;SDL2.lib;SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>cppsid.lib;resid.lib;SDL2.lib;SDL2main.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -148,9 +148,12 @@
   <ItemGroup>
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlayerSID.cpp" />
     <ClCompile Include="SoundUC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlayerSID.h" />
+    <ClInclude Include="utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>

@@ -4,6 +4,9 @@
 #include <iostream>
 #include <tchar.h>
 
+#include "utilities.h"
+#include "PlayerSID.h"
+
 #include <cppsid/cppsid.h>
 #include <resid/sid.h>
 
@@ -26,11 +29,7 @@ namespace Interactive_Evolution_SFX
 			if (!initialize_sounds())
 				throw gcnew WarningException("sounds failed to load");
 
-			CPPSID::Player* player = new CPPSID::Player();
-			player->load("../Beyond_the_Zero.sid");
-			player->start();
-
-			RESID::SID a;
+			player = new PlayerSID();
 		}
 
 	protected:
@@ -65,23 +64,6 @@ namespace Interactive_Evolution_SFX
 
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
-
-	private: 
-		array<SoundUC^>^ sounds;
-		bool initialize_sounds();
-
-		static const size_t row_count = 3;
-		static const size_t column_count = 4;
-
-	public:
-		double mutation_size()
-		{
-			return (mutationSizeSlider->Value * 4) / 100.0;
-		}
-		double mutation_rate()
-		{
-			return (mutationRateSlider->Value * 4) / 100.0;
-		}
 	
 #pragma region Windows Form Designer generated code
 	private:
@@ -360,6 +342,7 @@ namespace Interactive_Evolution_SFX
 			this->volumeSlider->TabIndex = 10;
 			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
 			this->volumeSlider->Value = 13;
+			this->volumeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::volumeSlider_ValueChanged);
 			// 
 			// label1
 			// 
@@ -381,7 +364,7 @@ namespace Interactive_Evolution_SFX
 			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->label2->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->label2->Location = System::Drawing::Point(693, 57);
+			this->label2->Location = System::Drawing::Point(693, 53);
 			this->label2->Margin = System::Windows::Forms::Padding(0);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(55, 25);
@@ -437,46 +420,70 @@ namespace Interactive_Evolution_SFX
 		}
 #pragma endregion
 
-		private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	private:
+		array<SoundUC^>^ sounds;
+
+		const int row_count = 3;
+		const int column_count = 4;
+
+		PlayerSID* player;
+
+	public:
+		bool initialize_sounds();
+
+		inline double mutation_size()
 		{
-			SaveFileDialog saveFileDialog;
-			saveFileDialog.Filter = "WAV File|*.wav";
-			saveFileDialog.Title = "Load a sound file";
-			saveFileDialog.ShowDialog();
-
-			if (saveFileDialog.FileName != "")
-			{
-
-			}
+			return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum);
 		}
-		private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		inline double mutation_rate()
 		{
-
+			return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum);
 		}
-		private: System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
 
-		}
-		private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			System::Windows::Forms::DialogResult dialogueResult = MessageBox::Show("Resetting will discard all progress and present new random candidates", "Reset?", MessageBoxButtons::YesNo);
+	private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+		SaveFileDialog saveFileDialog;
+		saveFileDialog.Filter = "WAV File|*.wav";
+		saveFileDialog.Title = "Load a sound file";
+		saveFileDialog.ShowDialog();
 
-			if (dialogueResult == System::Windows::Forms::DialogResult::Yes)
-			{
-
-			}
-		}
-		private: System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		if (saveFileDialog.FileName != "")
 		{
 
 		}
-		private: System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+	}
+	private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+
+	}
+	private: System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+
+	}
+	private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+		System::Windows::Forms::DialogResult dialogueResult = MessageBox::Show("Resetting will discard all progress and present new random candidates", "Reset?", MessageBoxButtons::YesNo);
+
+		if (dialogueResult == System::Windows::Forms::DialogResult::Yes)
 		{
-			mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+
 		}
-		private: System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-		{
-			mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
-		}
+	}
+	private: System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
+	{
+
+	}
+	private: System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+	{
+		mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+	}
+	private: System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+	{
+		mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
+	}
+	private: System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+	{
+		volume = util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum);
+	}
 };
 }
