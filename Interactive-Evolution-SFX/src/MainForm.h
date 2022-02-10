@@ -4,8 +4,8 @@
 #include <iostream>
 #include <tchar.h>
 
-#include <cppsid.h>
-#include <libcsid.h>
+#include <cppsid/cppsid.h>
+#include <resid/sid.h>
 
 namespace Interactive_Evolution_SFX 
 {
@@ -16,7 +16,7 @@ namespace Interactive_Evolution_SFX
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	public ref class MainForm : public System::Windows::Forms::Form
+	public ref class MainForm : public Form
 	{
 	public:
 		MainForm(void)
@@ -25,6 +25,12 @@ namespace Interactive_Evolution_SFX
 
 			if (!initialize_sounds())
 				throw gcnew WarningException("sounds failed to load");
+
+			CPPSID::Player* player = new CPPSID::Player();
+			player->load("../Beyond_the_Zero.sid");
+			player->start();
+
+			RESID::SID a;
 		}
 
 	protected:
@@ -55,7 +61,8 @@ namespace Interactive_Evolution_SFX
 	private: System::Windows::Forms::Label^ mutationRateTextLabel;
 	private: System::Windows::Forms::Label^ mutationRateLabel;
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
-	private: System::Windows::Forms::TrackBar^ trackBar1;
+	private: System::Windows::Forms::TrackBar^ volumeSlider;
+
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
 
@@ -101,7 +108,7 @@ namespace Interactive_Evolution_SFX
 			this->mutationRateTextLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationSizeLabel = (gcnew System::Windows::Forms::Label());
-			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
+			this->volumeSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->menuStrip->SuspendLayout();
@@ -110,7 +117,7 @@ namespace Interactive_Evolution_SFX
 			this->botStripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -343,15 +350,16 @@ namespace Interactive_Evolution_SFX
 			this->mutationSizeLabel->TabIndex = 9;
 			this->mutationSizeLabel->Text = L"- 4%";
 			// 
-			// trackBar1
+			// volumeSlider
 			// 
-			this->trackBar1->Location = System::Drawing::Point(700, 79);
-			this->trackBar1->Maximum = 25;
-			this->trackBar1->Name = L"trackBar1";
-			this->trackBar1->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->trackBar1->Size = System::Drawing::Size(45, 350);
-			this->trackBar1->TabIndex = 10;
-			this->trackBar1->TickStyle = System::Windows::Forms::TickStyle::Both;
+			this->volumeSlider->Location = System::Drawing::Point(700, 79);
+			this->volumeSlider->Maximum = 26;
+			this->volumeSlider->Name = L"volumeSlider";
+			this->volumeSlider->Orientation = System::Windows::Forms::Orientation::Vertical;
+			this->volumeSlider->Size = System::Drawing::Size(45, 350);
+			this->volumeSlider->TabIndex = 10;
+			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
+			this->volumeSlider->Value = 13;
 			// 
 			// label1
 			// 
@@ -389,7 +397,7 @@ namespace Interactive_Evolution_SFX
 			this->ClientSize = System::Drawing::Size(764, 761);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			this->Controls->Add(this->trackBar1);
+			this->Controls->Add(this->volumeSlider);
 			this->Controls->Add(this->mutationSizeLabel);
 			this->Controls->Add(this->mutationRateLabel);
 			this->Controls->Add(this->mutationRateTextLabel);
@@ -422,7 +430,7 @@ namespace Interactive_Evolution_SFX
 			this->botStripTool->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 

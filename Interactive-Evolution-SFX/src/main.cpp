@@ -8,7 +8,7 @@ using namespace Interactive_Evolution_SFX;
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
     Application::EnableVisualStyles();
-    Application::SetCompatibleTextRenderingDefault(false);
+    Application::SetCompatibleTextRenderingDefault(true);
     Application::Run(gcnew MainForm());
 
     return 0;
