@@ -10,6 +10,8 @@
 #include <cppsid/cppsid.h>
 #include <resid/sid.h>
 
+#include <msclr/marshal_cppstd.h>
+
 namespace Interactive_Evolution_SFX 
 {
 	using namespace System;
@@ -445,11 +447,10 @@ namespace Interactive_Evolution_SFX
 		OpenFileDialog openFileDialog;
 		openFileDialog.Filter = "WAV File|*.wav";
 		openFileDialog.Title = "Load a sound file";
-		openFileDialog.ShowDialog();
 
-		if (openFileDialog.FileName != "")
+		if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 		{
-
+			player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
 		}
 	}
 	private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -459,13 +460,15 @@ namespace Interactive_Evolution_SFX
 	private: System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
 		player->pause();
-		sounds[0]->soundWave->BackColor = Color::Black;
 	}
 	private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-		System::Windows::Forms::DialogResult dialogueResult = MessageBox::Show("Resetting will discard all progress and present new random candidates", "Reset?", MessageBoxButtons::YesNo);
+		System::Windows::Forms::DialogResult result = MessageBox::Show(
+			"Resetting will discard all progress and present new random candidates", 
+			"Reset?",
+			MessageBoxButtons::YesNo);
 
-		if (dialogueResult == System::Windows::Forms::DialogResult::Yes)
+		if (result == System::Windows::Forms::DialogResult::Yes)
 		{
 
 		}
