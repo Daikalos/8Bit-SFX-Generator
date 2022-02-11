@@ -8,7 +8,7 @@ bool MainForm::initialize_sounds()
 
 	for (int i = 0; i < sounds->Length; ++i)
 	{
-		SoundUC^ soundUC = sounds[i] = gcnew SoundUC();
+		SoundUC^ soundUC = sounds[i] = gcnew SoundUC(this);
 		pnlItems->Controls->Add(soundUC);
 
 		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));

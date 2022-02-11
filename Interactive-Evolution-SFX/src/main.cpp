@@ -1,4 +1,4 @@
-#include "MainForm.h";
+#include "MainForm.h"
 
 #include <windows.h>
 

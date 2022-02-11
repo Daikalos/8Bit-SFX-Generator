@@ -2,6 +2,8 @@
 
 namespace Interactive_Evolution_SFX 
 {
+	ref class MainForm;
+
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -12,8 +14,9 @@ namespace Interactive_Evolution_SFX
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
 	public:
-		SoundUC(void)
+		SoundUC(MainForm^ mainForm)
 		{
+			this->mainForm = mainForm;
 			InitializeComponent();
 		}
 
@@ -22,17 +25,16 @@ namespace Interactive_Evolution_SFX
 		{
 			delete components;
 		}
+
+	public: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
+
 	private: System::Windows::Forms::ToolStrip^ stripTool;
 	private: System::Windows::Forms::ToolStripButton^ pauseButton;
-	private: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
 	private: System::Windows::Forms::ToolStripButton^ saveButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
 
 	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
@@ -123,6 +125,8 @@ namespace Interactive_Evolution_SFX
 			// 
 			// soundWave
 			// 
+			this->soundWave->BackSecondaryColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)),
+				static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			this->soundWave->BorderSkin->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)),
 				static_cast<System::Int32>(static_cast<System::Byte>(0)), static_cast<System::Int32>(static_cast<System::Byte>(0)));
 			this->soundWave->BorderSkin->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
@@ -149,13 +153,15 @@ namespace Interactive_Evolution_SFX
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			chartArea1->BackGradientStyle = System::Windows::Forms::DataVisualization::Charting::GradientStyle::VerticalCenter;
 			chartArea1->BackHatchStyle = System::Windows::Forms::DataVisualization::Charting::ChartHatchStyle::Cross;
-			chartArea1->BorderColor = System::Drawing::Color::Gray;
 			chartArea1->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Solid;
-			chartArea1->BorderWidth = 2;
 			chartArea1->Name = L"ChartArea1";
+			chartArea1->Position->Auto = false;
+			chartArea1->Position->Height = 96;
+			chartArea1->Position->Width = 96;
+			chartArea1->Position->X = 2;
+			chartArea1->Position->Y = 2;
 			this->soundWave->ChartAreas->Add(chartArea1);
-			this->soundWave->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->soundWave->ImeMode = System::Windows::Forms::ImeMode::NoControl;
+			this->soundWave->Dock = System::Windows::Forms::DockStyle::Top;
 			legend1->Enabled = false;
 			legend1->Name = L"Legend1";
 			this->soundWave->Legends->Add(legend1);
@@ -191,26 +197,30 @@ namespace Interactive_Evolution_SFX
 		}
 #pragma endregion
 
-	private: System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
-	{
-		DialogResult dialogueResult = MessageBox::Show("Are you sure you want to mutate this SFX?", "Mutate?", MessageBoxButtons::YesNo);
-
-		if (dialogueResult == DialogResult::Yes)
+	private: 
+		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
+			DialogResult dialogueResult = MessageBox::Show("Are you sure you want to mutate this SFX?", "Mutate?", MessageBoxButtons::YesNo);
 
+			if (dialogueResult == DialogResult::Yes)
+			{
+				
+			}
 		}
-	}
-	private: System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		SaveFileDialog saveFileDialog;
-		saveFileDialog.Filter = "WAV File|*.wav";
-		saveFileDialog.Title = "Save the selected sound";
-		saveFileDialog.ShowDialog();
-
-		if (saveFileDialog.FileName != "")
+		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			SaveFileDialog saveFileDialog;
+			saveFileDialog.Filter = "SID File|*.sid";
+			saveFileDialog.Title = "Save the selected sound";
+			saveFileDialog.ShowDialog();
 
+			if (saveFileDialog.FileName != "")
+			{
+
+			}
 		}
-	}
-};
+
+	private:
+		MainForm^ mainForm;
+	};
 }

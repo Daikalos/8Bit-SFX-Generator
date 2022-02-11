@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SoundUC.h"
 #include <iostream>
 #include <tchar.h>
 
 #include "utilities.h"
 #include "PlayerSID.h"
+#include "SoundUC.h"
 
 #include <cppsid/cppsid.h>
 #include <resid/sid.h>
@@ -364,12 +364,12 @@ namespace Interactive_Evolution_SFX
 			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->label2->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->label2->Location = System::Drawing::Point(693, 53);
+			this->label2->Location = System::Drawing::Point(696, 53);
 			this->label2->Margin = System::Windows::Forms::Padding(0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(55, 25);
+			this->label2->Size = System::Drawing::Size(51, 25);
 			this->label2->TabIndex = 12;
-			this->label2->Text = L"High";
+			this->label2->Text = L"Max";
 			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// MainForm
@@ -442,23 +442,24 @@ namespace Interactive_Evolution_SFX
 
 	private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-		SaveFileDialog saveFileDialog;
-		saveFileDialog.Filter = "WAV File|*.wav";
-		saveFileDialog.Title = "Load a sound file";
-		saveFileDialog.ShowDialog();
+		OpenFileDialog openFileDialog;
+		openFileDialog.Filter = "WAV File|*.wav";
+		openFileDialog.Title = "Load a sound file";
+		openFileDialog.ShowDialog();
 
-		if (saveFileDialog.FileName != "")
+		if (openFileDialog.FileName != "")
 		{
 
 		}
 	}
 	private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-
+		player->play();
 	}
 	private: System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
-
+		player->pause();
+		sounds[0]->soundWave->BackColor = Color::Black;
 	}
 	private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
@@ -483,7 +484,7 @@ namespace Interactive_Evolution_SFX
 	}
 	private: System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 	{
-		volume = util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum);
+		player->set_volume(util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
 	}
 };
 }
