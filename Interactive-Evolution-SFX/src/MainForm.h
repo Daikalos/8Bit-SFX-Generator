@@ -445,12 +445,13 @@ namespace Interactive_Evolution_SFX
 	private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 	{
 		OpenFileDialog openFileDialog;
-		openFileDialog.Filter = "WAV File|*.wav";
+		openFileDialog.Filter = "SID File|*.sid";
 		openFileDialog.Title = "Load a sound file";
 
 		if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 		{
-			player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
+			if (!player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+				MessageBox::Show("Failed to load SID file", "Error!", MessageBoxButtons::OK);
 		}
 	}
 	private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
