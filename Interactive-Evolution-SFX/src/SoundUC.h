@@ -29,7 +29,7 @@ namespace Interactive_Evolution_SFX
 	public: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
 
 	private: System::Windows::Forms::ToolStrip^ stripTool;
-	private: System::Windows::Forms::ToolStripButton^ pauseButton;
+
 	private: System::Windows::Forms::ToolStripButton^ saveButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
@@ -50,7 +50,6 @@ namespace Interactive_Evolution_SFX
 			System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->stripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
-			this->pauseButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->saveButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutateButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->soundWave = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
@@ -62,9 +61,9 @@ namespace Interactive_Evolution_SFX
 			// 
 			this->stripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->stripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
-			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
-				this->playButton, this->pauseButton,
-					this->saveButton, this->mutateButton
+			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->playButton, this->saveButton,
+					this->mutateButton
 			});
 			this->stripTool->Location = System::Drawing::Point(0, 155);
 			this->stripTool->Name = L"stripTool";
@@ -82,16 +81,6 @@ namespace Interactive_Evolution_SFX
 			this->playButton->Size = System::Drawing::Size(23, 22);
 			this->playButton->Text = L"Play";
 			this->playButton->ToolTipText = L"Play";
-			// 
-			// pauseButton
-			// 
-			this->pauseButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			this->pauseButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pauseButton.Image")));
-			this->pauseButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->pauseButton->Name = L"pauseButton";
-			this->pauseButton->Size = System::Drawing::Size(23, 22);
-			this->pauseButton->Text = L"Pause";
-			this->pauseButton->ToolTipText = L"Pause";
 			// 
 			// saveButton
 			// 

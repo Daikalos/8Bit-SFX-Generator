@@ -101,13 +101,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>cppsid-d.lib;resid-d.lib;SDL2.lib;SDL2main.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cppsid-d.lib;resid-d.lib;SDL2.lib;SDL2main.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -126,7 +126,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
@@ -148,11 +148,14 @@
   <ItemGroup>
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PlayerSID.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundUC.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PlayerSID.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>

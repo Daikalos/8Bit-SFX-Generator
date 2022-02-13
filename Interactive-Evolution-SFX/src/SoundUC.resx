@@ -141,28 +141,6 @@
         X0DzEgimC/LhAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="pauseButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOcSURBVHhe7Zs9ilRBFIWfKMMMjn+ZoaFLMHARLkEwMRB0
-        CYKYuQADl2BuKCiioJmBoaGLMGjr8hzOaefzVd/uvpX0fHCg6fe+cyoYwaBruuCCrTluedLyteX338Tn
-        +C6e7ZvRe4vcbfnesvpP4lm8sy9G7y1yu+VXCx3EE+/Eu7syeq/Lx5Z59Kjl6clqen9jTnyO73SoeHdX
-        Ru8t8rBlHrvc8vp0NX27tZ74Lp7pUOFsy+i9Lj9a5qFHx+cPc5Z4pgOFsy2j9xa51zKPnLTEnyAdJhLP
-        4h0dKtwso/e6PG+ZBx4c8UE88Y4OFG6W0Xtd3rXMAy+v8iE88Y4OFG6W0XtdfrbMA2+v8yE88Y4OFG6W
-        0Xtd4n9e88CXm3wIT7yjA4WbZfReFw3QASju5JFL3RR3ClA5jVPcySOXuinuFKByGqe4k0cudVPcKUDl
-        NE5xJ49c6qa4U4DKaZziTh651E1xpwCV0zjFnTxyqZviTgEqp3GKO3nkUjfFnQJUTuMUd/LIpW6KOwWo
-        nMYp7uSRS90UdwpQOY1T3Mkjl7op7hSgchqnuJNHLnVT3ClA5TROcSePXOqmuFOAymmc4k4eudRNcacA
-        ldM4xZ08cqmb4k4BKqdxijt55FI3xZ0CVE7jFHfyyKVuijsFqJzGKe7kkUvdFHcKUDmNU9zJI5e6Ke4U
-        oHIap7iTRy51U9wpQOU0TnEnj1zqprhTgMppnOJOHrnUTXGnAJXTOMWdPHKpm+JOASqncYo7eeRSN8Wd
-        AlRO4xR38silboo7Baicxinu5JFL3RR3ClA5jVPcySOXuinuFKByGqe4k0cudVPcKUDlNE5xJ49c6qa4
-        U4DKaZziTh651E1xpwCV0zjFnTxyqZviTgEqp3GKO3nkUjfFnQJUTuMUd/LIpW6KOwWonMYp7uSRS90U
-        dwpQOY1T3Mkjl7op7hSgchqnuJNHLnVT3ClA5TROcSePXOqmuFOAymmc4k4eudRNcacAldM4xZ08cqmb
-        4k4BKs//bC2SRe6YvS4H/0NJ/XT11QY/XY13dKDdfio7Zq/Li5Z5IP/j5XCzjN7rcr9lHji9tJo+Lfy7
-        jGfxjg4UbpbRexuhCwyPFy4wxDMdZj8XJsbsdVm/wvLm2vnDxHdVV2bq97pcafncMo/FLY24uPSh/QlG
-        4vP6zY14N5xtGb23EXdaNr3GFu/uyui9jTjoi5NnxHXVZy3/XmWN76quzo7cu+AAmKY/O5ZB/0Al14oA
-        AAAASUVORK5CYII=
-</value>
-  </data>
   <data name="saveButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8

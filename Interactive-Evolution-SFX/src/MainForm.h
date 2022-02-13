@@ -4,7 +4,7 @@
 #include <tchar.h>
 
 #include "utilities.h"
-#include "PlayerSID.h"
+#include "Player.h"
 #include "SoundUC.h"
 
 #include <cppsid/cppsid.h>
@@ -31,7 +31,7 @@ namespace Interactive_Evolution_SFX
 			if (!initialize_sounds())
 				throw gcnew WarningException("sounds failed to load");
 
-			player = new PlayerSID();
+			player = new Player();
 		}
 
 	protected:
@@ -343,7 +343,7 @@ namespace Interactive_Evolution_SFX
 			this->volumeSlider->Size = System::Drawing::Size(45, 350);
 			this->volumeSlider->TabIndex = 10;
 			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
-			this->volumeSlider->Value = 13;
+			this->volumeSlider->Value = 8;
 			this->volumeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::volumeSlider_ValueChanged);
 			// 
 			// label1
@@ -428,7 +428,7 @@ namespace Interactive_Evolution_SFX
 		const int row_count = 3;
 		const int column_count = 4;
 
-		PlayerSID* player;
+		Player* player;
 
 	public:
 		bool initialize_sounds();

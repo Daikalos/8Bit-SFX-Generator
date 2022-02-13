@@ -14,13 +14,13 @@ namespace util
 		return (value - min) / static_cast<double>(max - min);
 	}
 
-	template<class T, typename std::enable_if_t<!std::is_pointer_v<T>>>
+	template<class T>
 	static void print(const T& output)
 	{
-		std::wstring woutput = std::to_wstring(output) + L"\n";
+		std::wstring woutput = std::to_wstring(output);
 		OutputDebugString(woutput.c_str());
 	}
-	template<class T>
+	template<class T, typename std::enable_if_t<std::is_pointer_v<T>>>
 	static void print(T* output)
 	{
 		void* address = static_cast<void*>(output);
@@ -31,11 +31,11 @@ namespace util
 
 	static void print(const std::wstring& output)
 	{
-		OutputDebugString((output + L"\n").c_str());
+		OutputDebugString(output.c_str());
 	}
 	static void print(const std::string& output)
 	{
-		print(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(output + "\n"));
+		print(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(output));
 	}
 
 	static void print(const wchar_t* output) { print(std::wstring(output)); }
