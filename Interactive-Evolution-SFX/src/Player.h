@@ -5,26 +5,57 @@
 
 #include <fstream>
 
+#include <SFML/Audio.hpp>
+
+#include <functional>
+
 #include "utilities.h"
 #include "Config.h"
 #include "Sound.h"
 
-#include <SFML/Audio.hpp>
-
-class Player
+namespace IESFX
 {
-public:
-	Player();
-	~Player();
+	class Player
+	{
+	public:
+		Player(std::vector<Sound>* sounds);
+		~Player();
 
-	void set_volume(double volume);
+		void set_volume(double volume);
 
-	void play();
-	void pause();
+		void play();
+		void pause();
 
-	bool load(const std::string& file);
+		void play_sound(const Sound& sound);
 
-private:
-	Sound _sound;
-};
+		bool load(const std::string& file);
+		bool save(const std::string& name);
+
+		//template<class F, class... Args>
+		//void add_callback_begin(F&& f, Args&&... args)
+		//{
+		//	_callbacks_begin.push_back(std::bind(
+		//		std::forward<F>(f), 
+		//		std::forward<Args>(args)...));
+		//}
+		//template<class F, class... Args>
+		//void add_callback_end(F&& f, Args&&... args)
+		//{
+		//	_callbacks_end.push_back(std::bind(
+		//		std::forward<F>(f), 
+		//		std::forward<Args>(args)...));
+		//}
+
+	private:
+		std::vector<std::function<void()>> _callbacks_begin;
+		std::vector<std::function<void()>> _callbacks_end;
+
+		std::vector<Sound>* _sounds;
+		Sound* _sound;
+
+		bool _is_playing;
+		double _volume;
+		int _pos;
+	};
+}
 

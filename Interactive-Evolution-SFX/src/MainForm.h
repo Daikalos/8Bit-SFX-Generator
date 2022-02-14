@@ -12,7 +12,7 @@
 
 #include <msclr/marshal_cppstd.h>
 
-namespace Interactive_Evolution_SFX 
+namespace IESFX
 {
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -28,17 +28,15 @@ namespace Interactive_Evolution_SFX
 		{
 			InitializeComponent();
 
-			if (!initialize_sounds())
-				throw gcnew WarningException("sounds failed to load");
-
-			player = new Player();
+			if (!initialize())
+				throw gcnew WarningException("failed to initialize");
 		}
 
 	protected:
 		~MainForm()
 		{
 			delete components;
-			delete[] sounds;
+			delete _player;
 		}
 
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
@@ -63,9 +61,9 @@ namespace Interactive_Evolution_SFX
 	private: System::Windows::Forms::Label^ mutationRateLabel;
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
-
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::Panel^ modifiersPanel;
 	
 #pragma region Windows Form Designer generated code
 	private:
@@ -95,6 +93,7 @@ namespace Interactive_Evolution_SFX
 			this->volumeSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->modifiersPanel = (gcnew System::Windows::Forms::Panel());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -102,6 +101,7 @@ namespace Interactive_Evolution_SFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->BeginInit();
+			this->modifiersPanel->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -262,7 +262,7 @@ namespace Interactive_Evolution_SFX
 			// 
 			// mutationSizeSlider
 			// 
-			this->mutationSizeSlider->Location = System::Drawing::Point(78, 687);
+			this->mutationSizeSlider->Location = System::Drawing::Point(-3, 28);
 			this->mutationSizeSlider->Maximum = 25;
 			this->mutationSizeSlider->Minimum = 1;
 			this->mutationSizeSlider->Name = L"mutationSizeSlider";
@@ -273,7 +273,7 @@ namespace Interactive_Evolution_SFX
 			// 
 			// mutationRateSlider
 			// 
-			this->mutationRateSlider->Location = System::Drawing::Point(384, 687);
+			this->mutationRateSlider->Location = System::Drawing::Point(300, 28);
 			this->mutationRateSlider->Maximum = 25;
 			this->mutationRateSlider->Minimum = 1;
 			this->mutationRateSlider->Name = L"mutationRateSlider";
@@ -288,7 +288,7 @@ namespace Interactive_Evolution_SFX
 			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->mutationSizeTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationSizeTextLabel->Location = System::Drawing::Point(81, 659);
+			this->mutationSizeTextLabel->Location = System::Drawing::Point(0, 0);
 			this->mutationSizeTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeTextLabel->Name = L"mutationSizeTextLabel";
 			this->mutationSizeTextLabel->Size = System::Drawing::Size(135, 25);
@@ -301,7 +301,7 @@ namespace Interactive_Evolution_SFX
 			this->mutationRateTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->mutationRateTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationRateTextLabel->Location = System::Drawing::Point(387, 659);
+			this->mutationRateTextLabel->Location = System::Drawing::Point(303, 0);
 			this->mutationRateTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateTextLabel->Name = L"mutationRateTextLabel";
 			this->mutationRateTextLabel->Size = System::Drawing::Size(139, 25);
@@ -314,7 +314,7 @@ namespace Interactive_Evolution_SFX
 			this->mutationRateLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->mutationRateLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationRateLabel->Location = System::Drawing::Point(523, 659);
+			this->mutationRateLabel->Location = System::Drawing::Point(439, 0);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
 			this->mutationRateLabel->Size = System::Drawing::Size(52, 25);
@@ -327,7 +327,7 @@ namespace Interactive_Evolution_SFX
 			this->mutationSizeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->mutationSizeLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationSizeLabel->Location = System::Drawing::Point(213, 659);
+			this->mutationSizeLabel->Location = System::Drawing::Point(132, 0);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
 			this->mutationSizeLabel->Size = System::Drawing::Size(52, 25);
@@ -374,6 +374,21 @@ namespace Interactive_Evolution_SFX
 			this->label2->Text = L"Max";
 			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
+			// modifiersPanel
+			// 
+			this->modifiersPanel->BackColor = System::Drawing::Color::Gray;
+			this->modifiersPanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->modifiersPanel->Controls->Add(this->mutationSizeTextLabel);
+			this->modifiersPanel->Controls->Add(this->mutationSizeSlider);
+			this->modifiersPanel->Controls->Add(this->mutationSizeLabel);
+			this->modifiersPanel->Controls->Add(this->mutationRateLabel);
+			this->modifiersPanel->Controls->Add(this->mutationRateTextLabel);
+			this->modifiersPanel->Controls->Add(this->mutationRateSlider);
+			this->modifiersPanel->Location = System::Drawing::Point(80, 660);
+			this->modifiersPanel->Name = L"modifiersPanel";
+			this->modifiersPanel->Size = System::Drawing::Size(604, 65);
+			this->modifiersPanel->TabIndex = 13;
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -383,15 +398,10 @@ namespace Interactive_Evolution_SFX
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->volumeSlider);
-			this->Controls->Add(this->mutationSizeLabel);
-			this->Controls->Add(this->mutationRateLabel);
-			this->Controls->Add(this->mutationRateTextLabel);
-			this->Controls->Add(this->mutationSizeTextLabel);
-			this->Controls->Add(this->mutationRateSlider);
-			this->Controls->Add(this->mutationSizeSlider);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
 			this->Controls->Add(this->menuStrip);
+			this->Controls->Add(this->modifiersPanel);
 			this->DoubleBuffered = true;
 			this->Font = (gcnew System::Drawing::Font(L"Arial Black", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -416,79 +426,79 @@ namespace Interactive_Evolution_SFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->EndInit();
+			this->modifiersPanel->ResumeLayout(false);
+			this->modifiersPanel->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
 
-	private:
-		array<SoundUC^>^ sounds;
+	private: 
+		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			OpenFileDialog openFileDialog;
+			openFileDialog.Filter = "WAV File|*.wav";
+			openFileDialog.Title = "Load a sound file";
 
-		const int row_count = 3;
-		const int column_count = 4;
+			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
+			{
+				if (!_player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+					MessageBox::Show("Failed to load " + openFileDialog.FileName, "Error!", MessageBoxButtons::OK);
+			}
+		}
 
-		Player* player;
+		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			_player->play();
+		}
+		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			_player->pause();
+		}
+
+		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			System::Windows::Forms::DialogResult result = MessageBox::Show(
+				"Resetting will discard all progress and present new random candidates", 
+				"Reset?",
+				MessageBoxButtons::YesNo);
+
+			if (result == System::Windows::Forms::DialogResult::Yes)
+			{
+
+			}
+		}
+		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+
+		}
+
+		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+		}
+		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
+		}
+
+		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		{
+			_player->set_volume(util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
+		}
 
 	public:
-		bool initialize_sounds();
+		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
+		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
 
-		inline double mutation_size()
-		{
-			return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum);
-		}
-		inline double mutation_rate()
-		{
-			return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum);
-		}
+	private:
+		bool initialize();
 
-	private: System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		OpenFileDialog openFileDialog;
-		openFileDialog.Filter = "SID File|*.sid";
-		openFileDialog.Title = "Load a sound file";
+	private:
+		const size_t row_count = 3;
+		const size_t column_count = 4;
 
-		if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
-		{
-			if (!player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
-				MessageBox::Show("Failed to load SID file", "Error!", MessageBoxButtons::OK);
-		}
-	}
-	private: System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		player->play();
-	}
-	private: System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		player->pause();
-	}
-	private: System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		System::Windows::Forms::DialogResult result = MessageBox::Show(
-			"Resetting will discard all progress and present new random candidates", 
-			"Reset?",
-			MessageBoxButtons::YesNo);
-
-		if (result == System::Windows::Forms::DialogResult::Yes)
-		{
-
-		}
-	}
-	private: System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-
-	}
-	private: System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-	{
-		mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
-	}
-	private: System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-	{
-		mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
-	}
-	private: System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-	{
-		player->set_volume(util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
-	}
+		Player* _player;
 };
 }

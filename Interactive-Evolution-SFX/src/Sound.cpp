@@ -1,5 +1,7 @@
 #include "Sound.h"
 
+using namespace IESFX;
+
 Sound::Sound()
 	: _length(0), _buffer_size(0)
 {
@@ -23,7 +25,7 @@ void Sound::write(int offset, int value)
 	_sid.write(offset, value);
 }
 
-void Sound::create_buffer(size_t length)
+void Sound::generate_buffer(size_t length)
 {
 	_length = length;
 
@@ -37,6 +39,12 @@ void Sound::create_buffer(size_t length)
 	}
 
 	_buffer.loadFromSamples(buffer.data(), _buffer_size, 1, SAMPLE_RATE);
+	_sound.setBuffer(_buffer);
+}
+
+void Sound::load_buffer(const sf::Int16* samples, Uint64 sample_count, unsigned int channel_count, unsigned int sample_rate)
+{
+	_buffer.loadFromSamples(samples, sample_count, channel_count, sample_rate);
 	_sound.setBuffer(_buffer);
 }
 

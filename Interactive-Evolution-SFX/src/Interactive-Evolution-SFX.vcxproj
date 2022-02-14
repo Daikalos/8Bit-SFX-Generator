@@ -146,6 +146,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Evolution.cpp" />
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -154,8 +155,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Evolution.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="SoundInfo.h" />
+    <ClInclude Include="SoundFile.h" />
     <ClInclude Include="utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>

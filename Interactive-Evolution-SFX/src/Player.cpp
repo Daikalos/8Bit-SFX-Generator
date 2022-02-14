@@ -1,57 +1,71 @@
 #include "Player.h"
 
-Player::Player()
+using namespace IESFX;
+
+Player::Player(std::vector<Sound>* sounds)
+	: _sounds(sounds), _sound(nullptr), _is_playing(false), _volume(0.325), _pos(0)
 {
-	set_volume(0.325);
+
 }
 
 Player::~Player()
 {
-	_sound.stop();
+	delete _sounds;
 }
 
 void Player::set_volume(double volume)
 {
-	_sound.set_volume(volume);
+	_volume = volume;
 }
 
 void Player::play()
 {
-	if (_sound.status() == sf::SoundSource::Playing)
-		_sound.stop();
+	//_sound.reset();
 
-	_sound.reset();
+	//_sound.write(3, 8);
+	//_sound.write(2, 0);
+	//_sound.write(5, 9);
+	//_sound.write(6, 0);
+	//_sound.write(4, 65);
+	//_sound.write(4, 64);
+	//_sound.write(24, 10);
 
-	_sound.write(3, 8);
-	_sound.write(2, 0);
-	_sound.write(5, 9);
-	_sound.write(6, 0);
-	_sound.write(4, 65);
-	_sound.write(4, 64);
-	_sound.write(24, 10);
+	//_sound.generate_buffer(2);
 
-	_sound.create_buffer(2);
 
-	_sound.play();
+	_is_playing = true;
 }
 
 void Player::pause()
 {
-	_sound.pause();
+	_is_playing = false;
+}
+
+void Player::play_sound(const Sound& sound)
+{
+	
 }
 
 bool Player::load(const std::string& file)
 {
-	pause();
+	_is_playing = false;
 
 	std::ifstream stream(file, std::ios::binary);
 
 	if (stream.is_open())
 	{
+		std::istream_iterator<char> start(stream), end;
+		std::vector<sf::Int16> buffer(start, end);
 
+		
 
 		stream.close();
 	}
 
 	return true;
+}
+
+bool Player::save(const std::string& name)
+{
+	return false;
 }

@@ -1,37 +1,42 @@
 #pragma once
 
 #include <vector>
-
-#include "Config.h"
 #include <SFML/Audio.hpp>
 
-class Sound
+#include "Config.h"
+#include "SoundInfo.h"
+
+namespace IESFX
 {
-public:
-	Sound();
-	~Sound();
+	class Sound
+	{
+	public:
+		Sound();
+		~Sound();
 
-	void reset();
-	void write(int offset, int value);
+		void reset();
+		void write(int offset, int value);
 
-	// only create after write
-	//
-	void create_buffer(size_t length);
+		// only generate buffer after write
+		//
+		void generate_buffer(size_t length);
 
-	sf::SoundSource::Status status() const;
-	void set_volume(double volume);
+		void load_buffer(const sf::Int16* samples, Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 
-	void play();
-	void pause();
-	void stop();
+		sf::SoundSource::Status status() const;
+		void set_volume(double volume);
 
+		void play();
+		void pause();
+		void stop();
 
-private:
-	size_t _length;
-	size_t _buffer_size;
+	private:
+		size_t _length;
+		size_t _buffer_size;
 
-	sf::Sound _sound;
-	sf::SoundBuffer _buffer;
+		sf::Sound _sound;
+		sf::SoundBuffer _buffer;
 
-	RESID::SID _sid;
-};
+		RESID::SID _sid;
+	};
+}

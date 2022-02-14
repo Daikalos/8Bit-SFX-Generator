@@ -2,7 +2,7 @@
 
 #include <windows.h>
 
-using namespace Interactive_Evolution_SFX;
+using namespace IESFX;
 
 [STAThread]
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)

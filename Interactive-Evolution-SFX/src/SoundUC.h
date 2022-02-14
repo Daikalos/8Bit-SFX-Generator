@@ -1,9 +1,10 @@
 #pragma once
 
-namespace Interactive_Evolution_SFX 
-{
-	ref class MainForm;
+#include "Sound.h"
+#include "Player.h"
 
+namespace IESFX
+{
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -14,27 +15,31 @@ namespace Interactive_Evolution_SFX
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
 	public:
-		SoundUC(MainForm^ mainForm)
+		SoundUC(Player* player, size_t id)
 		{
-			this->mainForm = mainForm;
+			_player = player;
+			_id = id;
+
 			InitializeComponent();
+
+			_sound = new Sound();
 		}
 
 	protected:
 		~SoundUC()
 		{
 			delete components;
+			delete _sound;
 		}
 
 	public: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
 
 	private: System::Windows::Forms::ToolStrip^ stripTool;
-
 	private: System::Windows::Forms::ToolStripButton^ saveButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
 
-	private:
+	private: 
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
@@ -81,6 +86,7 @@ namespace Interactive_Evolution_SFX
 			this->playButton->Size = System::Drawing::Size(23, 22);
 			this->playButton->Text = L"Play";
 			this->playButton->ToolTipText = L"Play";
+			this->playButton->Click += gcnew System::EventHandler(this, &SoundUC::playButton_Click);
 			// 
 			// saveButton
 			// 
@@ -187,6 +193,10 @@ namespace Interactive_Evolution_SFX
 #pragma endregion
 
 	private: 
+		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+
+		}
 		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			DialogResult dialogueResult = MessageBox::Show("Are you sure you want to mutate this SFX?", "Mutate?", MessageBoxButtons::YesNo);
@@ -209,7 +219,13 @@ namespace Interactive_Evolution_SFX
 			}
 		}
 
+	public:
+		size_t id() { return _id; }
+
 	private:
-		MainForm^ mainForm;
+		size_t _id;
+
+		Player* _player;
+		Sound* _sound;
 	};
 }

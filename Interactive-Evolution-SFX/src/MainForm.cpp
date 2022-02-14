@@ -1,18 +1,20 @@
 #include "MainForm.h"
 
-using namespace Interactive_Evolution_SFX;
+using namespace IESFX;
 
-bool MainForm::initialize_sounds()
+bool MainForm::initialize()
 {
-	sounds = gcnew array<SoundUC^>(row_count * column_count);
+	std::vector<Sound>* sounds = new std::vector<Sound>(row_count * column_count);
 
-	for (int i = 0; i < sounds->Length; ++i)
+	for (size_t i = 0; i < sounds->size(); ++i)
 	{
-		SoundUC^ soundUC = sounds[i] = gcnew SoundUC(this);
-		pnlItems->Controls->Add(soundUC);
+		SoundUC^ soundUC = gcnew SoundUC(_player, i);
 
+		pnlItems->Controls->Add(soundUC);
 		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));
 	}
+
+	_player = new Player(sounds);
 
 	return true;
 }
