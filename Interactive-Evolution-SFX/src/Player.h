@@ -2,12 +2,12 @@
 
 #include <iostream>
 #include <vector>
-
+#include <functional>
 #include <fstream>
+#include <thread>
 
 #include <SFML/Audio.hpp>
 
-#include <functional>
 
 #include "utilities.h"
 #include "Config.h"
@@ -15,16 +15,22 @@
 
 namespace IESFX
 {
+	using namespace System::Threading;
+
 	public ref class Player
 	{
 	public:
 		Player(std::vector<Sound>* sounds);
 		~Player();
 
+		void reset();
+
 		void set_volume(double volume);
 
 		void play();
 		void pause();
+
+		void iterate();
 
 		void play_sound(const Sound& sound);
 
@@ -33,34 +39,30 @@ namespace IESFX
 
 		int pos() { return _pos; }
 
-		template<class F, class... Args>
-		void add_callback_begin(F&& f, Args&&... args)
+		Sound* operator[](int i)
 		{
-			_callbacks_begin.push_back(std::bind(
-				std::forward<F>(f), std::forward<Args>(args)...));
+			return &_sounds->at(i);
 		}
-		template<class F, class... Args>
-		void add_callback_end(F&& f, Args&&... args)
-		{
-			_callbacks_end.push_back(std::bind(
-				std::forward<F>(f), std::forward<Args>(args)...));
-		}
-
-	private:
-		delegate void callback_begin(); // called everytime a sound is started
-		delegate void callback_end();   // called when reached end
 
 	public:
-		callback_begin^ _callback_begin;
-		callback_end^ _callback_end;
+		delegate void callback_play(); // called everytime a sound is played
+		delegate void callback_done(); // called when reached end
+
+		callback_play^ _callback_play;
+		callback_done^ _callback_done;
+
+	private:
+		void player_loop();
 
 	private:
 		std::vector<Sound>* _sounds;
 		Sound* _sound;
 
-		bool _is_playing;
+		bool _is_playing, _shutdown;
 		double _volume;
 		int _pos;
+
+		Thread^ _thread;
 	};
 }
 

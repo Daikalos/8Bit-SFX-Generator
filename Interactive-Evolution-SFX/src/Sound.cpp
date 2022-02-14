@@ -19,15 +19,17 @@ Sound::~Sound()
 void Sound::reset()
 {
 	_sid.reset();
-}
-void Sound::write(int offset, int value)
-{
-	_sid.write(offset, value);
+	_sound.resetBuffer();
 }
 
-void Sound::generate_buffer(size_t length)
+void Sound::generate_buffer(const SoundInfo& info, size_t length)
 {
+	reset();
+
 	_length = length;
+
+	for (int i = 0; i < 25; ++i)
+		_sid.write(i, info[i]);
 
 	_buffer_size = SAMPLE_RATE * length;
 	std::vector<sf::Int16> buffer(_buffer_size);

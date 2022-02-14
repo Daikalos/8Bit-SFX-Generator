@@ -3,14 +3,22 @@
 using namespace IESFX;
 
 Player::Player(std::vector<Sound>* sounds)
-	: _sounds(sounds), _sound(nullptr), _is_playing(false), _volume(0.325), _pos(0)
+	: _sounds(sounds), _sound(nullptr), _is_playing(false), _shutdown(false), _volume(0.325), _pos(0), _thread(nullptr)
 {
-	
+	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
+	_thread->Start();
 }
 
 Player::~Player()
 {
 	delete _sounds;
+	_shutdown = true;
+}
+
+void Player::reset()
+{
+	_pos = 0;
+	_is_playing = false;
 }
 
 void Player::set_volume(double volume)
@@ -20,6 +28,13 @@ void Player::set_volume(double volume)
 
 void Player::play()
 {
+	if (_is_playing)
+		return;
+
+	_callback_play();
+	(_sound = &_sounds->at(_pos))->play();
+	_is_playing = true;
+
 	//_sound.reset();
 
 	//_sound.write(3, 8);
@@ -31,14 +46,29 @@ void Player::play()
 	//_sound.write(24, 10);
 
 	//_sound.generate_buffer(2);
-
-
-	_is_playing = true;
 }
 
 void Player::pause()
 {
+	if (!_is_playing && _sound != nullptr)
+		return;
+
+	_sound->pause();
 	_is_playing = false;
+}
+
+void Player::iterate()
+{
+	if (_pos >= _sounds->size() - 1)
+	{
+		_callback_done();
+		_pos = _is_playing = false;
+	}
+	else
+	{
+		(_sound = &_sounds->at(++_pos))->play();
+		_callback_play();
+	}
 }
 
 void Player::play_sound(const Sound& sound)
@@ -67,5 +97,18 @@ bool Player::load(const std::string& file)
 
 bool Player::save(const std::string& name)
 {
+
 	return false;
+}
+
+void Player::player_loop()
+{
+	while (!_shutdown)
+	{
+		if (!_is_playing || _sound == nullptr)
+			continue;
+
+		if (_sound->status() == sf::SoundSource::Status::Stopped)
+			iterate();
+	}
 }

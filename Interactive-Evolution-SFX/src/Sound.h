@@ -15,11 +15,10 @@ namespace IESFX
 		~Sound();
 
 		void reset();
-		void write(int offset, int value);
 
 		// only generate buffer after write
 		//
-		void generate_buffer(size_t length);
+		void generate_buffer(const SoundInfo& info, size_t length);
 
 		void load_buffer(const sf::Int16* samples, Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 

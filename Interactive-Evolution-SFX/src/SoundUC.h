@@ -22,20 +22,20 @@ namespace IESFX
 			_player = player;
 			_id = id;
 
-			_sound = new Sound();
+			_sound = _player[_id];
 		}
 
 	protected:
 		~SoundUC()
 		{
 			delete components;
-			delete _sound;
 		}
 
 	public: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
 
 	private: System::Windows::Forms::ToolStrip^ stripTool;
-	private: System::Windows::Forms::ToolStripButton^ saveButton;
+	private: System::Windows::Forms::ToolStripButton^ exportButton;
+
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
 
@@ -55,7 +55,7 @@ namespace IESFX
 			System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->stripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
-			this->saveButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->exportButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutateButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->soundWave = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->stripTool->SuspendLayout();
@@ -67,7 +67,7 @@ namespace IESFX
 			this->stripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->stripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
 			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
-				this->playButton, this->saveButton,
+				this->playButton, this->exportButton,
 					this->mutateButton
 			});
 			this->stripTool->Location = System::Drawing::Point(0, 155);
@@ -88,19 +88,19 @@ namespace IESFX
 			this->playButton->ToolTipText = L"Play";
 			this->playButton->Click += gcnew System::EventHandler(this, &SoundUC::playButton_Click);
 			// 
-			// saveButton
+			// exportButton
 			// 
-			this->saveButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
-			this->saveButton->AutoToolTip = false;
-			this->saveButton->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+			this->exportButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->exportButton->AutoToolTip = false;
+			this->exportButton->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->saveButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
-			this->saveButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
-			this->saveButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->saveButton->Name = L"saveButton";
-			this->saveButton->Size = System::Drawing::Size(35, 22);
-			this->saveButton->Text = L"Save";
-			this->saveButton->Click += gcnew System::EventHandler(this, &SoundUC::saveButton_Click);
+			this->exportButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
+			this->exportButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
+			this->exportButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->exportButton->Name = L"exportButton";
+			this->exportButton->Size = System::Drawing::Size(45, 22);
+			this->exportButton->Text = L"Export";
+			this->exportButton->Click += gcnew System::EventHandler(this, &SoundUC::exportButton_Click);
 			// 
 			// mutateButton
 			// 
@@ -154,7 +154,7 @@ namespace IESFX
 			chartArea1->Position->X = 2;
 			chartArea1->Position->Y = 2;
 			this->soundWave->ChartAreas->Add(chartArea1);
-			this->soundWave->Dock = System::Windows::Forms::DockStyle::Top;
+			this->soundWave->Dock = System::Windows::Forms::DockStyle::Fill;
 			legend1->Enabled = false;
 			legend1->Name = L"Legend1";
 			this->soundWave->Legends->Add(legend1);
@@ -193,7 +193,7 @@ namespace IESFX
 	private: 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-
+			_sound->play();
 		}
 		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
@@ -204,14 +204,13 @@ namespace IESFX
 				
 			}
 		}
-		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		System::Void exportButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			SaveFileDialog saveFileDialog;
-			saveFileDialog.Filter = "SID File|*.sid";
-			saveFileDialog.Title = "Save the selected sound";
-			saveFileDialog.ShowDialog();
+			saveFileDialog.Filter = "WAV File|*.wav";
+			saveFileDialog.Title = "Export";
 
-			if (saveFileDialog.FileName != "")
+			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
 
 			}
@@ -225,5 +224,6 @@ namespace IESFX
 
 		Player^ _player;
 		Sound* _sound;
-	};
+
+};
 }

@@ -31,14 +31,14 @@ namespace IESFX
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize");
 
-
+			_player->_callback_play += gcnew Player::callback_play(this, &MainForm::callback_play);
+			_player->_callback_done += gcnew Player::callback_done(this, &MainForm::callback_done);
 		}
 
 	protected:
 		~MainForm()
 		{
 			delete components;
-			delete _player;
 		}
 
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
@@ -65,7 +65,11 @@ namespace IESFX
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
-	private: System::Windows::Forms::ToolStripMenuItem^ saveToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
+	private: System::Windows::Forms::Panel^ volumePanel;
+	private: System::Windows::Forms::Panel^ panel1;
+
+
 	private: System::Windows::Forms::Panel^ modifiersPanel;
 	
 #pragma region Windows Form Designer generated code
@@ -75,7 +79,7 @@ namespace IESFX
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->saveToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -98,6 +102,8 @@ namespace IESFX
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->modifiersPanel = (gcnew System::Windows::Forms::Panel());
+			this->volumePanel = (gcnew System::Windows::Forms::Panel());
+			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -106,6 +112,7 @@ namespace IESFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->BeginInit();
 			this->modifiersPanel->SuspendLayout();
+			this->volumePanel->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -118,32 +125,33 @@ namespace IESFX
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(764, 24);
+			this->menuStrip->Size = System::Drawing::Size(794, 24);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip";
 			// 
 			// optionsToolStripMenuItem
 			// 
 			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
-				this->saveToolStripMenuItem,
+				this->saveButton,
 					this->loadButton
 			});
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
 			this->optionsToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->optionsToolStripMenuItem->Text = L"File";
 			// 
-			// saveToolStripMenuItem
+			// saveButton
 			// 
-			this->saveToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saveToolStripMenuItem.Image")));
-			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(180, 22);
-			this->saveToolStripMenuItem->Text = L"Save";
+			this->saveButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saveButton.Image")));
+			this->saveButton->Name = L"saveButton";
+			this->saveButton->Size = System::Drawing::Size(100, 22);
+			this->saveButton->Text = L"Save";
+			this->saveButton->Click += gcnew System::EventHandler(this, &MainForm::saveButton_Click);
 			// 
 			// loadButton
 			// 
 			this->loadButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"loadButton.Image")));
 			this->loadButton->Name = L"loadButton";
-			this->loadButton->Size = System::Drawing::Size(180, 22);
+			this->loadButton->Size = System::Drawing::Size(100, 22);
 			this->loadButton->Text = L"Load";
 			this->loadButton->Click += gcnew System::EventHandler(this, &MainForm::loadButton_Click);
 			// 
@@ -161,13 +169,13 @@ namespace IESFX
 			// 
 			this->helpButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"helpButton.Image")));
 			this->helpButton->Name = L"helpButton";
-			this->helpButton->Size = System::Drawing::Size(180, 22);
+			this->helpButton->Size = System::Drawing::Size(111, 22);
 			this->helpButton->Text = L"Help";
 			// 
 			// creditsButton
 			// 
 			this->creditsButton->Name = L"creditsButton";
-			this->creditsButton->Size = System::Drawing::Size(180, 22);
+			this->creditsButton->Size = System::Drawing::Size(111, 22);
 			this->creditsButton->Text = L"Credits";
 			// 
 			// statusStrip
@@ -175,11 +183,11 @@ namespace IESFX
 			this->statusStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->statusLabel });
-			this->statusStrip->Location = System::Drawing::Point(0, 735);
+			this->statusStrip->Location = System::Drawing::Point(0, 715);
 			this->statusStrip->Name = L"statusStrip";
 			this->statusStrip->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
 			this->statusStrip->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->statusStrip->Size = System::Drawing::Size(764, 26);
+			this->statusStrip->Size = System::Drawing::Size(794, 26);
 			this->statusStrip->SizingGrip = false;
 			this->statusStrip->TabIndex = 2;
 			this->statusStrip->Text = L"statusStrip";
@@ -201,7 +209,7 @@ namespace IESFX
 			this->pnlItems->BackColor = System::Drawing::Color::Black;
 			this->pnlItems->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->pnlItems->Controls->Add(this->botStripTool);
-			this->pnlItems->Location = System::Drawing::Point(80, 62);
+			this->pnlItems->Location = System::Drawing::Point(130, 40);
 			this->pnlItems->Margin = System::Windows::Forms::Padding(0);
 			this->pnlItems->Name = L"pnlItems";
 			this->pnlItems->Size = System::Drawing::Size(604, 590);
@@ -278,7 +286,7 @@ namespace IESFX
 			// 
 			// mutationSizeSlider
 			// 
-			this->mutationSizeSlider->Location = System::Drawing::Point(-3, 28);
+			this->mutationSizeSlider->Location = System::Drawing::Point(0, 28);
 			this->mutationSizeSlider->Maximum = 25;
 			this->mutationSizeSlider->Minimum = 1;
 			this->mutationSizeSlider->Name = L"mutationSizeSlider";
@@ -303,8 +311,9 @@ namespace IESFX
 			this->mutationSizeTextLabel->AutoSize = true;
 			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->mutationSizeTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationSizeTextLabel->Location = System::Drawing::Point(0, 0);
+			this->mutationSizeTextLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->mutationSizeTextLabel->Location = System::Drawing::Point(3, 0);
 			this->mutationSizeTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeTextLabel->Name = L"mutationSizeTextLabel";
 			this->mutationSizeTextLabel->Size = System::Drawing::Size(135, 25);
@@ -316,7 +325,8 @@ namespace IESFX
 			this->mutationRateTextLabel->AutoSize = true;
 			this->mutationRateTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->mutationRateTextLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationRateTextLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->mutationRateTextLabel->Location = System::Drawing::Point(303, 0);
 			this->mutationRateTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateTextLabel->Name = L"mutationRateTextLabel";
@@ -329,7 +339,8 @@ namespace IESFX
 			this->mutationRateLabel->AutoSize = true;
 			this->mutationRateLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->mutationRateLabel->ForeColor = System::Drawing::SystemColors::WindowText;
+			this->mutationRateLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->mutationRateLabel->Location = System::Drawing::Point(439, 0);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
@@ -342,8 +353,9 @@ namespace IESFX
 			this->mutationSizeLabel->AutoSize = true;
 			this->mutationSizeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->mutationSizeLabel->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->mutationSizeLabel->Location = System::Drawing::Point(132, 0);
+			this->mutationSizeLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->mutationSizeLabel->Location = System::Drawing::Point(135, 0);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
 			this->mutationSizeLabel->Size = System::Drawing::Size(52, 25);
@@ -352,7 +364,8 @@ namespace IESFX
 			// 
 			// volumeSlider
 			// 
-			this->volumeSlider->Location = System::Drawing::Point(700, 79);
+			this->volumeSlider->Location = System::Drawing::Point(-1, 20);
+			this->volumeSlider->Margin = System::Windows::Forms::Padding(0);
 			this->volumeSlider->Maximum = 26;
 			this->volumeSlider->Name = L"volumeSlider";
 			this->volumeSlider->Orientation = System::Windows::Forms::Orientation::Vertical;
@@ -364,56 +377,76 @@ namespace IESFX
 			// 
 			// label1
 			// 
-			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->label1->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->label1->Location = System::Drawing::Point(700, 423);
+			this->label1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->label1->Location = System::Drawing::Point(-1, 365);
 			this->label1->Margin = System::Windows::Forms::Padding(0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(40, 25);
+			this->label1->Size = System::Drawing::Size(43, 22);
 			this->label1->TabIndex = 11;
 			this->label1->Text = L"Off";
 			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// label2
 			// 
-			this->label2->AutoSize = true;
-			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
+			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->label2->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->label2->Location = System::Drawing::Point(696, 53);
+			this->label2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->label2->Location = System::Drawing::Point(0, 2);
 			this->label2->Margin = System::Windows::Forms::Padding(0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(51, 25);
+			this->label2->Size = System::Drawing::Size(42, 22);
 			this->label2->TabIndex = 12;
 			this->label2->Text = L"Max";
 			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// modifiersPanel
 			// 
-			this->modifiersPanel->BackColor = System::Drawing::Color::Gray;
-			this->modifiersPanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->modifiersPanel->BackColor = System::Drawing::SystemColors::WindowFrame;
+			this->modifiersPanel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->modifiersPanel->Controls->Add(this->mutationSizeTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationSizeSlider);
 			this->modifiersPanel->Controls->Add(this->mutationSizeLabel);
 			this->modifiersPanel->Controls->Add(this->mutationRateLabel);
 			this->modifiersPanel->Controls->Add(this->mutationRateTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationRateSlider);
-			this->modifiersPanel->Location = System::Drawing::Point(80, 660);
+			this->modifiersPanel->Location = System::Drawing::Point(130, 639);
 			this->modifiersPanel->Name = L"modifiersPanel";
 			this->modifiersPanel->Size = System::Drawing::Size(604, 65);
 			this->modifiersPanel->TabIndex = 13;
+			// 
+			// volumePanel
+			// 
+			this->volumePanel->BackColor = System::Drawing::SystemColors::WindowFrame;
+			this->volumePanel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->volumePanel->Controls->Add(this->volumeSlider);
+			this->volumePanel->Controls->Add(this->label2);
+			this->volumePanel->Controls->Add(this->label1);
+			this->volumePanel->Location = System::Drawing::Point(742, 40);
+			this->volumePanel->Name = L"volumePanel";
+			this->volumePanel->Size = System::Drawing::Size(43, 395);
+			this->volumePanel->TabIndex = 14;
+			// 
+			// panel1
+			// 
+			this->panel1->BackColor = System::Drawing::SystemColors::WindowFrame;
+			this->panel1->Location = System::Drawing::Point(6, 40);
+			this->panel1->Margin = System::Windows::Forms::Padding(0);
+			this->panel1->Name = L"panel1";
+			this->panel1->Size = System::Drawing::Size(120, 664);
+			this->panel1->TabIndex = 15;
 			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
-			this->ClientSize = System::Drawing::Size(764, 761);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->volumeSlider);
+			this->ClientSize = System::Drawing::Size(794, 741);
+			this->Controls->Add(this->panel1);
+			this->Controls->Add(this->volumePanel);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
 			this->Controls->Add(this->menuStrip);
@@ -444,6 +477,8 @@ namespace IESFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->EndInit();
 			this->modifiersPanel->ResumeLayout(false);
 			this->modifiersPanel->PerformLayout();
+			this->volumePanel->ResumeLayout(false);
+			this->volumePanel->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -451,20 +486,51 @@ namespace IESFX
 #pragma endregion
 
 	private: 
-		void player_begin()
+		void callback_play()
 		{
+			int next = _player->pos();
 
+			execute_safely(_soundUCs[next]->soundWave, Color::Gray);
+			execute_safely(_soundUCs[_prev]->soundWave, Color::White);
+
+			_prev = _player->pos();
 		}
-		void player_end()
+		void callback_done()
 		{
-
+			int pos = _player->pos();
+			execute_safely(_soundUCs[pos]->soundWave, Color::White);
 		}
 
+		delegate void set_color_del(Control^ ctrl, Color color);
+
+		void execute_safely(Control^ ctrl, Color color)
+		{
+			if (ctrl->InvokeRequired)
+				ctrl->Invoke(gcnew set_color_del(this, &MainForm::set_color), ctrl, color);
+			else
+				set_color(ctrl, color);
+		}
+		void set_color(Control^ ctrl, Color color)
+		{
+			ctrl->BackColor = color;
+		}
+
+		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			SaveFileDialog saveFileDialog;
+			saveFileDialog.Filter = "TXT File|*.txt";
+			saveFileDialog.Title = "save config";
+
+			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
+			{
+
+			}
+		}
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			OpenFileDialog openFileDialog;
-			openFileDialog.Filter = "WAV File|*.wav";
-			openFileDialog.Title = "Load a sound file";
+			openFileDialog.Filter = "TXT File|*.txt";
+			openFileDialog.Title = "load config";
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
@@ -524,6 +590,9 @@ namespace IESFX
 		const size_t row_count = 3;
 		const size_t column_count = 4;
 
+		array<SoundUC^>^ _soundUCs;
+
 		Player^ _player;
+		size_t _prev;
 };
 }
