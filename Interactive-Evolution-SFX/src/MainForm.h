@@ -159,14 +159,15 @@ namespace IESFX
 			// 
 			// helpButton
 			// 
+			this->helpButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"helpButton.Image")));
 			this->helpButton->Name = L"helpButton";
-			this->helpButton->Size = System::Drawing::Size(111, 22);
+			this->helpButton->Size = System::Drawing::Size(180, 22);
 			this->helpButton->Text = L"Help";
 			// 
 			// creditsButton
 			// 
 			this->creditsButton->Name = L"creditsButton";
-			this->creditsButton->Size = System::Drawing::Size(111, 22);
+			this->creditsButton->Size = System::Drawing::Size(180, 22);
 			this->creditsButton->Text = L"Credits";
 			// 
 			// statusStrip
@@ -271,7 +272,7 @@ namespace IESFX
 			this->resetButton->Margin = System::Windows::Forms::Padding(0, 2, 2, 2);
 			this->resetButton->Name = L"resetButton";
 			this->resetButton->Size = System::Drawing::Size(40, 41);
-			this->resetButton->Text = L"Pause";
+			this->resetButton->Text = L"Reset";
 			this->resetButton->ToolTipText = L"Reset";
 			this->resetButton->Click += gcnew System::EventHandler(this, &MainForm::resetButton_Click);
 			// 

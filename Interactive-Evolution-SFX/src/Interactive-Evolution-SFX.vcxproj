@@ -176,15 +176,6 @@
       <DependentUpon>SoundUC.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="playButton.Image.png" />
-    <Image Include="playButton.png" />
-    <Image Include="Resources\pauseButton.png" />
-    <Image Include="Resources\playButton.png" />
-    <Image Include="resources\reset.png" />
-    <Image Include="resources\save-icon.png" />
-    <Image Include="resources\showNext.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
