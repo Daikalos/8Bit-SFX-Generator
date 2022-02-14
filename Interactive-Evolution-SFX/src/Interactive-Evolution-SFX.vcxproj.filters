@@ -79,5 +79,14 @@
     <Image Include="Resources\playButton.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\showNext.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\reset.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\save-icon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

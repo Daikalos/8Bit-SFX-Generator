@@ -15,12 +15,12 @@ namespace IESFX
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
 	public:
-		SoundUC(Player* player, size_t id)
+		SoundUC(Player^ player, size_t id)
 		{
+			InitializeComponent();
+
 			_player = player;
 			_id = id;
-
-			InitializeComponent();
 
 			_sound = new Sound();
 		}
@@ -96,7 +96,6 @@ namespace IESFX
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->saveButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
 			this->saveButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
-			this->saveButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saveButton.Image")));
 			this->saveButton->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->saveButton->Name = L"saveButton";
 			this->saveButton->Size = System::Drawing::Size(35, 22);
@@ -111,7 +110,6 @@ namespace IESFX
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->mutateButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
 			this->mutateButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
-			this->mutateButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"mutateButton.Image")));
 			this->mutateButton->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->mutateButton->Name = L"mutateButton";
 			this->mutateButton->Size = System::Drawing::Size(49, 22);
@@ -225,7 +223,7 @@ namespace IESFX
 	private:
 		size_t _id;
 
-		Player* _player;
+		Player^ _player;
 		Sound* _sound;
 	};
 }

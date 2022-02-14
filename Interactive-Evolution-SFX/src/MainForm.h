@@ -30,6 +30,8 @@ namespace IESFX
 
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize");
+
+
 		}
 
 	protected:
@@ -63,6 +65,7 @@ namespace IESFX
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
+	private: System::Windows::Forms::ToolStripMenuItem^ saveToolStripMenuItem;
 	private: System::Windows::Forms::Panel^ modifiersPanel;
 	
 #pragma region Windows Form Designer generated code
@@ -72,6 +75,7 @@ namespace IESFX
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -120,15 +124,26 @@ namespace IESFX
 			// 
 			// optionsToolStripMenuItem
 			// 
-			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->loadButton });
+			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				this->saveToolStripMenuItem,
+					this->loadButton
+			});
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
 			this->optionsToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->optionsToolStripMenuItem->Text = L"File";
 			// 
+			// saveToolStripMenuItem
+			// 
+			this->saveToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"saveToolStripMenuItem.Image")));
+			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+			this->saveToolStripMenuItem->Text = L"Save";
+			// 
 			// loadButton
 			// 
+			this->loadButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"loadButton.Image")));
 			this->loadButton->Name = L"loadButton";
-			this->loadButton->Size = System::Drawing::Size(100, 22);
+			this->loadButton->Size = System::Drawing::Size(180, 22);
 			this->loadButton->Text = L"Load";
 			this->loadButton->Click += gcnew System::EventHandler(this, &MainForm::loadButton_Click);
 			// 
@@ -435,6 +450,15 @@ namespace IESFX
 #pragma endregion
 
 	private: 
+		void player_begin()
+		{
+
+		}
+		void player_end()
+		{
+
+		}
+
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			OpenFileDialog openFileDialog;
@@ -499,6 +523,6 @@ namespace IESFX
 		const size_t row_count = 3;
 		const size_t column_count = 4;
 
-		Player* _player;
+		Player^ _player;
 };
 }

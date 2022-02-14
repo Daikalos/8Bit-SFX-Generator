@@ -5,7 +5,7 @@ using namespace IESFX;
 Player::Player(std::vector<Sound>* sounds)
 	: _sounds(sounds), _sound(nullptr), _is_playing(false), _volume(0.325), _pos(0)
 {
-
+	
 }
 
 Player::~Player()

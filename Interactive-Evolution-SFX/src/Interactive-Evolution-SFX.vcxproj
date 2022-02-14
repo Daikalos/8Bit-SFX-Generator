@@ -23,7 +23,7 @@
     <ProjectGuid>{18ee807f-21c7-4bdd-8fc3-a856ff5f14f4}</ProjectGuid>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
-    <RootNamespace>Interactive_Evolution_SFX</RootNamespace>
+    <RootNamespace>IESFX</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -181,6 +181,9 @@
     <Image Include="playButton.png" />
     <Image Include="Resources\pauseButton.png" />
     <Image Include="Resources\playButton.png" />
+    <Image Include="resources\reset.png" />
+    <Image Include="resources\save-icon.png" />
+    <Image Include="resources\showNext.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

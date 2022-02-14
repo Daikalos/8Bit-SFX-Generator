@@ -14,7 +14,7 @@ bool MainForm::initialize()
 		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));
 	}
 
-	_player = new Player(sounds);
+	_player = gcnew Player(sounds);
 
 	return true;
 }

@@ -15,7 +15,7 @@
 
 namespace IESFX
 {
-	class Player
+	public ref class Player
 	{
 	public:
 		Player(std::vector<Sound>* sounds);
@@ -31,25 +31,30 @@ namespace IESFX
 		bool load(const std::string& file);
 		bool save(const std::string& name);
 
-		//template<class F, class... Args>
-		//void add_callback_begin(F&& f, Args&&... args)
-		//{
-		//	_callbacks_begin.push_back(std::bind(
-		//		std::forward<F>(f), 
-		//		std::forward<Args>(args)...));
-		//}
-		//template<class F, class... Args>
-		//void add_callback_end(F&& f, Args&&... args)
-		//{
-		//	_callbacks_end.push_back(std::bind(
-		//		std::forward<F>(f), 
-		//		std::forward<Args>(args)...));
-		//}
+		int pos() { return _pos; }
+
+		template<class F, class... Args>
+		void add_callback_begin(F&& f, Args&&... args)
+		{
+			_callbacks_begin.push_back(std::bind(
+				std::forward<F>(f), std::forward<Args>(args)...));
+		}
+		template<class F, class... Args>
+		void add_callback_end(F&& f, Args&&... args)
+		{
+			_callbacks_end.push_back(std::bind(
+				std::forward<F>(f), std::forward<Args>(args)...));
+		}
 
 	private:
-		std::vector<std::function<void()>> _callbacks_begin;
-		std::vector<std::function<void()>> _callbacks_end;
+		delegate void callback_begin(); // called everytime a sound is started
+		delegate void callback_end();   // called when reached end
 
+	public:
+		callback_begin^ _callback_begin;
+		callback_end^ _callback_end;
+
+	private:
 		std::vector<Sound>* _sounds;
 		Sound* _sound;
 
