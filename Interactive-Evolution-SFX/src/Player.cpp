@@ -2,8 +2,8 @@
 
 using namespace IESFX;
 
-Player::Player(std::vector<Sound>* sounds)
-	: _sounds(sounds), _sound(nullptr), _is_playing(false), _shutdown(false), _volume(0.325), _pos(0), _thread(nullptr)
+Player::Player(size_t size)
+	: _sounds(new std::vector<Sound>(size)), _sound(nullptr), _is_playing(false), _shutdown(false), _volume(0.325), _pos(0), _thread(nullptr)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
 	_thread->Start();
@@ -17,8 +17,11 @@ Player::~Player()
 
 void Player::reset()
 {
+	_callback_done();
+
 	_pos = 0;
 	_is_playing = false;
+	_sound = nullptr;
 }
 
 void Player::set_volume(double volume)
@@ -31,9 +34,12 @@ void Player::play()
 	if (_is_playing)
 		return;
 
-	_callback_play();
-	(_sound = &_sounds->at(_pos))->play();
 	_is_playing = true;
+	_sound = this[_pos];
+
+	_callback_play();
+
+	_sound->play();
 
 	//_sound.reset();
 
@@ -59,43 +65,24 @@ void Player::pause()
 
 void Player::iterate()
 {
-	if (_pos >= _sounds->size() - 1)
-	{
-		_callback_done();
-		_pos = _is_playing = false;
-	}
-	else
-	{
-		(_sound = &_sounds->at(++_pos))->play();
-		_callback_play();
-	}
+	(++_pos >= _sounds->size()) ? reset() : play();
 }
 
-void Player::play_sound(const Sound& sound)
+bool Player::load(String^ file)
 {
-	
-}
+	String^ ext = Path::GetExtension(file)->ToLower();
 
-bool Player::load(const std::string& file)
-{
 	_is_playing = false;
 
-	std::ifstream stream(file, std::ios::binary);
+	if (ext->Equals(".txt"))
+		return load_txt(file);
+	if (ext->Equals(".wav"))
+		return load_wav(file);
 
-	if (stream.is_open())
-	{
-		std::istream_iterator<char> start(stream), end;
-		std::vector<sf::Int16> buffer(start, end);
-
-		
-
-		stream.close();
-	}
-
-	return true;
+	return false;
 }
 
-bool Player::save(const std::string& name)
+bool Player::save(String^ name)
 {
 
 	return false;
@@ -111,4 +98,30 @@ void Player::player_loop()
 		if (_sound->status() == sf::SoundSource::Status::Stopped)
 			iterate();
 	}
+}
+
+bool Player::load_wav(String^ file)
+{
+	std::string filename = msclr::interop::marshal_as<std::string>(file);
+
+	std::ifstream stream(filename, std::ios::binary);
+
+	if (stream.is_open())
+	{
+		std::istream_iterator<char> start(stream), end;
+		std::vector<sf::Int16> buffer(start, end);
+
+
+
+		stream.close();
+	}
+
+	return true;
+}
+
+bool Player::load_txt(String^ file)
+{
+
+
+	return true;
 }

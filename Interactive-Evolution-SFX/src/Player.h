@@ -5,9 +5,9 @@
 #include <functional>
 #include <fstream>
 #include <thread>
+#include <msclr/marshal_cppstd.h>
 
 #include <SFML/Audio.hpp>
-
 
 #include "utilities.h"
 #include "Config.h"
@@ -15,12 +15,14 @@
 
 namespace IESFX
 {
+	using namespace System;
 	using namespace System::Threading;
+	using namespace System::IO;
 
 	public ref class Player
 	{
 	public:
-		Player(std::vector<Sound>* sounds);
+		Player(size_t size);
 		~Player();
 
 		void reset();
@@ -32,10 +34,8 @@ namespace IESFX
 
 		void iterate();
 
-		void play_sound(const Sound& sound);
-
-		bool load(const std::string& file);
-		bool save(const std::string& name);
+		bool load(String^ file);
+		bool save(String^ name);
 
 		int pos() { return _pos; }
 
@@ -53,6 +53,9 @@ namespace IESFX
 
 	private:
 		void player_loop();
+
+		bool load_wav(String^ file);
+		bool load_txt(String^ file);
 
 	private:
 		std::vector<Sound>* _sounds;

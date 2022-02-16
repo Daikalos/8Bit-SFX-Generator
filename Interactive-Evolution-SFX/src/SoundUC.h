@@ -2,6 +2,7 @@
 
 #include "Sound.h"
 #include "Player.h"
+#include "Evolution.h"
 
 namespace IESFX
 {
@@ -15,11 +16,12 @@ namespace IESFX
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
 	public:
-		SoundUC(Player^ player, size_t id)
+		SoundUC(Player^ player, Evolution* evolution, size_t id)
 		{
 			InitializeComponent();
 
 			_player = player;
+			_evolution = evolution;
 			_id = id;
 
 			_sound = _player[_id];
@@ -35,7 +37,6 @@ namespace IESFX
 
 	private: System::Windows::Forms::ToolStrip^ stripTool;
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
-
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
 
@@ -223,7 +224,7 @@ namespace IESFX
 		size_t _id;
 
 		Player^ _player;
+		Evolution* _evolution;
 		Sound* _sound;
-
 };
 }

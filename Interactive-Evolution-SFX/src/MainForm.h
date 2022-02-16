@@ -6,6 +6,7 @@
 #include "utilities.h"
 #include "Player.h"
 #include "SoundUC.h"
+#include "Evolution.h"
 
 #include <cppsid/cppsid.h>
 #include <resid/sid.h>
@@ -29,7 +30,7 @@ namespace IESFX
 			InitializeComponent();
 
 			if (!initialize())
-				throw gcnew WarningException("failed to initialize");
+				throw gcnew WarningException("failed to initialize system");
 
 			_player->_callback_play += gcnew Player::callback_play(this, &MainForm::callback_play);
 			_player->_callback_done += gcnew Player::callback_done(this, &MainForm::callback_done);
@@ -287,7 +288,7 @@ namespace IESFX
 			// mutationSizeSlider
 			// 
 			this->mutationSizeSlider->Location = System::Drawing::Point(0, 28);
-			this->mutationSizeSlider->Maximum = 25;
+			this->mutationSizeSlider->Maximum = 50;
 			this->mutationSizeSlider->Minimum = 1;
 			this->mutationSizeSlider->Name = L"mutationSizeSlider";
 			this->mutationSizeSlider->Size = System::Drawing::Size(300, 45);
@@ -298,7 +299,7 @@ namespace IESFX
 			// mutationRateSlider
 			// 
 			this->mutationRateSlider->Location = System::Drawing::Point(300, 28);
-			this->mutationRateSlider->Maximum = 25;
+			this->mutationRateSlider->Maximum = 50;
 			this->mutationRateSlider->Minimum = 1;
 			this->mutationRateSlider->Name = L"mutationRateSlider";
 			this->mutationRateSlider->Size = System::Drawing::Size(300, 45);
@@ -519,7 +520,7 @@ namespace IESFX
 		{
 			SaveFileDialog saveFileDialog;
 			saveFileDialog.Filter = "TXT File|*.txt";
-			saveFileDialog.Title = "save config";
+			saveFileDialog.Title = "Save current config";
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
@@ -529,12 +530,12 @@ namespace IESFX
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			OpenFileDialog openFileDialog;
-			openFileDialog.Filter = "TXT File|*.txt";
-			openFileDialog.Title = "load config";
+			openFileDialog.Filter = "TXT File|*.txt|WAV File|*.wav";
+			openFileDialog.Title = "Load";
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-				if (!_player->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+				if (!_player->load(openFileDialog.FileName))
 					MessageBox::Show("Failed to load " + openFileDialog.FileName, "Error!", MessageBoxButtons::OK);
 			}
 		}
@@ -590,9 +591,11 @@ namespace IESFX
 		const size_t row_count = 3;
 		const size_t column_count = 4;
 
+		size_t _prev;
+
 		array<SoundUC^>^ _soundUCs;
 
 		Player^ _player;
-		size_t _prev;
+		Evolution* _evolution;
 };
 }

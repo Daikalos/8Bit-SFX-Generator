@@ -10,4 +10,6 @@ namespace IESFX
 
 	const size_t FORMAT = AUDIO_U8;
 	const size_t SAMPLE_RATE = 44100;
+
+	const size_t POPULATION_SIZE = 150;
 }
