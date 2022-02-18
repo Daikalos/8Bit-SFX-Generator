@@ -13,8 +13,19 @@ namespace IESFX
 		Evolution();
 		~Evolution();
 
+		void set_mutation_rate()
+		{
+
+		}
+		void set_mutation_size()
+		{
+
+		}
+
+		void reset();
+
 		void execute();
-		std::vector<SoundInfo>* output();
+		std::vector<SoundInfo>* output(size_t size, size_t step);
 
 	private:
 
@@ -47,6 +58,7 @@ namespace IESFX
 		bool complete(int current_gen, double current_quality);
 
 	private:
+		double _mutation_rate, _mutation_size;
 		std::vector<std::pair<SoundInfo, double>> _population;
 	};
 }

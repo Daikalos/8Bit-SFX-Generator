@@ -5,6 +5,7 @@
 
 #include "Config.h"
 #include "SoundInfo.h"
+#include "utilities.h"
 
 namespace IESFX
 {
@@ -16,14 +17,16 @@ namespace IESFX
 
 		void reset();
 
-		// only generate buffer after write
+		// only create buffer after write
 		//
-		void generate_buffer(const SoundInfo& info, size_t length);
+		void create_buffer(const SoundInfo& info, double length);
 
-		void load_buffer(const sf::Int16* samples, Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
+		void load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 
 		sf::SoundSource::Status status() const;
 		void set_volume(double volume);
+
+		double length() const { return _length; }
 
 		void play();
 		void pause();

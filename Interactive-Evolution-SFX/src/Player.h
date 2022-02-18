@@ -22,12 +22,13 @@ namespace IESFX
 	public ref class Player
 	{
 	public:
-		Player(size_t size);
+		Player(size_t size, double volume);
 		~Player();
 
 		void reset();
 
 		void set_volume(double volume);
+		void set_is_playing(bool value);
 
 		void play();
 		void pause();
@@ -41,7 +42,7 @@ namespace IESFX
 
 		Sound* operator[](int i)
 		{
-			return &_sounds->at(i);
+			return &_sounds[i];
 		}
 
 	public:
@@ -58,12 +59,12 @@ namespace IESFX
 		bool load_txt(String^ file);
 
 	private:
-		std::vector<Sound>* _sounds;
-		Sound* _sound;
-
+		size_t _pos, _size;
 		bool _is_playing, _shutdown;
 		double _volume;
-		int _pos;
+
+		Sound* _sounds;
+		Sound* _sound;
 
 		Thread^ _thread;
 	};

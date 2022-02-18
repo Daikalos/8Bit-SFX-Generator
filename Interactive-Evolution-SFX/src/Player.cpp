@@ -2,16 +2,29 @@
 
 using namespace IESFX;
 
-Player::Player(size_t size)
-	: _sounds(new std::vector<Sound>(size)), _sound(nullptr), _is_playing(false), _shutdown(false), _volume(0.325), _pos(0), _thread(nullptr)
+Player::Player(size_t size, double volume)
+	: _pos(0), _size(size), _is_playing(false), _shutdown(false), _volume(volume), _sounds(nullptr), _sound(nullptr), _thread(nullptr)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
+	_thread->IsBackground = true;
 	_thread->Start();
+
+	_sounds = new Sound[size];
+
+	for (int i = 0; i < size; ++i)
+	{
+		SoundInfo info;
+
+		//for (int j = 0; j < 25; ++j)
+		//	info[j] = 1 + rand() % 30;
+
+		_sounds[i].create_buffer(info, 1);
+	}
 }
 
 Player::~Player()
 {
-	delete _sounds;
+	delete[] _sounds;
 	_shutdown = true;
 }
 
@@ -19,53 +32,47 @@ void Player::reset()
 {
 	_callback_done();
 
-	_pos = 0;
 	_is_playing = false;
+	_pos = 0;
+
+	if (_sound != nullptr)
+		_sound->stop();
+
 	_sound = nullptr;
 }
 
 void Player::set_volume(double volume)
 {
 	_volume = volume;
+
+	if (_sound != nullptr)
+		_sound->set_volume(_volume);
+}
+void Player::set_is_playing(bool value)
+{
+	value ? play() : pause();
+	_is_playing = value;
 }
 
 void Player::play()
 {
-	if (_is_playing)
-		return;
-
-	_is_playing = true;
-	_sound = this[_pos];
-
 	_callback_play();
 
+	_sound = this[_pos];
 	_sound->play();
 
-	//_sound.reset();
-
-	//_sound.write(3, 8);
-	//_sound.write(2, 0);
-	//_sound.write(5, 9);
-	//_sound.write(6, 0);
-	//_sound.write(4, 65);
-	//_sound.write(4, 64);
-	//_sound.write(24, 10);
-
-	//_sound.generate_buffer(2);
+	_sound->set_volume(_volume);
 }
 
 void Player::pause()
 {
-	if (!_is_playing && _sound != nullptr)
-		return;
-
-	_sound->pause();
-	_is_playing = false;
+	if (_is_playing)
+		_sound->pause();
 }
 
 void Player::iterate()
 {
-	(++_pos >= _sounds->size()) ? reset() : play();
+	(++_pos >= _size) ? reset() : play();
 }
 
 bool Player::load(String^ file)
@@ -94,7 +101,7 @@ void Player::player_loop()
 	{
 		if (!_is_playing || _sound == nullptr)
 			continue;
-
+		
 		if (_sound->status() == sf::SoundSource::Status::Stopped)
 			iterate();
 	}

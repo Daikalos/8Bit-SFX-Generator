@@ -8,7 +8,6 @@
 #include "SoundUC.h"
 #include "Evolution.h"
 
-#include <cppsid/cppsid.h>
 #include <resid/sid.h>
 
 #include <msclr/marshal_cppstd.h>
@@ -29,11 +28,16 @@ namespace IESFX
 		{
 			InitializeComponent();
 
+			srand((unsigned)time(NULL));
+
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
 
 			_player->_callback_play += gcnew Player::callback_play(this, &MainForm::callback_play);
 			_player->_callback_done += gcnew Player::callback_done(this, &MainForm::callback_done);
+
+			_color = Color::White;
+			_prev = 0;
 		}
 
 	protected:
@@ -347,7 +351,7 @@ namespace IESFX
 			this->mutationRateLabel->Name = L"mutationRateLabel";
 			this->mutationRateLabel->Size = System::Drawing::Size(52, 25);
 			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 4%";
+			this->mutationRateLabel->Text = L"- 2%";
 			// 
 			// mutationSizeLabel
 			// 
@@ -361,7 +365,7 @@ namespace IESFX
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
 			this->mutationSizeLabel->Size = System::Drawing::Size(52, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 4%";
+			this->mutationSizeLabel->Text = L"- 2%";
 			// 
 			// volumeSlider
 			// 
@@ -491,15 +495,15 @@ namespace IESFX
 		{
 			int next = _player->pos();
 
+			execute_safely(_soundUCs[_prev]->soundWave, _color);
+			_color = _soundUCs[next]->soundWave->BackColor;
 			execute_safely(_soundUCs[next]->soundWave, Color::Gray);
-			execute_safely(_soundUCs[_prev]->soundWave, Color::White);
 
-			_prev = _player->pos();
+			_prev = next;
 		}
 		void callback_done()
 		{
-			int pos = _player->pos();
-			execute_safely(_soundUCs[pos]->soundWave, Color::White);
+			execute_safely(_soundUCs[_prev]->soundWave, _color);
 		}
 
 		delegate void set_color_del(Control^ ctrl, Color color);
@@ -542,11 +546,11 @@ namespace IESFX
 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			_player->play();
+			_player->set_is_playing(true);
 		}
 		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			_player->pause();
+			_player->set_is_playing(false);
 		}
 
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -558,7 +562,8 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
-
+				_player->reset();
+				_evolution->reset();
 			}
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -592,6 +597,7 @@ namespace IESFX
 		const size_t column_count = 4;
 
 		size_t _prev;
+		Color _color;
 
 		array<SoundUC^>^ _soundUCs;
 

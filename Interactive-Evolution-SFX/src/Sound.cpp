@@ -13,7 +13,7 @@ Sound::Sound()
 
 Sound::~Sound()
 {
-	
+
 }
 
 void Sound::reset()
@@ -22,7 +22,7 @@ void Sound::reset()
 	_sound.resetBuffer();
 }
 
-void Sound::generate_buffer(const SoundInfo& info, size_t length)
+void Sound::create_buffer(const SoundInfo& info, double length)
 {
 	reset();
 
@@ -32,19 +32,36 @@ void Sound::generate_buffer(const SoundInfo& info, size_t length)
 		_sid.write(i, info[i]);
 
 	_buffer_size = SAMPLE_RATE * length;
-	std::vector<sf::Int16> buffer(_buffer_size);
+	std::vector<sf::Int16> samples(_buffer_size, 0);
 
-	for (int i = 0; i < _buffer_size; ++i)
+	_sid.write(1, 130);
+	_sid.write(5, 9);
+	_sid.write(15, 30);
+	_sid.write(24, 15);
+
+	int index = 0;
+	for (int l = 0; l < 12; ++l)
 	{
-		_sid.clock();
-		buffer[i] = _sid.output() << 8;
+		_sid.write(4, 21);
+		for (int t = 0; t < 1000; ++t)
+		{
+
+		}
+		_sid.write(4, 20);
+		for (int t = 0; t < 1000; ++t)
+		{
+
+		}
 	}
 
-	_buffer.loadFromSamples(buffer.data(), _buffer_size, 1, SAMPLE_RATE);
+	RESID::cycle_count delta_t = (double)CLOCK_FREQ / ((double)SAMPLE_RATE / _buffer_size);
+	_sid.clock(delta_t, samples.data(), _buffer_size);
+
+	_buffer.loadFromSamples(samples.data(), _buffer_size, 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);
 }
 
-void Sound::load_buffer(const sf::Int16* samples, Uint64 sample_count, unsigned int channel_count, unsigned int sample_rate)
+void Sound::load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count, unsigned int sample_rate)
 {
 	_buffer.loadFromSamples(samples, sample_count, channel_count, sample_rate);
 	_sound.setBuffer(_buffer);
