@@ -493,7 +493,7 @@ namespace IESFX
 	private: 
 		void callback_play()
 		{
-			int next = _player->pos();
+			int next = _player->position();
 
 			execute_safely(_soundUCs[_prev]->soundWave, _color);
 			_color = _soundUCs[next]->soundWave->BackColor;

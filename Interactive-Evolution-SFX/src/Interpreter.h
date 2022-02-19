@@ -9,6 +9,9 @@
 #include <string>
 #include <regex>
 #include <map>
+#include <sstream>
+
+#include "SoundInfo.h"
 
 namespace IESFX
 {
@@ -18,12 +21,13 @@ namespace IESFX
 		Interpreter();
 		~Interpreter() = default;
 
-		void read_file(const std::string& filename);
+		void read_file(SoundInfo& sound, const std::string& filename);
+		void read_str(SoundInfo& sound, const std::string& str);
 
 		void clear();
 
 	private:
-		void tokenize(std::queue<std::string>& codelines);
+		void tokenize(std::queue<std::string>& lines);
 
 	private:
 		void evaluate(const std::vector<std::string>& tokens);
@@ -35,7 +39,7 @@ namespace IESFX
 
 		void parse_Stmt();
 		void parse_AssgStmt();
-		void parse_PokesStmt();
+		void parse_PokeStmt();
 		void parse_ForStmt();
 		void parse_NextStmt();
 
@@ -55,6 +59,8 @@ namespace IESFX
 
 		std::string var_name; // Current evaluated variable that is to be assigned a value
 		std::map<std::string, int> variables;
+
+		SoundInfo* _sound;
 
 	private:
 		Interpreter(const Interpreter& rhs) = delete;

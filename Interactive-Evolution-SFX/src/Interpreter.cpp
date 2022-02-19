@@ -9,7 +9,7 @@ Interpreter::Interpreter()
 
 void Interpreter::clear()
 {
-
+    variables.clear();
 }
 
 void Interpreter::evaluate(const std::vector<std::string>& tokens)
@@ -23,7 +23,7 @@ void Interpreter::evaluate(const std::vector<std::string>& tokens)
     }
     catch (std::exception exception)
     {
-        std::cout << exception.what();
+        std::cout << exception.what() << std::endl;
     }
 }
 
@@ -68,8 +68,8 @@ void Interpreter::parse_Stmt()
             consume("=");
             parse_AssgStmt();
         }
-        else if (next_token == "pokes")
-            parse_PokesStmt();
+        else if (next_token == "poke")
+            parse_PokeStmt();
         else if (next_token == "for")
             parse_ForStmt();
         else if (next_token == "next")
@@ -87,9 +87,36 @@ void Interpreter::parse_AssgStmt()
 
     variables[var_name] = parse_MathExp();
 }
-void Interpreter::parse_PokesStmt()
+void Interpreter::parse_PokeStmt()
 {
+    std::string next_token = peek();
+    if (next_token == "+")
+    {
+        consume("+");
 
+        int index;
+        {
+            std::string next_token = peek();
+            consume(next_token);
+
+            index = std::stoi(next_token);
+        }
+
+        if (peek() == ",")
+        {
+            consume(",");
+
+            int value;
+            {
+                std::string next_token = peek();
+                consume(next_token);
+
+                value = std::stoi(next_token);
+            }
+
+            (*_sound)[index] = value;
+        }
+    }
 }
 void Interpreter::parse_ForStmt()
 {
@@ -203,13 +230,13 @@ int Interpreter::get_variable(const std::string& name)
         throw std::runtime_error("variable '" + name + "' is not defined");
 }
 
-void Interpreter::tokenize(std::queue<std::string>& codelines)
+void Interpreter::tokenize(std::queue<std::string>& lines)
 {
-    while (!codelines.empty())
+    while (!lines.empty())
     {
         std::vector<std::string> tokens;
 
-        std::string line = codelines.front();
+        std::string line = lines.front();
         std::string stmt = std::string();
 
         for (const char& c : line)
@@ -223,7 +250,7 @@ void Interpreter::tokenize(std::queue<std::string>& codelines)
                 }
             }
             else
-                stmt += c;
+                stmt += std::tolower(c);
         }
 
         if (!stmt.empty())
@@ -232,13 +259,15 @@ void Interpreter::tokenize(std::queue<std::string>& codelines)
         if (!tokens.empty())
             evaluate(tokens);
 
-        codelines.pop();
+        lines.pop();
     }
 }
 
-void Interpreter::read_file(const std::string& filename)
+void Interpreter::read_file(SoundInfo& sound, const std::string& filename)
 {
-    std::queue<std::string> codeLines;
+    _sound = &sound;
+
+    std::queue<std::string> lines;
 
     std::string line;
     std::ifstream file(filename);
@@ -247,12 +276,28 @@ void Interpreter::read_file(const std::string& filename)
         while (file.good())
         {
             getline(file, line);
-            codeLines.push(line);
+            lines.push(line);
         }
         file.close();
     }
     else
         throw std::runtime_error("unable to open file");
 
-    tokenize(codeLines);
+    tokenize(lines);
+}
+void Interpreter::read_str(SoundInfo& sound, const std::string& str)
+{
+    _sound = &sound;
+
+    std::queue<std::string> lines;
+
+    std::string line;
+    std::stringstream ss(str);
+    while (ss.good())
+    {
+        getline(ss, line, '\n');
+        lines.push(line);
+    }
+
+    tokenize(lines);
 }
