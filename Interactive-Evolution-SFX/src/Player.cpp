@@ -3,7 +3,7 @@
 using namespace IESFX;
 
 Player::Player(size_t size, double volume)
-	: _pos(0), _size(size), _is_playing(false), _shutdown(false), _volume(volume), _sounds(nullptr), _sound(nullptr), _thread(nullptr)
+	: _position(0), _size(size), _is_playing(false), _shutdown(false), _volume(volume), _sounds(nullptr), _sound(nullptr), _thread(nullptr)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
 	_thread->IsBackground = true;
@@ -35,7 +35,7 @@ void Player::reset()
 	_callback_done();
 
 	_is_playing = false;
-	_pos = 0;
+	_position = 0;
 
 	if (_sound != nullptr)
 		_sound->stop();
@@ -69,7 +69,7 @@ Sound* Player::play(size_t id)
 void Player::play()
 {
 	_callback_play();
-	_sound = play(_pos);
+	_sound = play(_position);
 }
 void Player::pause()
 {
@@ -79,7 +79,7 @@ void Player::pause()
 
 void Player::iterate()
 {
-	(++_pos >= _size) ? reset() : play();
+	(++_position >= _size) ? reset() : play();
 }
 
 bool Player::load(String^ file)

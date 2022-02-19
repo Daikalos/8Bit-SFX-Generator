@@ -192,7 +192,7 @@ namespace IESFX
 	private: 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-			if (_player->pos() != _id)
+			if (_player->position() != _id)
 				_player->play(_id);
 		}
 		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -215,9 +215,6 @@ namespace IESFX
 
 			}
 		}
-
-	public:
-		size_t id() { return _id; }
 
 	private:
 		size_t _id;

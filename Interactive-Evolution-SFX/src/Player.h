@@ -40,7 +40,7 @@ namespace IESFX
 		bool load(String^ file);
 		bool save(String^ name);
 
-		int pos() { return _pos; }
+		int position() { return _position; }
 
 		Sound* operator[](int i)
 		{
@@ -61,7 +61,7 @@ namespace IESFX
 		bool load_txt(String^ file);
 
 	private:
-		size_t _pos, _size;
+		size_t _position, _size;
 		bool _is_playing, _shutdown;
 		double _volume;
 
