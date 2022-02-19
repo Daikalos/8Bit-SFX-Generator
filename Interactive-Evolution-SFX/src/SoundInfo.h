@@ -8,6 +8,7 @@ namespace IESFX
 		~SoundInfo() = default;
 
 		unsigned int reg[25];
+		double length = 1;
 
 		unsigned int& operator[](int i) { return reg[i]; }
 		unsigned int operator[](int i) const { return reg[i]; }

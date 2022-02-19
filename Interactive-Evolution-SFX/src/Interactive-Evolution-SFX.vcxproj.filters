@@ -47,7 +47,7 @@
     <ClInclude Include="SoundUC.h">
       <Filter>Forms</Filter>
     </ClInclude>
-    <ClInclude Include="utilities.h">
+    <ClInclude Include="Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">

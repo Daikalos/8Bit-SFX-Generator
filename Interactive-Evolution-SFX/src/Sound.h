@@ -3,9 +3,11 @@
 #include <vector>
 #include <SFML/Audio.hpp>
 
+#include <resid/sid.h>
+
 #include "Config.h"
 #include "SoundInfo.h"
-#include "utilities.h"
+#include "Utilities.h"
 
 namespace IESFX
 {
@@ -19,7 +21,7 @@ namespace IESFX
 
 		// only create buffer after write
 		//
-		void create_buffer(const SoundInfo& info, double length);
+		void create_buffer(const SoundInfo& info);
 
 		void load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 

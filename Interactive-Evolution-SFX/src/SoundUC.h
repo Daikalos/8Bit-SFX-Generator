@@ -23,8 +23,6 @@ namespace IESFX
 			_player = player;
 			_evolution = evolution;
 			_id = id;
-
-			_sound = _player[_id];
 		}
 
 	protected:
@@ -194,7 +192,8 @@ namespace IESFX
 	private: 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-			_sound->play();
+			if (_player->pos() != _id)
+				_player->play(_id);
 		}
 		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
@@ -225,6 +224,5 @@ namespace IESFX
 
 		Player^ _player;
 		Evolution* _evolution;
-		Sound* _sound;
 };
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <resid/sid.h>
+#include <resid/siddefs.h>
 
 namespace IESFX
 {

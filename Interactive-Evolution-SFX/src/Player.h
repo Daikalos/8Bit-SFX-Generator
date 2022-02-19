@@ -9,9 +9,9 @@
 
 #include <SFML/Audio.hpp>
 
-#include "utilities.h"
-#include "Config.h"
 #include "Sound.h"
+#include "Config.h"
+#include "Utilities.h"
 
 namespace IESFX
 {
@@ -29,6 +29,8 @@ namespace IESFX
 
 		void set_volume(double volume);
 		void set_is_playing(bool value);
+
+		Sound* play(size_t id);
 
 		void play();
 		void pause();

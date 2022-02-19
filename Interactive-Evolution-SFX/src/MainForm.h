@@ -273,7 +273,7 @@ namespace IESFX
 			this->showNextButton->Name = L"showNextButton";
 			this->showNextButton->Size = System::Drawing::Size(40, 41);
 			this->showNextButton->Text = L"Next";
-			this->showNextButton->ToolTipText = L"Next";
+			this->showNextButton->ToolTipText = L"Next Subset";
 			this->showNextButton->Click += gcnew System::EventHandler(this, &MainForm::showNextButton_Click);
 			// 
 			// resetButton

@@ -15,10 +15,12 @@ Player::Player(size_t size, double volume)
 	{
 		SoundInfo info;
 
-		//for (int j = 0; j < 25; ++j)
+		//for (int j = 0; j < 24; ++j)
 		//	info[j] = 1 + rand() % 30;
 
-		_sounds[i].create_buffer(info, 1);
+		//info[24] = 12;
+
+		_sounds[i].create_buffer(info);
 	}
 }
 
@@ -54,16 +56,21 @@ void Player::set_is_playing(bool value)
 	_is_playing = value;
 }
 
+Sound* Player::play(size_t id)
+{
+	Sound* sound = &_sounds[id];
+
+	sound->set_volume(_volume);
+	sound->play();
+
+	return sound;
+}
+
 void Player::play()
 {
 	_callback_play();
-
-	_sound = this[_pos];
-	_sound->play();
-
-	_sound->set_volume(_volume);
+	_sound = play(_pos);
 }
-
 void Player::pause()
 {
 	if (_is_playing)

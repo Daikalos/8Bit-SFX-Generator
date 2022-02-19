@@ -22,16 +22,16 @@ void Sound::reset()
 	_sound.resetBuffer();
 }
 
-void Sound::create_buffer(const SoundInfo& info, double length)
+void Sound::create_buffer(const SoundInfo& info)
 {
 	reset();
 
-	_length = length;
+	_length = info.length;
 
 	for (int i = 0; i < 25; ++i)
 		_sid.write(i, info[i]);
 
-	_buffer_size = SAMPLE_RATE * length;
+	_buffer_size = SAMPLE_RATE * _length;
 	std::vector<sf::Int16> samples(_buffer_size, 0);
 
 	_sid.write(1, 130);
@@ -43,19 +43,25 @@ void Sound::create_buffer(const SoundInfo& info, double length)
 	for (int l = 0; l < 12; ++l)
 	{
 		_sid.write(4, 21);
-		for (int t = 0; t < 1000; ++t)
-		{
 
+		{		
+			RESID::cycle_count delta_t = util::get_cycles(_buffer_size - index);
+			index += _sid.clock(delta_t, samples.data() + index, _buffer_size - index);
 		}
-		_sid.write(4, 20);
-		for (int t = 0; t < 1000; ++t)
-		{
 
+		_sid.write(4, 20);
+
+		{
+			RESID::cycle_count delta_t = util::get_cycles(_buffer_size - index);
+			index += _sid.clock(delta_t, samples.data() + index, _buffer_size - index);
 		}
 	}
 
-	RESID::cycle_count delta_t = (double)CLOCK_FREQ / ((double)SAMPLE_RATE / _buffer_size);
-	_sid.clock(delta_t, samples.data(), _buffer_size);
+	for (int i = 0; i < 1024; ++i)
+		samples[i] = 0;
+
+	//RESID::cycle_count delta_t = (double)CLOCK_FREQ / ((double)SAMPLE_RATE / _buffer_size);
+	//_sid.clock(delta_t, samples.data(), _buffer_size);
 
 	_buffer.loadFromSamples(samples.data(), _buffer_size, 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);
