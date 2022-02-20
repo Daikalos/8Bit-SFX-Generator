@@ -12,6 +12,7 @@
 #include "Sound.h"
 #include "Config.h"
 #include "Utilities.h"
+#include "Evolution.h"
 
 namespace IESFX
 {
@@ -22,7 +23,7 @@ namespace IESFX
 	public ref class Player
 	{
 	public:
-		Player(size_t size, double volume);
+		Player(Evolution* evolution, size_t size, double volume);
 		~Player();
 
 		void initialize();
@@ -71,6 +72,8 @@ namespace IESFX
 		size_t _position, _size;
 		bool _is_playing, _shutdown;
 		double _volume;
+
+		Evolution* _evolution;
 
 		Sound* _sounds;
 		Sound* _sound;

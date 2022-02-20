@@ -133,7 +133,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>cppsid.lib;resid.lib;SDL2.lib;SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>resid.lib;sfml-system-s.lib;sfml-audio-s.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>100000000</StackReserveSize>
@@ -167,7 +167,6 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundInfo.h" />
-    <ClInclude Include="SoundFile.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
@@ -177,6 +176,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="InfoForm.resx">
+      <DependentUpon>InfoForm.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.h</DependentUpon>
     </EmbeddedResource>

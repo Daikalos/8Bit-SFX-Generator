@@ -6,6 +6,7 @@
 #include "utilities.h"
 #include "Player.h"
 #include "SoundUC.h"
+#include "InfoForm.h"
 #include "Evolution.h"
 
 #include <resid/sid.h>
@@ -50,7 +51,7 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
 	private: System::Windows::Forms::Panel^ pnlItems;
 	private: System::Windows::Forms::ToolStripMenuItem^ otherToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^ creditsButton;
+
 	private: System::Windows::Forms::ToolStripMenuItem^ helpButton;
 	private: System::Windows::Forms::ToolStrip^ botStripTool;
 	private: System::Windows::Forms::ToolStripButton^ showNextButton;
@@ -83,7 +84,6 @@ namespace IESFX
 			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->creditsButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->statusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
@@ -156,10 +156,7 @@ namespace IESFX
 			// 
 			// otherToolStripMenuItem
 			// 
-			this->otherToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
-				this->helpButton,
-					this->creditsButton
-			});
+			this->otherToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->helpButton });
 			this->otherToolStripMenuItem->Name = L"otherToolStripMenuItem";
 			this->otherToolStripMenuItem->Size = System::Drawing::Size(44, 20);
 			this->otherToolStripMenuItem->Text = L"Help";
@@ -168,14 +165,9 @@ namespace IESFX
 			// 
 			this->helpButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"helpButton.Image")));
 			this->helpButton->Name = L"helpButton";
-			this->helpButton->Size = System::Drawing::Size(111, 22);
+			this->helpButton->Size = System::Drawing::Size(180, 22);
 			this->helpButton->Text = L"Help";
-			// 
-			// creditsButton
-			// 
-			this->creditsButton->Name = L"creditsButton";
-			this->creditsButton->Size = System::Drawing::Size(111, 22);
-			this->creditsButton->Text = L"Credits";
+			this->helpButton->Click += gcnew System::EventHandler(this, &MainForm::helpButton_Click);
 			// 
 			// statusStrip
 			// 
@@ -565,6 +557,15 @@ namespace IESFX
 			_player->set_volume(util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
 		}
 
+		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			if (_info == nullptr || _info->IsDisposed)
+				_info = gcnew InfoForm();
+
+			if (!_info->Visible)
+				_info->Show();
+		}
+
 	public:
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
@@ -580,6 +581,7 @@ namespace IESFX
 		Color _color;
 
 		array<SoundUC^>^ _soundUCs;
+		InfoForm^ _info;
 
 		Player^ _player;
 		Evolution* _evolution;

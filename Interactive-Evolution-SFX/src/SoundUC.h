@@ -121,6 +121,7 @@ namespace IESFX
 			this->soundWave->BorderSkin->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)),
 				static_cast<System::Int32>(static_cast<System::Byte>(0)), static_cast<System::Int32>(static_cast<System::Byte>(0)));
 			this->soundWave->BorderSkin->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
+			chartArea1->AlignmentStyle = System::Windows::Forms::DataVisualization::Charting::AreaAlignmentStyles::Position;
 			chartArea1->AxisX->InterlacedColor = System::Drawing::Color::Transparent;
 			chartArea1->AxisX->IsLabelAutoFit = false;
 			chartArea1->AxisX->LabelStyle->Enabled = false;
@@ -142,9 +143,16 @@ namespace IESFX
 			chartArea1->AxisY->MaximumAutoSize = 100;
 			chartArea1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			chartArea1->BackGradientStyle = System::Windows::Forms::DataVisualization::Charting::GradientStyle::VerticalCenter;
-			chartArea1->BackHatchStyle = System::Windows::Forms::DataVisualization::Charting::ChartHatchStyle::Cross;
+			chartArea1->BackImageAlignment = System::Windows::Forms::DataVisualization::Charting::ChartImageAlignmentStyle::Center;
+			chartArea1->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)),
+				static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			chartArea1->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Solid;
+			chartArea1->BorderWidth = 2;
+			chartArea1->InnerPlotPosition->Auto = false;
+			chartArea1->InnerPlotPosition->Height = 99;
+			chartArea1->InnerPlotPosition->Width = 99;
+			chartArea1->InnerPlotPosition->X = 1;
+			chartArea1->InnerPlotPosition->Y = 1;
 			chartArea1->Name = L"ChartArea1";
 			chartArea1->Position->Auto = false;
 			chartArea1->Position->Height = 96;

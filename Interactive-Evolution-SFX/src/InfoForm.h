@@ -34,6 +34,8 @@ namespace IESFX
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::RichTextBox^ richTextBox1;
+	protected:
 
 	private:
 		/// <summary>
@@ -48,11 +50,39 @@ namespace IESFX
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->components = gcnew System::ComponentModel::Container();
-			this->Size = System::Drawing::Size(300,300);
-			this->Text = L"MyForm";
-			this->Padding = System::Windows::Forms::Padding(0);
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(InfoForm::typeid));
+			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
+			this->SuspendLayout();
+			// 
+			// richTextBox1
+			// 
+			this->richTextBox1->BackColor = System::Drawing::Color::DarkGray;
+			this->richTextBox1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->richTextBox1->CausesValidation = false;
+			this->richTextBox1->Enabled = false;
+			this->richTextBox1->Location = System::Drawing::Point(12, 12);
+			this->richTextBox1->Name = L"richTextBox1";
+			this->richTextBox1->ReadOnly = true;
+			this->richTextBox1->Size = System::Drawing::Size(460, 537);
+			this->richTextBox1->TabIndex = 0;
+			this->richTextBox1->Text = L"";
+			// 
+			// InfoForm
+			// 
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->BackColor = System::Drawing::Color::Gray;
+			this->CausesValidation = false;
+			this->ClientSize = System::Drawing::Size(484, 561);
+			this->Controls->Add(this->richTextBox1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+			this->MaximizeBox = false;
+			this->Name = L"InfoForm";
+			this->Text = L"Help";
+			this->TopMost = true;
+			this->ResumeLayout(false);
+
 		}
 #pragma endregion
 	};

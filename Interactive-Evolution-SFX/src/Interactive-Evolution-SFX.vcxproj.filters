@@ -68,9 +68,6 @@
     <ClInclude Include="Evolution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
