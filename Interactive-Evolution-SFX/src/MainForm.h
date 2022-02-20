@@ -68,7 +68,7 @@ namespace IESFX
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
 	private: System::Windows::Forms::Panel^ volumePanel;
-	private: System::Windows::Forms::Panel^ panel1;
+
 	private: System::Windows::Forms::Panel^ modifiersPanel;
 	private: System::ComponentModel::Container^ components;
 	
@@ -103,7 +103,6 @@ namespace IESFX
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->modifiersPanel = (gcnew System::Windows::Forms::Panel());
 			this->volumePanel = (gcnew System::Windows::Forms::Panel());
-			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -125,7 +124,7 @@ namespace IESFX
 			});
 			this->menuStrip->Location = System::Drawing::Point(0, 0);
 			this->menuStrip->Name = L"menuStrip";
-			this->menuStrip->Size = System::Drawing::Size(794, 24);
+			this->menuStrip->Size = System::Drawing::Size(675, 24);
 			this->menuStrip->TabIndex = 1;
 			this->menuStrip->Text = L"menuStrip";
 			// 
@@ -187,7 +186,7 @@ namespace IESFX
 			this->statusStrip->Name = L"statusStrip";
 			this->statusStrip->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
 			this->statusStrip->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->statusStrip->Size = System::Drawing::Size(794, 26);
+			this->statusStrip->Size = System::Drawing::Size(675, 26);
 			this->statusStrip->SizingGrip = false;
 			this->statusStrip->TabIndex = 2;
 			this->statusStrip->Text = L"statusStrip";
@@ -203,13 +202,11 @@ namespace IESFX
 			// 
 			// pnlItems
 			// 
-			this->pnlItems->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-				| System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
+			this->pnlItems->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->pnlItems->BackColor = System::Drawing::Color::Black;
 			this->pnlItems->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->pnlItems->Controls->Add(this->botStripTool);
-			this->pnlItems->Location = System::Drawing::Point(130, 40);
+			this->pnlItems->Location = System::Drawing::Point(13, 36);
 			this->pnlItems->Margin = System::Windows::Forms::Padding(0);
 			this->pnlItems->Name = L"pnlItems";
 			this->pnlItems->Size = System::Drawing::Size(604, 590);
@@ -413,7 +410,7 @@ namespace IESFX
 			this->modifiersPanel->Controls->Add(this->mutationRateLabel);
 			this->modifiersPanel->Controls->Add(this->mutationRateTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationRateSlider);
-			this->modifiersPanel->Location = System::Drawing::Point(130, 639);
+			this->modifiersPanel->Location = System::Drawing::Point(13, 637);
 			this->modifiersPanel->Name = L"modifiersPanel";
 			this->modifiersPanel->Size = System::Drawing::Size(604, 65);
 			this->modifiersPanel->TabIndex = 13;
@@ -425,27 +422,17 @@ namespace IESFX
 			this->volumePanel->Controls->Add(this->volumeSlider);
 			this->volumePanel->Controls->Add(this->label2);
 			this->volumePanel->Controls->Add(this->label1);
-			this->volumePanel->Location = System::Drawing::Point(742, 40);
+			this->volumePanel->Location = System::Drawing::Point(625, 36);
 			this->volumePanel->Name = L"volumePanel";
 			this->volumePanel->Size = System::Drawing::Size(43, 395);
 			this->volumePanel->TabIndex = 14;
-			// 
-			// panel1
-			// 
-			this->panel1->BackColor = System::Drawing::SystemColors::WindowFrame;
-			this->panel1->Location = System::Drawing::Point(6, 40);
-			this->panel1->Margin = System::Windows::Forms::Padding(0);
-			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(120, 664);
-			this->panel1->TabIndex = 15;
 			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
-			this->ClientSize = System::Drawing::Size(794, 741);
-			this->Controls->Add(this->panel1);
+			this->ClientSize = System::Drawing::Size(675, 741);
 			this->Controls->Add(this->volumePanel);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
@@ -502,11 +489,13 @@ namespace IESFX
 		}
 		void player_update(Sound* sound, int i)
 		{
-			size_t size = sound->buffer_count();
-			array<short>^ samples = gcnew array<short>(size);
+			size_t offset = 100;
 
-			for (int j = 0; j < size; ++j)
-				samples[j] = sound->buffer_samples()[j];
+			size_t size = sound->buffer_count();
+			array<short>^ samples = gcnew array<short>(size / offset);
+
+			for (size_t i = 0, j = 0; j < size; ++i, j += offset)
+				samples[i] = sound->buffer_samples()[j];
 
 			_soundUCs[i]->add_data(samples);
 		}

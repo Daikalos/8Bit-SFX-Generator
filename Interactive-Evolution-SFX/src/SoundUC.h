@@ -219,8 +219,7 @@ namespace IESFX
 		}
 		void ad(array<short>^ samples)
 		{
-			for (int i = 0; i < samples->Length; i += 100)
-				soundWave->Series[0]->Points->AddXY(i, samples[i]);
+			soundWave->Series[0]->Points->DataBindY(samples);
 		}
 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
