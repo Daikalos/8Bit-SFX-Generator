@@ -152,6 +152,7 @@
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="InfoForm.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundUC.cpp" />
@@ -160,6 +161,9 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Evolution.h" />
     <ClInclude Include="Interpreter.h" />
+    <ClInclude Include="InfoForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundInfo.h" />

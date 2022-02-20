@@ -39,6 +39,9 @@
     <ClCompile Include="Interpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InfoForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainForm.h">
@@ -70,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="Interpreter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InfoForm.h">
+      <Filter>Forms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

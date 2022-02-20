@@ -21,5 +21,11 @@ bool MainForm::initialize()
 		_soundUCs[i] = soundUC;
 	}
 
+	_player->_callback_play += gcnew Player::callback_play(this, &MainForm::player_next);
+	_player->_callback_done += gcnew Player::callback_done(this, &MainForm::player_done);
+	_player->_callback_update += gcnew Player::callback_update(this, &MainForm::player_update);
+
+	_player->initialize();
+
 	return true;
 }

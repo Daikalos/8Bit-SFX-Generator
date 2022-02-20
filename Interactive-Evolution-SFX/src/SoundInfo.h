@@ -1,5 +1,7 @@
 #pragma once
 
+#include <resid/sid.h>
+
 namespace IESFX
 {
 	struct SoundInfo

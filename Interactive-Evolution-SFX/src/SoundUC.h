@@ -12,6 +12,7 @@ namespace IESFX
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Runtime::InteropServices;
 
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
@@ -37,9 +38,7 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
-
-	private: 
-		System::ComponentModel::Container ^components;
+	private: System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -162,7 +161,7 @@ namespace IESFX
 			this->soundWave->Name = L"soundWave";
 			series1->BackSecondaryColor = System::Drawing::Color::Transparent;
 			series1->BorderColor = System::Drawing::Color::Black;
-			series1->BorderWidth = 3;
+			series1->BorderWidth = 2;
 			series1->ChartArea = L"ChartArea1";
 			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
 			series1->Color = System::Drawing::Color::DodgerBlue;
@@ -189,10 +188,44 @@ namespace IESFX
 		}
 #pragma endregion
 
+	public:
+		void reset()
+		{
+			for (int i = soundWave->Series->Count - 1; i >= 0; ++i)
+				soundWave->Series[i]->Points->Clear();
+		}
+		void set_color(Color color)
+		{
+			if (InvokeRequired)
+				Invoke(gcnew set_color_del(this, &SoundUC::sc), color);
+			else
+				sc(color);
+		}
+		void add_data(array<short>^ samples)
+		{
+			if (InvokeRequired)
+				Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
+			else
+				ad(samples);
+		}
+
 	private: 
+		delegate void set_color_del(Color);
+		delegate void add_data_del(array<short>^);
+
+		void sc(Color color)
+		{
+			soundWave->BackColor = color;
+		}
+		void ad(array<short>^ samples)
+		{
+			for (int i = 0; i < samples->Length; i += 100)
+				soundWave->Series[0]->Points->AddXY(i, samples[i]);
+		}
+
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-			if (_player->position() != _id)
+			if (!_player->active() || _player->position() != _id)
 				_player->play(_id);
 		}
 		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -212,7 +245,8 @@ namespace IESFX
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-
+				if (!_player[_id]->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
+					MessageBox::Show("Could not save", "Error!", MessageBoxButtons::OK);
 			}
 		}
 

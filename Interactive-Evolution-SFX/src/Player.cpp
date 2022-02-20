@@ -10,24 +10,31 @@ Player::Player(size_t size, double volume)
 	_thread->Start();
 
 	_sounds = new Sound[size];
-
-	for (int i = 0; i < size; ++i)
-	{
-		SoundInfo info;
-
-		//for (int j = 0; j < 24; ++j)
-		//	info[j] = 1 + rand() % 30;
-
-		//info[24] = 12;
-
-		_sounds[i].create_buffer(info);
-	}
 }
 
 Player::~Player()
 {
 	delete[] _sounds;
 	_shutdown = true;
+}
+
+void Player::initialize()
+{
+	std::vector<SoundInfo> infos;
+
+	for (int i = 0; i < _size; ++i)
+	{
+		SoundInfo info;
+
+		//for (int j = 0; j < 24; ++j)
+		//	info[j] = rand() % 150;
+
+		//info[24] = 13;
+
+		infos.push_back(info);
+	}
+
+	update(infos);
 }
 
 void Player::reset()
@@ -52,6 +59,9 @@ void Player::set_volume(double volume)
 }
 void Player::set_is_playing(bool value)
 {
+	if (value && _is_playing)
+		return;
+
 	value ? play() : pause();
 	_is_playing = value;
 }
@@ -100,6 +110,15 @@ bool Player::save(String^ name)
 {
 
 	return false;
+}
+
+void Player::update(const std::vector<SoundInfo>& info)
+{
+	for (int i = 0; i < info.size(); ++i)
+		_sounds[i].create_buffer(info.at(i));
+
+	for (int i = 0; i < _size; ++i)
+		_callback_update(&_sounds[i], i);
 }
 
 void Player::player_loop()

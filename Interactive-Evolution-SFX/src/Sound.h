@@ -28,11 +28,16 @@ namespace IESFX
 		sf::SoundSource::Status status() const;
 		void set_volume(double volume);
 
+		const sf::Int16* buffer_samples() const { return _buffer.getSamples(); }
+		sf::Uint64 buffer_count() const { return _buffer.getSampleCount(); }
+
 		double length() const { return _length; }
 
 		void play();
 		void pause();
 		void stop();
+
+		bool save(const std::string& filename);
 
 	private:
 		size_t _length;

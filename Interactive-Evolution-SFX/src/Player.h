@@ -25,6 +25,8 @@ namespace IESFX
 		Player(size_t size, double volume);
 		~Player();
 
+		void initialize();
+
 		void reset();
 
 		void set_volume(double volume);
@@ -40,7 +42,10 @@ namespace IESFX
 		bool load(String^ file);
 		bool save(String^ name);
 
+		void update(const std::vector<SoundInfo>& info);
+
 		int position() { return _position; }
+		bool active() { return _is_playing; }
 
 		Sound* operator[](int i)
 		{
@@ -50,9 +55,11 @@ namespace IESFX
 	public:
 		delegate void callback_play(); // called everytime a sound is played
 		delegate void callback_done(); // called when reached end
+		delegate void callback_update(Sound*, int);
 
 		callback_play^ _callback_play;
 		callback_done^ _callback_done;
+		callback_update^ _callback_update;
 
 	private:
 		void player_loop();

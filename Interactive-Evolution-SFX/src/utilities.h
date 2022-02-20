@@ -24,7 +24,7 @@ namespace util
 
 	static int get_cycles(size_t size)
 	{
-		return static_cast<double>(IESFX::CLOCK_FREQ) / (static_cast<double>(IESFX::SAMPLE_RATE) / size);
+		return round((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
 
 	template<class T>

@@ -33,9 +33,6 @@ namespace IESFX
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
 
-			_player->_callback_play += gcnew Player::callback_play(this, &MainForm::callback_play);
-			_player->_callback_done += gcnew Player::callback_done(this, &MainForm::callback_done);
-
 			_color = Color::White;
 			_prev = 0;
 		}
@@ -51,7 +48,6 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripStatusLabel^ statusLabel;
 	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
-	private: System::ComponentModel::Container ^components;
 	private: System::Windows::Forms::Panel^ pnlItems;
 	private: System::Windows::Forms::ToolStripMenuItem^ otherToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ creditsButton;
@@ -73,9 +69,8 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
 	private: System::Windows::Forms::Panel^ volumePanel;
 	private: System::Windows::Forms::Panel^ panel1;
-
-
 	private: System::Windows::Forms::Panel^ modifiersPanel;
+	private: System::ComponentModel::Container^ components;
 	
 #pragma region Windows Form Designer generated code
 	private:
@@ -491,33 +486,29 @@ namespace IESFX
 #pragma endregion
 
 	private: 
-		void callback_play()
+		void player_next()
 		{
 			int next = _player->position();
 
-			execute_safely(_soundUCs[_prev]->soundWave, _color);
+			_soundUCs[_prev]->set_color(_color);
 			_color = _soundUCs[next]->soundWave->BackColor;
-			execute_safely(_soundUCs[next]->soundWave, Color::Gray);
+			_soundUCs[next]->set_color(Color::Gray);
 
 			_prev = next;
 		}
-		void callback_done()
+		void player_done()
 		{
-			execute_safely(_soundUCs[_prev]->soundWave, _color);
+			_soundUCs[_prev]->set_color(_color);
 		}
-
-		delegate void set_color_del(Control^ ctrl, Color color);
-
-		void execute_safely(Control^ ctrl, Color color)
+		void player_update(Sound* sound, int i)
 		{
-			if (ctrl->InvokeRequired)
-				ctrl->Invoke(gcnew set_color_del(this, &MainForm::set_color), ctrl, color);
-			else
-				set_color(ctrl, color);
-		}
-		void set_color(Control^ ctrl, Color color)
-		{
-			ctrl->BackColor = color;
+			size_t size = sound->buffer_count();
+			array<short>^ samples = gcnew array<short>(size);
+
+			for (int j = 0; j < size; ++j)
+				samples[j] = sound->buffer_samples()[j];
+
+			_soundUCs[i]->add_data(samples);
 		}
 
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)

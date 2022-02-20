@@ -38,30 +38,51 @@ void Sound::create_buffer(const SoundInfo& info)
 	_sid.write(5, 9);
 	_sid.write(15, 30);
 	_sid.write(24, 15);
+	_sid.write(4, 21);
 
-	int index = 0;
-	for (int l = 0; l < 12; ++l)
-	{
-		_sid.write(4, 21);
+	//int index = 0;
+	//for (int l = 0; l < 12; ++l)
+	//{
+	//	_sid.write(4, 21);
 
-		{		
-			RESID::cycle_count delta_t = util::get_cycles(_buffer_size - index);
-			index += _sid.clock(delta_t, samples.data() + index, _buffer_size - index);
-		}
+	//	{		
+	//		RESID::cycle_count delta_t = util::get_cycles(1000);
+	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
+	//	}
 
-		_sid.write(4, 20);
+	//	_sid.write(4, 20);
 
-		{
-			RESID::cycle_count delta_t = util::get_cycles(_buffer_size - index);
-			index += _sid.clock(delta_t, samples.data() + index, _buffer_size - index);
-		}
-	}
+	//	{
+	//		RESID::cycle_count delta_t = util::get_cycles(1000);
+	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
+	//	}
+	//}
 
+	//int index = 0;
+	//for (int l = 0; l < 12; ++l)
+	//{
+	//	_sid.write(4, 21);
+
+	//	for (int j = 0; j < 1000; ++j)
+	//	{		
+	//		_sid.clock(22);
+	//		samples[index++] = _sid.output();
+	//	}
+
+	//	_sid.write(4, 20);
+
+	//	for (int j = 0; j < 1000; ++j)
+	//	{
+	//		_sid.clock(22);
+	//		samples[index++] = _sid.output();
+	//	}
+	//}
+
+	RESID::cycle_count delta_t = util::get_cycles(_buffer_size);
+	_sid.clock(delta_t, samples.data(), _buffer_size);
+	
 	for (int i = 0; i < 1024; ++i)
 		samples[i] = 0;
-
-	//RESID::cycle_count delta_t = (double)CLOCK_FREQ / ((double)SAMPLE_RATE / _buffer_size);
-	//_sid.clock(delta_t, samples.data(), _buffer_size);
 
 	_buffer.loadFromSamples(samples.data(), _buffer_size, 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);
@@ -93,4 +114,14 @@ void Sound::pause()
 void Sound::stop()
 {
 	_sound.stop();
+}
+
+bool Sound::save(const std::string& filename)
+{
+	if (_buffer.getSamples() == nullptr || filename.empty())
+		return false;
+
+	_buffer.saveToFile(filename);
+
+	return true;
 }
