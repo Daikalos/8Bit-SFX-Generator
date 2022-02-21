@@ -34,28 +34,28 @@ void Sound::create_buffer(const SoundInfo& info)
 	_buffer_size = SAMPLE_RATE * _length;
 	std::vector<sf::Int16> samples(_buffer_size, 0);
 
-	_sid.write(1, 130);
-	_sid.write(5, 9);
-	_sid.write(15, 30);
-	_sid.write(24, 15);
+	//_sid.write(1, 130);
+	//_sid.write(5, 9);
+	//_sid.write(15, 30);
+	//_sid.write(24, 15);
 
-	int index = 0;
-	for (int l = 0; l < 12; ++l)
-	{
-		_sid.write(4, 21);
+	//int index = 0;
+	//for (int l = 0; l < 12; ++l)
+	//{
+	//	_sid.write(4, 21);
 
-		{		
-			RESID::cycle_count delta_t = util::get_cycles(1000);
-			index += _sid.clock(delta_t, samples.data() + index, 1000);
-		}
+	//	{		
+	//		RESID::cycle_count delta_t = util::get_cycles(1000);
+	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
+	//	}
 
-		_sid.write(4, 20);
+	//	_sid.write(4, 20);
 
-		{
-			RESID::cycle_count delta_t = util::get_cycles(1000);
-			index += _sid.clock(delta_t, samples.data() + index, 1000);
-		}
-	}
+	//	{
+	//		RESID::cycle_count delta_t = util::get_cycles(1000);
+	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
+	//	}
+	//}
 
 	//RESID::cycle_count delta_t = util::get_cycles(_buffer_size);
 	//_sid.clock(delta_t, samples.data(), _buffer_size);

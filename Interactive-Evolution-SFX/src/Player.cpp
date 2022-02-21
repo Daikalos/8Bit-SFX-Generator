@@ -27,10 +27,10 @@ void Player::initialize()
 	{
 		SoundInfo info;
 
-		//for (int j = 0; j < 24; ++j)
-		//	info[j] = rand() % 150;
+		for (int j = 0; j < 24; ++j)
+			info[j] = rand() % 150;
 
-		//info[24] = 13;
+		info[24] = 13;
 
 		infos.push_back(info);
 	}
@@ -62,6 +62,8 @@ void Player::set_is_playing(bool value)
 {
 	if (value && _is_playing)
 		return;
+
+	initialize();
 
 	value ? play() : pause();
 	_is_playing = value;
