@@ -22,7 +22,7 @@ void Sound::reset()
 	_sound.resetBuffer();
 }
 
-void Sound::create_buffer(const SoundInfo& info)
+void Sound::create_buffer(const SoundGene& info)
 {
 	reset();
 
@@ -34,28 +34,34 @@ void Sound::create_buffer(const SoundInfo& info)
 	_buffer_size = SAMPLE_RATE * _length;
 	std::vector<sf::Int16> samples(_buffer_size, 0);
 
-	//_sid.write(1, 130);
-	//_sid.write(5, 9);
-	//_sid.write(15, 30);
-	//_sid.write(24, 15);
+	_sid.write(1, 130);
+	_sid.write(5, 9);
+	_sid.write(15, 30);
+	_sid.write(24, 15);
 
-	//int index = 0;
-	//for (int l = 0; l < 12; ++l)
-	//{
-	//	_sid.write(4, 21);
+	int index = 0;
+	for (int l = 0; l < 12; ++l)
+	{
+		_sid.write(4, 22);
 
-	//	{		
-	//		RESID::cycle_count delta_t = util::get_cycles(1000);
-	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
-	//	}
+		for (int i = 0; i < 1000; ++i)
+		{
+			_sid.clock(CLOCKS_PER_SAMPLE);
+			samples[index] = _sid.output();
 
-	//	_sid.write(4, 20);
+			++index;
+		}
 
-	//	{
-	//		RESID::cycle_count delta_t = util::get_cycles(1000);
-	//		index += _sid.clock(delta_t, samples.data() + index, 1000);
-	//	}
-	//}
+		_sid.write(4, 19);
+
+		for (int i = 0; i < 1000; ++i)
+		{
+			_sid.clock(CLOCKS_PER_SAMPLE);
+			samples[index] = _sid.output();
+
+			++index;
+		}
+	}
 
 	//RESID::cycle_count delta_t = util::get_cycles(_buffer_size);
 	//_sid.clock(delta_t, samples.data(), _buffer_size);
@@ -100,7 +106,5 @@ bool Sound::save(const std::string& filename)
 	if (_buffer.getSamples() == nullptr || filename.empty())
 		return false;
 
-	_buffer.saveToFile(filename);
-
-	return true;
+	return _buffer.saveToFile(filename);
 }

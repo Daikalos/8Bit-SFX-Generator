@@ -21,16 +21,16 @@ Player::~Player()
 
 void Player::initialize()
 {
-	std::vector<SoundInfo> infos;
+	std::vector<SoundGene> infos;
 
 	for (int i = 0; i < _size; ++i)
 	{
-		SoundInfo info;
+		SoundGene info;
 
-		for (int j = 0; j < 24; ++j)
-			info[j] = rand() % 150;
+		//for (int j = 0; j < 24; ++j)
+		//	info[j] = rand() % 80;
 
-		info[24] = 13;
+		//info[24] = 13;
 
 		infos.push_back(info);
 	}
@@ -115,7 +115,7 @@ bool Player::save(String^ name)
 	return false;
 }
 
-void Player::update(const std::vector<SoundInfo>& info)
+void Player::update(const std::vector<SoundGene>& info)
 {
 	for (int i = 0; i < info.size(); ++i)
 		_sounds[i].create_buffer(info.at(i));

@@ -512,7 +512,7 @@ namespace IESFX
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
 				if (!_player->load(openFileDialog.FileName))
-					MessageBox::Show("Failed to load " + openFileDialog.FileName, "Error!", MessageBoxButtons::OK);
+					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 		}
 
@@ -528,28 +528,35 @@ namespace IESFX
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Resetting will discard all progress and present new random candidates", 
+				"Resetting will discard all progress and present new random candidates.", 
 				"Reset?",
-				MessageBoxButtons::YesNo);
+				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
-			{
-				_player->reset();
-				_evolution->reset();
-			}
+				reset();
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-
+			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, _step);
+			
+			if (genes != nullptr)
+			{
+				_step += _soundUCs->Length;
+				_player->update(*_evolution->output(_soundUCs->Length, _step));
+			}
+			else
+				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
 			mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+			_evolution->set_mutation_size(mutation_size());
 		}
 		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
 			mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
+			_evolution->set_mutation_rate(mutation_rate());
 		}
 
 		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
@@ -570,14 +577,39 @@ namespace IESFX
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
 
+		void evolve()
+		{
+			_prev = _step = 0;
+			_color = Color::White;
+
+			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, 0);
+
+			if (genes != nullptr)
+			{
+				_evolution->execute();
+				_player->update(*_evolution->output(_soundUCs->Length, 0));
+			}
+			else
+				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+
+		void reset() 
+		{ 
+			_player->reset(); 
+			_evolution->reset(); 
+
+			_prev = _step = 0;
+			_color = Color::White;
+		}
+
 	private:
 		bool initialize();
 
 	private:
-		const size_t row_count = 3;
-		const size_t column_count = 4;
+		static const size_t row_count = 3;
+		static const size_t column_count = 4;
 
-		size_t _prev;
+		size_t _prev, _step;
 		Color _color;
 
 		array<SoundUC^>^ _soundUCs;

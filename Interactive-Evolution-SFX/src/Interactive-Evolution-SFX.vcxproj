@@ -166,7 +166,7 @@
     </ClInclude>
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="SoundInfo.h" />
+    <ClInclude Include="SoundGene.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>

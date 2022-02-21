@@ -62,7 +62,7 @@
     <ClInclude Include="Sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundInfo.h">
+    <ClInclude Include="SoundGene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Evolution.h">

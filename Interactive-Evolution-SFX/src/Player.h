@@ -43,7 +43,7 @@ namespace IESFX
 		bool load(String^ file);
 		bool save(String^ name);
 
-		void update(const std::vector<SoundInfo>& info);
+		void update(const std::vector<SoundGene>& info);
 
 		int position() { return _position; }
 		bool active() { return _is_playing; }

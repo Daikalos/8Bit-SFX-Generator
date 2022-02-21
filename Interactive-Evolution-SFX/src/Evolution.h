@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Sound.h"
-#include "SoundInfo.h"
+#include "SoundGene.h"
 
 namespace IESFX
 {
@@ -13,19 +13,19 @@ namespace IESFX
 		Evolution();
 		~Evolution();
 
-		void set_mutation_rate()
+		void set_mutation_rate(double value)
 		{
-
+			_mutation_rate = value;
 		}
-		void set_mutation_size()
+		void set_mutation_size(double value)
 		{
-
+			_mutation_size = value;
 		}
 
 		void reset();
 
 		void execute();
-		std::vector<SoundInfo>* output(size_t size, size_t step);
+		std::vector<SoundGene>* output(size_t size, size_t step);
 
 	private:
 
@@ -39,7 +39,7 @@ namespace IESFX
 
 		// evaluate each candidates fitness
 		//
-		void evaluate(std::pair<SoundInfo, double>& candidate);
+		void evaluate(std::pair<SoundGene, double>& candidate);
 
 		// rank based selection (we can do it because we sort before selection)
 		//
@@ -59,7 +59,7 @@ namespace IESFX
 
 	private:
 		double _mutation_rate, _mutation_size;
-		std::vector<std::pair<SoundInfo, double>> _population;
+		std::vector<std::pair<SoundGene, double>> _population;
 	};
 }
 

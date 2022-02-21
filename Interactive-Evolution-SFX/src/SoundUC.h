@@ -253,7 +253,7 @@ namespace IESFX
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
 				if (!_player[_id]->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
-					MessageBox::Show("Could not save", "Error!", MessageBoxButtons::OK);
+					MessageBox::Show("Could not export.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 		}
 

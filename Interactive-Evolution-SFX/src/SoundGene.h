@@ -1,13 +1,14 @@
 #pragma once
 
 #include <resid/sid.h>
+#include <string>
 
 namespace IESFX
 {
-	struct SoundInfo
+	struct SoundGene
 	{
-		SoundInfo() { memset(reg, 0, sizeof(reg)); }
-		~SoundInfo() = default;
+		SoundGene() { memset(reg, 0, sizeof(reg)); }
+		~SoundGene() = default;
 
 		unsigned int reg[25];
 		double length = 1;
