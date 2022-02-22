@@ -90,33 +90,24 @@ void Interpreter::parse_AssgStmt()
 void Interpreter::parse_PokeStmt()
 {
     std::string next_token = peek();
-    if (next_token == "+")
+
+    int index;
     {
-        consume("+");
+        std::string next_token = peek();
+        consume(next_token);
 
-        int index;
-        {
-            std::string next_token = peek();
-            consume(next_token);
-
-            index = std::stoi(next_token);
-        }
-
-        if (peek() == ",")
-        {
-            consume(",");
-
-            int value;
-            {
-                std::string next_token = peek();
-                consume(next_token);
-
-                value = std::stoi(next_token);
-            }
-
-            (*_sound)[index] = value;
-        }
+        index = std::stoi(next_token);
     }
+
+    int value;
+    {
+        std::string next_token = peek();
+        consume(next_token);
+
+        value = std::stoi(next_token);
+    }
+
+    _data->write(index, value);
 }
 void Interpreter::parse_ForStmt()
 {
@@ -263,9 +254,9 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
     }
 }
 
-void Interpreter::read_file(SoundInfo& sound, const std::string& filename)
+void Interpreter::read_file(SoundData* data, const std::string& filename)
 {
-    _sound = &sound;
+    _data = data;
 
     std::queue<std::string> lines;
 
@@ -285,9 +276,9 @@ void Interpreter::read_file(SoundInfo& sound, const std::string& filename)
 
     tokenize(lines);
 }
-void Interpreter::read_str(SoundInfo& sound, const std::string& str)
+void Interpreter::read_str(SoundData* data, const std::string& str)
 {
-    _sound = &sound;
+    _data = data;
 
     std::queue<std::string> lines;
 

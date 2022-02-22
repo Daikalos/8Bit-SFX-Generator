@@ -62,7 +62,7 @@
     <ClInclude Include="Sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SoundGene.h">
+    <ClInclude Include="SoundData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Evolution.h">
@@ -73,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="InfoForm.h">
       <Filter>Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="Heatmap.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

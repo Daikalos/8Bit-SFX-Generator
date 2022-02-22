@@ -9,6 +9,8 @@
 #include "InfoForm.h"
 #include "Evolution.h"
 
+#include "Heatmap.h"
+
 #include <resid/sid.h>
 
 #include <msclr/marshal_cppstd.h>
@@ -537,7 +539,7 @@ namespace IESFX
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, _step);
+			std::vector<SoundData>* genes = _evolution->output(_soundUCs->Length, _step);
 			
 			if (genes != nullptr)
 			{
@@ -582,7 +584,7 @@ namespace IESFX
 			_prev = _step = 0;
 			_color = Color::White;
 
-			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, 0);
+			std::vector<SoundData>* genes = _evolution->output(_soundUCs->Length, 0);
 
 			if (genes != nullptr)
 			{

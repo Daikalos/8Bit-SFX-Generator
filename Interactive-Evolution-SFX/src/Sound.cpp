@@ -2,74 +2,18 @@
 
 using namespace IESFX;
 
-Sound::Sound()
-	: _length(0), _buffer_size(0)
-{
-	_sid.set_chip_model(CHIP_MODEL);
-
-	_sid.enable_filter(true);
-	_sid.enable_external_filter(true);
-}
-
-Sound::~Sound()
-{
-
-}
-
 void Sound::reset()
 {
-	_sid.reset();
 	_sound.resetBuffer();
 }
 
-void Sound::create_buffer(const SoundGene& info)
+void Sound::create_buffer(SoundData& data)
 {
 	reset();
 
-	_length = info.length;
+	std::vector<sf::Int16> samples = data.samples();
 
-	for (int i = 0; i < 25; ++i)
-		_sid.write(i, info[i]);
-
-	_buffer_size = SAMPLE_RATE * _length;
-	std::vector<sf::Int16> samples(_buffer_size, 0);
-
-	_sid.write(1, 130);
-	_sid.write(5, 9);
-	_sid.write(15, 30);
-	_sid.write(24, 15);
-
-	int index = 0;
-	for (int l = 0; l < 12; ++l)
-	{
-		_sid.write(4, 22);
-
-		for (int i = 0; i < 1000; ++i)
-		{
-			_sid.clock(CLOCKS_PER_SAMPLE);
-			samples[index] = _sid.output();
-
-			++index;
-		}
-
-		_sid.write(4, 19);
-
-		for (int i = 0; i < 1000; ++i)
-		{
-			_sid.clock(CLOCKS_PER_SAMPLE);
-			samples[index] = _sid.output();
-
-			++index;
-		}
-	}
-
-	//RESID::cycle_count delta_t = util::get_cycles(_buffer_size);
-	//_sid.clock(delta_t, samples.data(), _buffer_size);
-	
-	for (int i = 0; i < 1024; ++i)
-		samples[i] = 0;
-
-	_buffer.loadFromSamples(samples.data(), _buffer_size, 1, SAMPLE_RATE);
+	_buffer.loadFromSamples(samples.data(), samples.size(), 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);
 }
 

@@ -107,7 +107,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>resid-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>resid-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>100000000</StackReserveSize>
@@ -160,13 +160,14 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="Evolution.h" />
+    <ClInclude Include="Heatmap.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="InfoForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="SoundGene.h" />
+    <ClInclude Include="SoundData.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>

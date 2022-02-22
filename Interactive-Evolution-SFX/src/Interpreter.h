@@ -11,7 +11,7 @@
 #include <map>
 #include <sstream>
 
-#include "SoundInfo.h"
+#include "SoundData.h"
 
 namespace IESFX
 {
@@ -21,8 +21,8 @@ namespace IESFX
 		Interpreter();
 		~Interpreter() = default;
 
-		void read_file(SoundInfo& sound, const std::string& filename);
-		void read_str(SoundInfo& sound, const std::string& str);
+		void read_file(SoundData* data, const std::string& filename);
+		void read_str(SoundData* data, const std::string& str);
 
 		void clear();
 
@@ -58,9 +58,12 @@ namespace IESFX
 		std::vector<std::string> _tokens;
 
 		std::string var_name; // Current evaluated variable that is to be assigned a value
-		std::map<std::string, int> variables;
+		std::map<std::string, size_t> variables;
 
-		SoundInfo* _sound;
+		std::map<size_t, std::vector<std::string>> _loops;
+		std::vector<size_t> _next;
+
+		SoundData* _data;
 
 	private:
 		Interpreter(const Interpreter& rhs) = delete;

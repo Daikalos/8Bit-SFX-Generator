@@ -21,21 +21,21 @@ Player::~Player()
 
 void Player::initialize()
 {
-	std::vector<SoundGene> infos;
+	std::vector<SoundData> datas;
 
 	for (int i = 0; i < _size; ++i)
 	{
-		SoundGene info;
+		SoundData data;
 
-		//for (int j = 0; j < 24; ++j)
-		//	info[j] = rand() % 80;
+		for (int j = 0; j < 24; ++j)
+			data.write(j, rand() % 80);
 
-		//info[24] = 13;
+		data.write(24, 13);
 
-		infos.push_back(info);
+		datas.push_back(data);
 	}
 
-	update(infos);
+	update(datas);
 }
 
 void Player::reset()
@@ -115,10 +115,10 @@ bool Player::save(String^ name)
 	return false;
 }
 
-void Player::update(const std::vector<SoundGene>& info)
+void Player::update(std::vector<SoundData>& data)
 {
-	for (int i = 0; i < info.size(); ++i)
-		_sounds[i].create_buffer(info.at(i));
+	for (int i = 0; i < data.size(); ++i)
+		_sounds[i].create_buffer(data.at(i));
 
 	for (int i = 0; i < _size; ++i)
 		_callback_update(&_sounds[i], i);

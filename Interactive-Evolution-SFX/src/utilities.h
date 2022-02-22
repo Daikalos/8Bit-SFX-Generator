@@ -27,6 +27,7 @@ namespace util
 		return round((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
 
+#if !NDEBUG
 	template<class T>
 	static void print(const T& output)
 	{
@@ -45,4 +46,5 @@ namespace util
 
 	static void print(const wchar_t* output) { print(std::wstring(output)); }
 	static void print(const char* output) { print(std::string(output)); }
+#endif
 }

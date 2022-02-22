@@ -6,7 +6,7 @@
 #include <resid/sid.h>
 
 #include "Config.h"
-#include "SoundGene.h"
+#include "SoundData.h"
 #include "Utilities.h"
 
 namespace IESFX
@@ -14,14 +14,14 @@ namespace IESFX
 	class Sound
 	{
 	public:
-		Sound();
-		~Sound();
+		Sound() = default;
+		~Sound() = default;
 
 		void reset();
 
 		// only create buffer after write
 		//
-		void create_buffer(const SoundGene& info);
+		void create_buffer(SoundData& data);
 
 		void load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 
@@ -31,8 +31,6 @@ namespace IESFX
 		const sf::Int16* buffer_samples() const { return _buffer.getSamples(); }
 		sf::Uint64 buffer_count() const { return _buffer.getSampleCount(); }
 
-		double length() const { return _length; }
-
 		void play();
 		void pause();
 		void stop();
@@ -40,12 +38,7 @@ namespace IESFX
 		bool save(const std::string& filename);
 
 	private:
-		size_t _length;
-		size_t _buffer_size;
-
 		sf::Sound _sound;
 		sf::SoundBuffer _buffer;
-
-		RESID::SID _sid;
 	};
 }
