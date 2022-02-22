@@ -13,61 +13,59 @@ namespace IESFX
 	class SoundData
 	{
 	public:
-		SoundData()
-		{
-			_sid.set_chip_model(CHIP_MODEL);
-
-			_sid.enable_filter(true);
-			_sid.enable_external_filter(true);
-		}
+		SoundData() { memset(reg, 0, sizeof(reg)); }
 		~SoundData() = default;
 
-		void write(short offset, short value)
-		{
-			_sid.write(offset, value);
-		}
+		unsigned int reg[25];
+
+		unsigned int& operator[](int i) { return reg[i]; }
+		unsigned int operator[](int i) const { return reg[i]; }
 
 		std::vector<sf::Int16> samples()
 		{
+			RESID::SID sid;
+
 			size_t buffer_size = SAMPLE_RATE * 1;
 			std::vector<sf::Int16> samples(buffer_size, 0);
 
-			//_sid.write(1, 130);
-			//_sid.write(5, 9);
-			//_sid.write(15, 30);
-			//_sid.write(24, 15);
+			{
+				sid.set_chip_model(CHIP_MODEL);
 
-			//int index = 0;
-			//for (int l = 0; l < 12; ++l)
-			//{
-			//	_sid.write(4, 22);
+				sid.enable_filter(true);
+				sid.enable_external_filter(true);
 
-			//	for (int i = 0; i < 1000; ++i)
-			//	{
-			//		_sid.clock(CLOCKS_PER_SAMPLE);
-			//		samples[index] = _sid.output();
+				for (int i = 0; i < 25; ++i)
+					sid.write(i, reg[i]);
+			}
 
-			//		++index;
-			//	}
+			sid.write(1, 130);
+			sid.write(5, 9);
+			sid.write(15, 30);
+			sid.write(24, 15);
 
-			//	_sid.write(l, 15);
+			int index = 0;
 
-			//	for (int i = 0; i < 1000; ++i)
-			//	{
-			//		_sid.clock(CLOCKS_PER_SAMPLE);
-			//		samples[index] = _sid.output();
+			sid.write(4, 21);
 
-			//		++index;
-			//	}
-			//}
+			{
+				RESID::cycle_count delta_t = util::get_cycles(1000 * CLOCKS_PER_SAMPLE);
+				index += sid.clock(delta_t, samples.data() + index, 1000 * CLOCKS_PER_SAMPLE);
+			}
 
-			RESID::cycle_count delta_t = util::get_cycles(buffer_size);
-			_sid.clock(delta_t, samples.data(), buffer_size);
+			sid.write(4, 20);
+
+			{
+				RESID::cycle_count delta_t = util::get_cycles(1000 * CLOCKS_PER_SAMPLE);
+				index += sid.clock(delta_t, samples.data() + index, 1000 * CLOCKS_PER_SAMPLE);
+			}
+
+			//RESID::cycle_count delta_t = util::get_cycles(buffer_size);
+			//_sid->clock(delta_t, samples->data(), buffer_size);
+
+			for (int i = 0; i < 1024; ++i)
+				samples[i] = 0;
 
 			return samples;
 		}
-
-	private:
-		RESID::SID _sid;
 	};
 }

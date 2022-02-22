@@ -107,11 +107,22 @@ void Interpreter::parse_PokeStmt()
         value = std::stoi(next_token);
     }
 
-    _data->write(index, value);
+
 }
 void Interpreter::parse_ForStmt()
 {
+    std::string next_token = peek();
+    if (is_variable(next_token))
+    {
+        consume(next_token);
+        if (peek() == "=")
+        {
+            var_name = next_token;
 
+            consume("=");
+            parse_AssgStmt();
+        }
+    }
 }
 void Interpreter::parse_NextStmt()
 {
