@@ -13,6 +13,7 @@
 #include "Config.h"
 #include "Utilities.h"
 #include "Evolution.h"
+#include "Interpreter.h"
 
 namespace IESFX
 {

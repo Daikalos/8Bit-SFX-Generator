@@ -70,12 +70,10 @@ void Interpreter::parse_Stmt()
         }
         else if (next_token == "poke")
             parse_PokeStmt();
-        else if (next_token == "for")
-            parse_ForStmt();
-        else if (next_token == "next")
-            parse_NextStmt();
+        else if (next_token == "sample")
+            parse_SampleStmt();
         else
-            throw std::runtime_error("'" + next_token + " is not a valid statement; expected: 'pokes', 'for', '=' or 'next'");
+            throw std::runtime_error("'" + next_token + " is not a valid statement; expected: 'poke' or 'sample'");
     }
     else
         throw std::runtime_error("syntax error");
@@ -91,42 +89,44 @@ void Interpreter::parse_PokeStmt()
 {
     std::string next_token = peek();
 
-    int index;
+    int offset = 0;
     {
         std::string next_token = peek();
         consume(next_token);
 
-        index = std::stoi(next_token);
+        if (is_integer(next_token))
+            offset = std::stoi(next_token);
+        else
+            throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
     }
 
-    int value;
+    int value = 0;
     {
         std::string next_token = peek();
         consume(next_token);
 
-        value = std::stoi(next_token);
+        if (is_integer(next_token))
+            value = std::stoi(next_token);
+        else
+            throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
     }
 
-
+    _data->enqueue_write(offset, value);
 }
-void Interpreter::parse_ForStmt()
+void Interpreter::parse_SampleStmt()
 {
     std::string next_token = peek();
-    if (is_variable(next_token))
+    consume(next_token);
+
+    if (is_integer(next_token))
     {
-        consume(next_token);
-        if (peek() == "=")
-        {
-            var_name = next_token;
+        size_t size = std::stoi(next_token);
 
-            consume("=");
-            parse_AssgStmt();
-        }
+        _data->_size += size;
+        _data->enqueue_sample(size);
     }
-}
-void Interpreter::parse_NextStmt()
-{
-
+    else
+        throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
 }
 
 int Interpreter::parse_MathExp()

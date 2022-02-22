@@ -16,26 +16,31 @@ Player::Player(Evolution* evolution, size_t size, double volume)
 Player::~Player()
 {
 	delete[] _sounds;
+
 	_shutdown = true;
+	_thread->Join();
 }
 
 void Player::initialize()
 {
-	std::vector<SoundData> datas;
+	std::vector<SoundData> data;
+	Interpreter interpreter;
 
 	for (int i = 0; i < _size; ++i)
 	{
-		SoundData data;
+		SoundData d;
+
+		interpreter.read_file(&d, "../test.txt");
 
 		//for (int j = 0; j < 24; ++j)
 		//	data.write(j, rand() % 80);
 
 		//data.write(24, 13);
 
-		datas.push_back(data);
+		data.push_back(d);
 	}
 
-	update(datas);
+	update(data);
 }
 
 void Player::reset()

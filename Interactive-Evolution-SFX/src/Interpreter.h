@@ -40,8 +40,7 @@ namespace IESFX
 		void parse_Stmt();
 		void parse_AssgStmt();
 		void parse_PokeStmt();
-		void parse_ForStmt();
-		void parse_NextStmt();
+		void parse_SampleStmt();
 
 		int parse_MathExp();
 		int parse_SumExp();
@@ -59,9 +58,6 @@ namespace IESFX
 
 		std::string var_name; // Current evaluated variable that is to be assigned a value
 		std::map<std::string, size_t> variables;
-
-		std::map<size_t, std::vector<std::string>> _loops;
-		std::vector<size_t> _next;
 
 		SoundData* _data;
 

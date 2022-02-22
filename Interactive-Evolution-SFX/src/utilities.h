@@ -26,6 +26,10 @@ namespace util
 	{
 		return round((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
+	static size_t get_size(size_t size)
+	{
+		return size * IESFX::CLOCKS_PER_SAMPLE;
+	}
 
 #if !NDEBUG
 	template<class T>

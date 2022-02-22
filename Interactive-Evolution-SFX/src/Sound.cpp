@@ -11,9 +11,9 @@ void Sound::create_buffer(SoundData& data)
 {
 	reset();
 
-	std::vector<sf::Int16> samples = data.samples();
+	std::vector<sf::Int16> buffer(data.release());
 
-	_buffer.loadFromSamples(samples.data(), samples.size(), 1, SAMPLE_RATE);
+	_buffer.loadFromSamples(buffer.data(), buffer.size(), 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);
 }
 
