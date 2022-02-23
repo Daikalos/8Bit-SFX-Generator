@@ -4,6 +4,7 @@
 
 #include "Sound.h"
 #include "SoundData.h"
+#include "SoundGene.h"
 
 namespace IESFX
 {

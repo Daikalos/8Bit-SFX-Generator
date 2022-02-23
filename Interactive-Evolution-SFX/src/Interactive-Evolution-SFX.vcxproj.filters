@@ -77,5 +77,11 @@
     <ClInclude Include="Heatmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SoundGene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpretable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

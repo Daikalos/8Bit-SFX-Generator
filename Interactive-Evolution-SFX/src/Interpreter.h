@@ -11,7 +11,10 @@
 #include <map>
 #include <sstream>
 
+#include "Interpretable.h"
+
 #include "SoundData.h"
+#include "SoundGene.h"
 
 namespace IESFX
 {
@@ -21,13 +24,19 @@ namespace IESFX
 		Interpreter();
 		~Interpreter() = default;
 
-		void read_file(SoundData* data, const std::string& filename);
-		void read_str(SoundData* data, const std::string& str);
+		void read_file(Interpretable* ptr, const std::string& filename);
+		void read_str(Interpretable* ptr, const std::string& str);
 
 		void clear();
 
 	private:
 		void tokenize(std::queue<std::string>& lines);
+
+		template<class T>
+		T* cast()
+		{
+			return dynamic_cast<T*>(_ptr);
+		}
 
 	private:
 		void evaluate(const std::vector<std::string>& tokens);
@@ -56,10 +65,14 @@ namespace IESFX
 		size_t _position;
 		std::vector<std::string> _tokens;
 
-		std::string var_name; // Current evaluated variable that is to be assigned a value
-		std::map<std::string, size_t> variables;
+		std::string _var; // Current evaluated variable that is to be assigned a value
+		std::map<std::string, size_t> _variables;
 
+		Interpretable* _ptr;
 		SoundData* _data;
+		SoundGene* _gene;
+
+		int _line;
 
 	private:
 		Interpreter(const Interpreter& rhs) = delete;

@@ -161,6 +161,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Evolution.h" />
     <ClInclude Include="Heatmap.h" />
+    <ClInclude Include="Interpretable.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="InfoForm.h">
       <FileType>CppForm</FileType>
@@ -168,6 +169,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundData.h" />
+    <ClInclude Include="SoundGene.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>

@@ -9,7 +9,7 @@ Interpreter::Interpreter()
 
 void Interpreter::clear()
 {
-    variables.clear();
+    _variables.clear();
 }
 
 void Interpreter::evaluate(const std::vector<std::string>& tokens)
@@ -17,14 +17,7 @@ void Interpreter::evaluate(const std::vector<std::string>& tokens)
     _tokens = tokens;
     _position = 0;
 
-    try
-    {
-        parse_Stmt();
-    }
-    catch (std::exception exception)
-    {
-        std::cout << exception.what() << std::endl;
-    }
+    parse_Stmt();
 }
 
 std::string Interpreter::peek()
@@ -63,7 +56,7 @@ void Interpreter::parse_Stmt()
         consume(next_token);
         if (peek() == "=")
         {
-            var_name = next_token;
+            _var = next_token;
 
             consume("=");
             parse_AssgStmt();
@@ -80,16 +73,16 @@ void Interpreter::parse_Stmt()
 }
 void Interpreter::parse_AssgStmt()
 {
-    if (var_name.empty())
+    if (_var.empty())
         throw std::runtime_error("variable name is undefined");
 
-    variables[var_name] = parse_MathExp();
+    _variables[_var] = parse_MathExp();
 }
 void Interpreter::parse_PokeStmt()
 {
     std::string next_token = peek();
 
-    int offset = 0;
+    unsigned int offset = 0;
     {
         std::string next_token = peek();
         consume(next_token);
@@ -100,7 +93,7 @@ void Interpreter::parse_PokeStmt()
             throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
     }
 
-    int value = 0;
+    unsigned int value = 0;
     {
         std::string next_token = peek();
         consume(next_token);
@@ -111,7 +104,10 @@ void Interpreter::parse_PokeStmt()
             throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
     }
 
-    _data->enqueue(std::bind(&SoundData::write, _data, offset, value));
+    if (_data != nullptr)
+        _data->enqueue(std::bind(&SoundData::write, _data, offset, value));
+    if (_gene != nullptr)
+        _gene->set({ _line++, offset, value });
 }
 void Interpreter::parse_SampleStmt()
 {
@@ -122,8 +118,13 @@ void Interpreter::parse_SampleStmt()
     {
         size_t size = std::stoi(next_token);
 
-        _data->_size += size;
-        _data->enqueue(std::bind(&SoundData::sample, _data, size));
+        if (_data != nullptr)
+        {
+            _data->_size += size;
+            _data->enqueue(std::bind(&SoundData::sample, _data, size));
+        }
+        if (_gene != nullptr)
+            _gene->set({ _line++, size });
     }
     else
         throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
@@ -226,8 +227,8 @@ bool Interpreter::is_variable(const std::string& token)
 
 int Interpreter::get_variable(const std::string& name)
 {
-    if (variables.find(name) != variables.end())
-        return variables[name];
+    if (_variables.find(name) != _variables.end())
+        return _variables[name];
     else
         throw std::runtime_error("variable '" + name + "' is not defined");
 }
@@ -265,9 +266,13 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
     }
 }
 
-void Interpreter::read_file(SoundData* data, const std::string& filename)
+void Interpreter::read_file(Interpretable* ptr, const std::string& filename)
 {
-    _data = data;
+    _ptr = ptr;
+    _data = cast<SoundData>();
+    _gene = cast<SoundGene>();
+
+    _line = 0;
 
     std::queue<std::string> lines;
 
@@ -287,9 +292,13 @@ void Interpreter::read_file(SoundData* data, const std::string& filename)
 
     tokenize(lines);
 }
-void Interpreter::read_str(SoundData* data, const std::string& str)
+void Interpreter::read_str(Interpretable* ptr, const std::string& str)
 {
-    _data = data;
+    _ptr = ptr;
+    _data = cast<SoundData>();
+    _gene = cast<SoundGene>();
+
+    _line = 0;
 
     std::queue<std::string> lines;
 

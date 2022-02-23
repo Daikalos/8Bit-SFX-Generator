@@ -1,23 +1,22 @@
 #pragma once
 
 #include <resid/sid.h>
-#include <string>
+#include <SFML/Config.hpp>
 #include <vector>
 #include <functional>
 #include <algorithm>
-#include <queue>
-#include <SFML/Config.hpp>
 
 #include "Config.h"
 #include "Utilities.h"
+#include "Interpretable.h"
 
 namespace IESFX
 {
-	class SoundData
+	class SoundData : public Interpretable
 	{
 	public:
 		SoundData() 
-			: _sid(new RESID::SID()), _size(0), _index(0), _queue(0) 
+			: _sid(new RESID::SID()), _size(0), _index(0) 
 		{ 
 			_sid->set_chip_model(CHIP_MODEL);
 
@@ -32,16 +31,15 @@ namespace IESFX
 		std::vector<sf::Int16> buffer()
 		{
 			_sid->reset();
+			_samples.clear();
 
-			size_t buffer_size = util::get_size(_size);
-			_samples.resize(buffer_size, 0);
-
+			_samples.resize(util::get_size(_size), 0);
 			_index = 0;
 
-			for (auto& func : actions)
-				func();
+			for (auto& comm : _commands)
+				comm();
 
-			size_t length = (_size < 1024LLU) ? _size : 1024LLU;
+			size_t length = std::min<size_t>(_samples.size(), 1024LLU);
 			for (size_t i = 0; i < length; ++i)
 				_samples[i] = 0;
 
@@ -50,7 +48,7 @@ namespace IESFX
 
 		void enqueue(std::function<void()> action)
 		{
-			actions.push_back(action);
+			_commands.push_back(action);
 		}
 
 		void write(RESID::reg8 offset, RESID::reg8 value)
@@ -69,9 +67,9 @@ namespace IESFX
 	private:
 		RESID::SID* _sid;
 
-		std::vector<std::function<void()>> actions;
+		std::vector<std::function<void()>> _commands;
+		size_t _index;
 
 		std::vector<sf::Int16> _samples;
-		size_t _index, _queue;
 	};
 }

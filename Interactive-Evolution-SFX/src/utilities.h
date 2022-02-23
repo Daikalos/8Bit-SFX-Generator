@@ -1,10 +1,11 @@
 #pragma once
 
+#if !NDEBUG
+
 #include <Windows.h>
-#include <string>
 #include <codecvt>
-#include <type_traits>
-#include <sstream>
+
+#endif
 
 #include "Config.h"
 
