@@ -51,7 +51,7 @@ namespace IESFX
 			_commands.push_back(action);
 		}
 
-		void write(RESID::reg8 offset, RESID::reg8 value)
+		void poke(RESID::reg8 offset, RESID::reg8 value)
 		{
 			_sid->write(offset, value);
 		}
@@ -59,6 +59,16 @@ namespace IESFX
 		{
 			RESID::cycle_count delta_t = util::get_cycles(util::get_size(size));
 			_index += _sid->clock(delta_t, _samples.data() + _index, util::get_size(size));
+		}
+
+		void read_poke(RESID::reg8 offset, RESID::reg8 value) override
+		{
+			enqueue(std::bind(&SoundData::poke, this, offset, value));
+		}
+		void read_sample(size_t size) override
+		{
+			_size += size;
+			enqueue(std::bind(&SoundData::sample, this, size));
 		}
 
 	public:

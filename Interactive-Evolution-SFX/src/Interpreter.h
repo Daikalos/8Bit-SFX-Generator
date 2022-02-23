@@ -32,12 +32,6 @@ namespace IESFX
 	private:
 		void tokenize(std::queue<std::string>& lines);
 
-		template<class T>
-		T* cast()
-		{
-			return dynamic_cast<T*>(_ptr);
-		}
-
 	private:
 		void evaluate(const std::vector<std::string>& tokens);
 
@@ -69,10 +63,6 @@ namespace IESFX
 		std::map<std::string, size_t> _variables;
 
 		Interpretable* _ptr;
-		SoundData* _data;
-		SoundGene* _gene;
-
-		int _line;
 
 	private:
 		Interpreter(const Interpreter& rhs) = delete;

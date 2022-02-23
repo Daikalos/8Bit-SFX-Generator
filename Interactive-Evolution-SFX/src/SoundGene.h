@@ -15,18 +15,16 @@ namespace IESFX
 {
 	struct Command
 	{
-		Command(int i) 
-			: index(i) { }
+		Command() { }
+		virtual ~Command() { }
 
 		virtual std::string print() const = 0;
-
-		int index;
 	};
 
 	struct Poke : public Command
 	{ 
-		Poke(int i, RESID::reg8 o, RESID::reg8 v) 
-			: Command(i), offset(o), value(v) { }
+		Poke(RESID::reg8 o, RESID::reg8 v) 
+			: offset(o), value(v) { }
 
 		std::string print() const override
 		{
@@ -39,8 +37,7 @@ namespace IESFX
 	};
 	struct Sample : public Command
 	{ 
-		Sample(int i, size_t s)
-			: Command(i), size(s) { }
+		Sample(size_t s) : size(s) { }
 
 		std::string print() const override
 		{
@@ -53,7 +50,7 @@ namespace IESFX
 	class SoundGene : public Interpretable
 	{
 	public:
-		SoundGene() = default;
+		SoundGene() : _line(0) { };
 		~SoundGene() = default;
 
 		auto& get(int index)
@@ -61,13 +58,21 @@ namespace IESFX
 			return _gene[index];
 		}
 
-		void set(Poke&& poke)
+		void set(int index, Poke&& poke)
 		{
-			_gene[poke.index] = std::make_unique<Poke>(poke);
+			_gene[index] = std::make_unique<Poke>(poke);
 		}
-		void set(Sample&& sample)
+		void set(int index, Sample&& sample)
 		{
-			_gene[sample.index] = std::make_unique<Sample>(sample);
+			_gene[index] = std::make_unique<Sample>(sample);
+		}
+		void read_poke(unsigned int offset, unsigned int value) override
+		{
+			set(_line++, { offset, value });
+		}
+		void read_sample(size_t size) override
+		{
+			set(_line++, { size });
 		}
 
 		void swap(int x, int y)
@@ -87,5 +92,6 @@ namespace IESFX
 
 	private:
 		std::map<int, std::unique_ptr<Command>> _gene;
+		int _line;
 	};
 }
