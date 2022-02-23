@@ -38,7 +38,8 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
-	private: System::ComponentModel::Container ^components;
+	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
+	private: System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -56,6 +57,7 @@ namespace IESFX
 			this->exportButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutateButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->soundWave = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
+			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			this->stripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->soundWave))->BeginInit();
 			this->SuspendLayout();
@@ -171,7 +173,7 @@ namespace IESFX
 			series1->BorderColor = System::Drawing::Color::Black;
 			series1->BorderWidth = 2;
 			series1->ChartArea = L"ChartArea1";
-			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Spline;
+			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::FastLine;
 			series1->Color = System::Drawing::Color::DodgerBlue;
 			series1->Legend = L"Legend1";
 			series1->Name = L"Sound";

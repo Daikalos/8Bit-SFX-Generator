@@ -39,9 +39,11 @@ namespace IESFX
 			for (auto& comm : _commands)
 				comm();
 
+#if !_DEBUG
 			size_t length = std::min<size_t>(_samples.size(), 1024LLU);
 			for (size_t i = 0; i < length; ++i)
 				_samples[i] = 0;
+#endif
 
 			return _samples;
 		}

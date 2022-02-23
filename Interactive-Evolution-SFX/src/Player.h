@@ -46,7 +46,7 @@ namespace IESFX
 
 		void update(std::vector<SoundData>& info);
 
-		int position() { return _position; }
+		size_t position() { return _position; }
 		bool active() { return _is_playing; }
 
 		Sound* operator[](int i)

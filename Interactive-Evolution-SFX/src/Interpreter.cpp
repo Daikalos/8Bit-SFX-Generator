@@ -215,7 +215,7 @@ bool Interpreter::is_variable(const std::string& token)
     return std::regex_match(token, std::regex("[a-zA-z][a-zA-z0-9]*"));
 }
 
-int Interpreter::get_variable(const std::string& name)
+size_t Interpreter::get_variable(const std::string& name)
 {
     if (_variables.find(name) != _variables.end())
         return _variables[name];

@@ -3,17 +3,15 @@
 #include <iostream>
 #include <tchar.h>
 
+#include <resid/sid.h>
+#include <msclr/marshal_cppstd.h>
+
 #include "utilities.h"
 #include "Player.h"
 #include "SoundUC.h"
 #include "InfoForm.h"
 #include "Evolution.h"
-
 #include "Heatmap.h"
-
-#include <resid/sid.h>
-
-#include <msclr/marshal_cppstd.h>
 
 namespace IESFX
 {
@@ -31,13 +29,13 @@ namespace IESFX
 		{
 			InitializeComponent();
 
-			srand((unsigned)time(NULL));
-
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
 
 			_color = Color::White;
 			_prev = 0;
+
+			heatmap();
 		}
 
 	protected:
@@ -483,7 +481,7 @@ namespace IESFX
 		}
 		void player_update(Sound* sound, int i)
 		{
-			size_t offset = 100;
+			size_t offset = 50;
 
 			size_t size = sound->buffer_count();
 			array<short>^ samples = gcnew array<short>(size / offset);

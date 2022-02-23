@@ -53,7 +53,7 @@ namespace IESFX
 		bool is_integer(const std::string& token);
 		bool is_variable(const std::string& token);
 
-		int get_variable(const std::string& name);
+		size_t get_variable(const std::string& name);
 
 	private:
 		size_t _position;
