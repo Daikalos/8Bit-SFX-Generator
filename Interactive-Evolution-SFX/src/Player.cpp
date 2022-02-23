@@ -23,22 +23,11 @@ Player::~Player()
 
 void Player::initialize()
 {
-	std::vector<SoundData> data;
+	std::vector<SoundData> data(_size);
 	Interpreter interpreter;
 
 	for (int i = 0; i < _size; ++i)
-	{
-		SoundData d;
-
-		interpreter.read_file(&d, "../test.txt");
-
-		//for (int j = 0; j < 24; ++j)
-		//	data.write(j, rand() % 80);
-
-		//data.write(24, 13);
-
-		data.push_back(d);
-	}
+		interpreter.read_file(&data[i], "../test.txt");
 
 	update(data);
 }

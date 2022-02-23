@@ -111,7 +111,7 @@ void Interpreter::parse_PokeStmt()
             throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
     }
 
-    _data->enqueue_write(offset, value);
+    _data->enqueue(std::bind(&SoundData::write, _data, offset, value));
 }
 void Interpreter::parse_SampleStmt()
 {
@@ -123,7 +123,7 @@ void Interpreter::parse_SampleStmt()
         size_t size = std::stoi(next_token);
 
         _data->_size += size;
-        _data->enqueue_sample(size);
+        _data->enqueue(std::bind(&SoundData::sample, _data, size));
     }
     else
         throw std::runtime_error("the given expression: '" + next_token + "' is not valid");
