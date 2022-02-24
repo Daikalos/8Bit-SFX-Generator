@@ -24,6 +24,8 @@ namespace IESFX
 		Interpreter();
 		~Interpreter() = default;
 
+		std::vector<SoundGene> read_file(const std::string& filename);
+
 		void read_file(Interpretable* ptr, const std::string& filename);
 		void read_str(Interpretable* ptr, const std::string& str);
 

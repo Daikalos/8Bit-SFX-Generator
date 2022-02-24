@@ -10,6 +10,7 @@ Interpreter::Interpreter()
 void Interpreter::clear()
 {
     _variables.clear();
+    _ptr = nullptr;
 }
 
 void Interpreter::evaluate(const std::vector<std::string>& tokens)
@@ -249,11 +250,45 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
         if (!stmt.empty())
             tokens.push_back(stmt);
 
-        if (!tokens.empty())
+        if (!tokens.empty() && tokens.front() != "//")
             evaluate(tokens);
 
         lines.pop();
     }
+}
+
+std::vector<SoundGene> Interpreter::read_file(const std::string& filename)
+{
+    clear();
+
+    std::vector<SoundGene> result;
+    std::queue<std::string> lines;
+
+    std::string line;
+    std::ifstream file(filename);
+    if (file.is_open())
+    {
+        while (file.good())
+        {
+            getline(file, line);
+            if (line != "RUN")
+                lines.push(line);
+            else
+            {
+                result.push_back(SoundGene());
+                _ptr = &result[result.size() - 1];
+
+                tokenize(lines);
+
+                std::queue<std::string>().swap(lines);
+            }
+        }
+        file.close();
+    }
+    else
+        throw std::runtime_error("unable to open file");
+
+    return result;
 }
 
 void Interpreter::read_file(Interpretable* ptr, const std::string& filename)
