@@ -35,7 +35,7 @@ namespace IESFX
 			_color = Color::White;
 			_prev = 0;
 
-			heatmap();
+			//heatmap();
 		}
 
 	protected:
@@ -65,12 +65,15 @@ namespace IESFX
 	private: System::Windows::Forms::Label^ mutationRateLabel;
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
-	private: System::Windows::Forms::Label^ label1;
-	private: System::Windows::Forms::Label^ label2;
+
+
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
 	private: System::Windows::Forms::Panel^ volumePanel;
 
 	private: System::Windows::Forms::Panel^ modifiersPanel;
+	private: System::Windows::Forms::PictureBox^ pictureBox1;
+	private: System::Windows::Forms::PictureBox^ pictureBox2;
+
 	private: System::ComponentModel::Container^ components;
 	
 #pragma region Windows Form Designer generated code
@@ -99,10 +102,10 @@ namespace IESFX
 			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationSizeLabel = (gcnew System::Windows::Forms::Label());
 			this->volumeSlider = (gcnew System::Windows::Forms::TrackBar());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->modifiersPanel = (gcnew System::Windows::Forms::Panel());
 			this->volumePanel = (gcnew System::Windows::Forms::Panel());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -112,6 +115,8 @@ namespace IESFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->BeginInit();
 			this->modifiersPanel->SuspendLayout();
 			this->volumePanel->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -165,7 +170,7 @@ namespace IESFX
 			// 
 			this->helpButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"helpButton.Image")));
 			this->helpButton->Name = L"helpButton";
-			this->helpButton->Size = System::Drawing::Size(180, 22);
+			this->helpButton->Size = System::Drawing::Size(99, 22);
 			this->helpButton->Text = L"Help";
 			this->helpButton->Click += gcnew System::EventHandler(this, &MainForm::helpButton_Click);
 			// 
@@ -353,44 +358,16 @@ namespace IESFX
 			// 
 			// volumeSlider
 			// 
-			this->volumeSlider->Location = System::Drawing::Point(-1, 20);
+			this->volumeSlider->Location = System::Drawing::Point(-1, 39);
 			this->volumeSlider->Margin = System::Windows::Forms::Padding(0);
-			this->volumeSlider->Maximum = 26;
+			this->volumeSlider->Maximum = 50;
 			this->volumeSlider->Name = L"volumeSlider";
 			this->volumeSlider->Orientation = System::Windows::Forms::Orientation::Vertical;
-			this->volumeSlider->Size = System::Drawing::Size(45, 350);
+			this->volumeSlider->Size = System::Drawing::Size(45, 508);
 			this->volumeSlider->TabIndex = 10;
 			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
-			this->volumeSlider->Value = 8;
+			this->volumeSlider->Value = 15;
 			this->volumeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::volumeSlider_ValueChanged);
-			// 
-			// label1
-			// 
-			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->label1->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->label1->Location = System::Drawing::Point(-1, 365);
-			this->label1->Margin = System::Windows::Forms::Padding(0);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(43, 22);
-			this->label1->TabIndex = 11;
-			this->label1->Text = L"Off";
-			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
-			// 
-			// label2
-			// 
-			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->label2->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->label2->Location = System::Drawing::Point(0, 2);
-			this->label2->Margin = System::Windows::Forms::Padding(0);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(42, 22);
-			this->label2->TabIndex = 12;
-			this->label2->Text = L"Max";
-			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// modifiersPanel
 			// 
@@ -411,13 +388,35 @@ namespace IESFX
 			// 
 			this->volumePanel->BackColor = System::Drawing::SystemColors::WindowFrame;
 			this->volumePanel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->volumePanel->Controls->Add(this->pictureBox2);
+			this->volumePanel->Controls->Add(this->pictureBox1);
 			this->volumePanel->Controls->Add(this->volumeSlider);
-			this->volumePanel->Controls->Add(this->label2);
-			this->volumePanel->Controls->Add(this->label1);
 			this->volumePanel->Location = System::Drawing::Point(625, 36);
 			this->volumePanel->Name = L"volumePanel";
-			this->volumePanel->Size = System::Drawing::Size(43, 395);
+			this->volumePanel->Size = System::Drawing::Size(43, 590);
 			this->volumePanel->TabIndex = 14;
+			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(3, 1);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(35, 35);
+			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox1->TabIndex = 11;
+			this->pictureBox1->TabStop = false;
+			// 
+			// pictureBox2
+			// 
+			this->pictureBox2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->pictureBox2->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox2.Image")));
+			this->pictureBox2->Location = System::Drawing::Point(3, 550);
+			this->pictureBox2->Name = L"pictureBox2";
+			this->pictureBox2->Size = System::Drawing::Size(35, 35);
+			this->pictureBox2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox2->TabIndex = 12;
+			this->pictureBox2->TabStop = false;
 			// 
 			// MainForm
 			// 
@@ -458,6 +457,8 @@ namespace IESFX
 			this->modifiersPanel->PerformLayout();
 			this->volumePanel->ResumeLayout(false);
 			this->volumePanel->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -486,7 +487,7 @@ namespace IESFX
 			size_t size = sound->buffer_count();
 			array<short>^ samples = gcnew array<short>(size / offset);
 
-			for (size_t i = 0, j = 0; j < size; ++i, j += offset)
+			for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
 				samples[i] = sound->buffer_samples()[j];
 
 			_soundUCs[i]->add_data(samples);

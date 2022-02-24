@@ -27,7 +27,20 @@ void Player::initialize()
 	Interpreter interpreter;
 
 	for (int i = 0; i < _size; ++i)
-		interpreter.read_file(&data[i], "../test.txt");
+	{
+		//interpreter.read_file(&data[i], "../test.txt");
+
+		data[i].read_poke(24, 15); // always volume on
+
+		size_t commands = util::random(0, 128);
+		for (size_t j = 0; j < commands; ++j)
+		{
+			if (util::random(0.0, 1.0) > 0.1)
+				data[i].read_poke(util::random(0, 23), util::random(0, 200));
+			else
+				data[i].read_sample(util::random(0, 1000));
+		}
+	}
 
 	update(data);
 }
@@ -56,6 +69,8 @@ void Player::set_is_playing(bool value)
 {
 	if (value && _is_playing)
 		return;
+
+	initialize();
 
 	value ? play() : pause();
 	_is_playing = value;
