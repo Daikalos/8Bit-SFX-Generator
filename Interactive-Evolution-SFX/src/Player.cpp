@@ -36,7 +36,7 @@ void Player::initialize()
 		for (size_t j = 0; j < commands; ++j)
 		{
 			if (util::random(0.0, 1.0) > 0.1)
-				data[i].read_poke(util::random(0, 23), util::random(0, 200));
+				data[i].read_poke(util::random(0, 23), util::random(0, 100));
 			else
 				data[i].read_sample(util::random(0, 1000));
 		}

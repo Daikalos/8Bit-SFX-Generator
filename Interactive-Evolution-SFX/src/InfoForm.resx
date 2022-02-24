@@ -300,7 +300,7 @@ Next presents new candidates in the current configuration.
 
 Mutation rate and size modifies the randomness of the process. Smaller values make generated sounds less varied and vice versa.
 
-As the volume can get pretty high, I would recommend not turning it up too much.
+As the volume can become pretty loud, I would recommend not turning it up too much.
 
 When you are satisfied with a sound effect, you can export it as a .wav file on the computer.
 </value>
