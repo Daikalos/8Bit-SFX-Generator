@@ -6,7 +6,6 @@
 #include <numeric>
 #include <utility>
 #include <memory>
-#include <map>
 #include <sstream>
 
 #include "Interpretable.h"
@@ -50,7 +49,7 @@ namespace IESFX
 	class SoundGene : public Interpretable
 	{
 	public:
-		SoundGene() : _line(0) { };
+		SoundGene() = default;
 		~SoundGene() = default;
 
 		auto& get(int index)
@@ -66,13 +65,22 @@ namespace IESFX
 		{
 			_gene[index] = std::make_unique<Sample>(sample);
 		}
+		void push(Poke&& poke)
+		{
+			_gene.push_back(std::make_unique<Poke>(poke));
+		}
+		void push(Sample&& sample)
+		{
+			_gene.push_back(std::make_unique<Sample>(sample));
+		}
+
 		void read_poke(unsigned int offset, unsigned int value) override
 		{
-			set(_line++, { offset, value });
+			push({ offset, value });
 		}
 		void read_sample(size_t size) override
 		{
-			set(_line++, { size });
+			push({ size });
 		}
 
 		void swap(int x, int y)
@@ -85,13 +93,12 @@ namespace IESFX
 			std::string output;
 
 			for (const auto& s : _gene)
-				output += s.second->print() + '\n';
+				output += s->print() + '\n';
 
 			return output;
 		}
 
 	private:
-		std::map<int, std::unique_ptr<Command>> _gene;
-		int _line;
+		std::vector<std::unique_ptr<Command>> _gene;
 	};
 }

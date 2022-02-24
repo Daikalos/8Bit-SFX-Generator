@@ -3,6 +3,7 @@
 #if _DEBUG
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <random>
 
 #include "Sound.h"
@@ -32,51 +33,107 @@ namespace IESFX
 		return sf::Color(r, g, b);
 	}
 
+	static void plot_line(int* heatmap, int width, int x0, int y0, int x1, int y1, int dx, int dy)
+	{
+		if (x0 == x1 && y0 == y1)
+			return;
+
+		if (dx > dy)
+		{
+			++heatmap[x0 + y0 * width];
+
+			int pk = 2 * dy - dx;
+			for (int i = 0; i < dx; ++i)
+			{
+				x0 < x1 ? ++x0 : --x0;
+				if (pk < 0)
+					pk += 2 * dy;
+				else
+				{
+					y0 < y1 ? ++y0 : --y0;
+					pk += 2 * dy - 2 * dx;
+				}
+				++heatmap[x0 + y0 * width];
+			}
+		}
+		else
+		{
+			++heatmap[x0 + y0 * width];
+
+			int pk = 2 * dx - dy;
+			for (int i = 0; i < dy; ++i)
+			{
+				y0 < y1 ? ++y0 : --y0;
+				if (pk < 0)
+					pk += 2 * dx;
+				else
+				{
+					x0 < x1 ? ++x0 : --x0;
+					pk += 2 * dx - 2 * dy;
+				}
+				++heatmap[x0 + y0 * width];
+			}
+		}
+	}
+
 	static void heatmap()
 	{
 		const size_t width = 1024;
 		const size_t height = 1024;
 
-		const size_t max = 10;
+		const sf::Int16 bounds_height = 17000;
+		const size_t bounds_width = SAMPLE_RATE * 1.5;
 
-		const sf::Int16 bounds_height = 700;
-		const size_t bounds_width = SAMPLE_RATE;
+		const size_t size = 10000;
 
-		const size_t size = 1000;
+		double max = 0;
 
 		int* heatmap = new int[(width + 1) * (height + 1)];
 		memset(heatmap, 0, sizeof(heatmap[0]) * (width + 1) * (height + 1));
 
-		std::vector<SoundData> data(size);
 		Interpreter interpreter;
-
 		for (size_t i = 0; i < size; ++i)
 		{
-			//interpreter.read_file(&data[i], "../test.txt");
+			SoundData data;
 
-			data[i].read_poke(24, 15); // always volume on
+			//interpreter.read_file(&data, "../test.txt");
 
-			size_t commands = util::random(0, 64);
+			data.read_poke(24, 15); // always volume on
+
+			size_t commands = util::random(0, 128);
 			for (size_t j = 0; j < commands; ++j)
 			{
-				if (util::random(0.0, 1.0) > 0.15)
-					data[i].read_poke(util::random(0, 23), util::random(0, 200));
+				if (util::random(0.0, 1.0) > 0.1)
+					data.read_poke(util::random(0, 23), util::random(0, 200));
 				else
-					data[i].read_sample(util::random(250, 750));
+					data.read_sample(util::random(250, 1000));
 			}
 
-			std::vector<sf::Int16> buffer = data[i].buffer();
-			size_t buffer_size = std::min<size_t>(buffer.size(), bounds_width);
+			std::vector<sf::Int16> buffer = data.buffer();
 
-			for (size_t j = 0; j < buffer_size; j += (buffer_size / width))
+			int x0 = 0, y0 = 0;
+			for (int x1 = 0; x1 < width; ++x1)
 			{
-				if (buffer[j] < -bounds_height || buffer[j] > bounds_height)
+				int j = (int)util::map(x1, 0, (int)width, 0, (int)buffer.size());
+
+				if (j >= buffer.size() || std::abs(buffer[j]) > bounds_height)
 					continue;
 
-				int x = (j / (double)bounds_width) * width;
-				int y = util::scale<sf::Int16>(buffer[j], -bounds_height, bounds_height) * height;
+				int y1 = (1.0 - util::scale<sf::Int16>(buffer[j], -bounds_height, bounds_height)) * height;
 
-				++heatmap[x + y * width];
+				if (x1 > 0)
+				{
+					//int dx = std::abs(x1 - x0);
+					//int dy = std::abs(y1 - y0);
+					//plot_line(heatmap, width, x0, y0, x1, y1, dx, dy);
+
+					bool dir = (y0 < y1);
+					for (int y = y0; dir ? y < y1 : y > y1; dir ? ++y : --y)
+						++heatmap[x0 + y * width];
+				}
+
+				x0 = x1;
+				y0 = y1;
 			}
 		}
 
@@ -87,7 +144,18 @@ namespace IESFX
 		{
 			for (size_t y = 0; y < height; ++y)
 			{
-				image.setPixel(x, y, gradient(heatmap[x + y * width] / (double)max));
+				if (heatmap[x + y * width] > max)
+					max = heatmap[x + y * width];
+			}
+		}
+
+		max = std::pow(max, 0.6);
+
+		for (size_t x = 0; x < width; ++x)
+		{
+			for (size_t y = 0; y < height; ++y)
+			{
+				image.setPixel(x, y, gradient(heatmap[x + y * width] / max));
 			}
 		}
 
