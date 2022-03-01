@@ -23,26 +23,28 @@ Player::~Player()
 
 void Player::initialize()
 {
-	std::vector<SoundData> data(_size);
+	std::vector<SoundGene> genes(_size);
 	Interpreter interpreter;
 
 	for (int i = 0; i < _size; ++i)
 	{
 		//interpreter.read_file(&data[i], "../test.txt");
 
-		data[i].read_poke(24, 15); // always volume on
+		genes[i].push({ 24, 15 }); // always volume on
 
 		size_t commands = util::random(0, 128);
 		for (size_t j = 0; j < commands; ++j)
 		{
 			if (util::random(0.0, 1.0) > 0.1)
-				data[i].read_poke(util::random(0, 23), util::random(0, 100));
+				genes[i].push({ 
+					util::random<RESID::reg8>(0, 23), 
+					util::random<RESID::reg8>(0, 100) });
 			else
-				data[i].read_sample(util::random(0, 1000));
+				genes[i].push({ util::random<size_t>(0, 1000) });
 		}
 	}
 
-	update(data);
+	update(genes);
 }
 
 void Player::reset()
@@ -62,8 +64,8 @@ void Player::set_volume(double volume)
 {
 	_volume = volume;
 
-	if (_sound != nullptr)
-		_sound->set_volume(_volume);
+	for (int i = 0; i < _size; ++i)
+		_sounds[i].set_volume(_volume);
 }
 void Player::set_is_playing(bool value)
 {
@@ -122,10 +124,10 @@ bool Player::save(String^ name)
 	return false;
 }
 
-void Player::update(std::vector<SoundData>& data)
+void Player::update(std::vector<SoundGene>& genes)
 {
-	for (int i = 0; i < data.size(); ++i)
-		_sounds[i].create_buffer(data.at(i));
+	for (int i = 0; i < genes.size(); ++i)
+		_sounds[i].create_buffer(genes.at(i));
 
 	for (int i = 0; i < _size; ++i)
 		_callback_update(&_sounds[i], i);

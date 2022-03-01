@@ -7,6 +7,7 @@
 
 #include "Config.h"
 #include "SoundData.h"
+#include "SoundGene.h"
 #include "Utilities.h"
 
 namespace IESFX
@@ -21,7 +22,7 @@ namespace IESFX
 
 		// only create buffer after write
 		//
-		void create_buffer(SoundData& data);
+		void create_buffer(SoundGene& gene);
 
 		void load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count = 1, unsigned int sample_rate = SAMPLE_RATE);
 
@@ -40,5 +41,7 @@ namespace IESFX
 	private:
 		sf::Sound _sound;
 		sf::SoundBuffer _buffer;
+
+		SoundGene* _gene;
 	};
 }

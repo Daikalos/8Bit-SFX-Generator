@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "Utilities.h"
 #include "Interpretable.h"
+#include "SoundGene.h"
 
 namespace IESFX
 {
@@ -28,10 +29,23 @@ namespace IESFX
 			delete _sid;
 		}
 
-		std::vector<sf::Int16> buffer()
+		std::vector<sf::Int16> buffer(const SoundGene& gene)
 		{
 			_sid->reset();
 			_samples.clear();
+
+			for (int i = 0; i < gene.size(); ++i)
+			{
+				Sample* sample;
+				Poke* poke;
+
+				if (!gene.get(i))
+					continue;
+				else if (poke = dynamic_cast<Poke*>(gene.get(i)))
+					read_poke(poke->offset, poke->value);
+				else if (sample = dynamic_cast<Sample*>(gene.get(i)))
+					read_sample(sample->size);
+			}
 
 			_samples.resize(util::get_size(_size), 0);
 			_index = 0;
@@ -53,16 +67,7 @@ namespace IESFX
 			_commands.push_back(action);
 		}
 
-		void poke(RESID::reg8 offset, RESID::reg8 value)
-		{
-			_sid->write(offset, value);
-		}
-		void sample(size_t size)
-		{
-			RESID::cycle_count delta_t = util::get_cycles(util::get_size(size));
-			_index += _sid->clock(delta_t, _samples.data() + _index, util::get_size(size));
-		}
-
+	protected:
 		void read_poke(RESID::reg8 offset, RESID::reg8 value) override
 		{
 			enqueue(std::bind(&SoundData::poke, this, offset, value));
@@ -71,6 +76,17 @@ namespace IESFX
 		{
 			_size += size;
 			enqueue(std::bind(&SoundData::sample, this, size));
+		}
+
+	private:
+		void poke(RESID::reg8 offset, RESID::reg8 value)
+		{
+			_sid->write(offset, value);
+		}
+		void sample(size_t size)
+		{
+			RESID::cycle_count delta_t = util::get_cycles(util::get_size(size));
+			_index += _sid->clock(delta_t, _samples.data() + _index, util::get_size(size));
 		}
 
 	public:

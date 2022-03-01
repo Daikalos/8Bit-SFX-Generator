@@ -271,7 +271,7 @@ std::vector<SoundGene> Interpreter::read_file(const std::string& filename)
         while (file.good())
         {
             getline(file, line);
-            if (line != "RUN")
+            if (line != "RUN" && line != "")
                 lines.push(line);
             else
             {

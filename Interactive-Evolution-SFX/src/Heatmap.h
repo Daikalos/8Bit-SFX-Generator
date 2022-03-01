@@ -94,22 +94,24 @@ namespace IESFX
 		Interpreter interpreter;
 		for (size_t i = 0; i < size; ++i)
 		{
-			SoundData data;
+			SoundGene gene;
 
 			//interpreter.read_file(&data, "../test.txt");
 
-			data.read_poke(24, 15); // always volume on
+			//gene.push({ 24, 15 }); // always volume on
 
-			size_t commands = util::random(0, 128);
-			for (size_t j = 0; j < commands; ++j)
-			{
-				if (util::random(0.0, 1.0) > 0.1)
-					data.read_poke(util::random(0, 23), util::random(0, 200));
-				else
-					data.read_sample(util::random(250, 1000));
-			}
+			//size_t commands = util::random(0, 128);
+			//for (size_t j = 0; j < commands; ++j)
+			//{
+			//	if (util::random(0.0, 1.0) > 0.1)
+			//		gene.push({
+			//			util::random<RESID::reg8>(0, 23),
+			//			util::random<RESID::reg8>(0, 100) });
+			//	else
+			//		gene.push({ util::random<size_t>(0, 1000) });
+			//}
 
-			std::vector<sf::Int16> buffer = data.buffer();
+			std::vector<sf::Int16> buffer = SoundData().buffer(gene);
 
 			int x0 = 0, y0 = 0;
 			for (int x1 = 0; x1 < width; ++x1)

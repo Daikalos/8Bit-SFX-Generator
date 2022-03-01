@@ -7,11 +7,11 @@ void Sound::reset()
 	_sound.resetBuffer();
 }
 
-void Sound::create_buffer(SoundData& data)
+void Sound::create_buffer(SoundGene& gene)
 {
 	reset();
 
-	std::vector<sf::Int16> buffer(data.buffer());
+	std::vector<sf::Int16> buffer(SoundData().buffer(gene));
 
 	_buffer.loadFromSamples(buffer.data(), buffer.size(), 1, SAMPLE_RATE);
 	_sound.setBuffer(_buffer);

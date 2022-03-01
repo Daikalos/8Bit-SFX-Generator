@@ -23,7 +23,7 @@ void Evolution::execute()
 
 }
 
-std::vector<SoundData>* Evolution::output(size_t size, size_t step)
+std::vector<SoundGene>* Evolution::output(size_t size, size_t step)
 {
 
 	return nullptr;

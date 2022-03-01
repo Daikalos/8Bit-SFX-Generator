@@ -26,7 +26,7 @@ namespace IESFX
 		void reset();
 
 		void execute();
-		std::vector<SoundData>* output(size_t size, size_t step);
+		std::vector<SoundGene>* output(size_t size, size_t step);
 
 	private:
 
@@ -61,6 +61,8 @@ namespace IESFX
 	private:
 		double _mutation_rate, _mutation_size;
 		std::vector<std::pair<SoundData, double>> _population;
+
+		//std::vector<Sound
 	};
 }
 

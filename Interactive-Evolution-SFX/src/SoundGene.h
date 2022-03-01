@@ -52,9 +52,18 @@ namespace IESFX
 		SoundGene() = default;
 		~SoundGene() = default;
 
-		auto& get(int index)
+		Command* get(int index) const
 		{
-			return _gene[index];
+			return _gene[index].get();
+		}
+		Command* get(int index)
+		{
+			return _gene[index].get();
+		}
+
+		size_t size() const
+		{
+			return _gene.size();
 		}
 
 		void set(int index, Poke&& poke)
@@ -67,25 +76,16 @@ namespace IESFX
 		}
 		void push(Poke&& poke)
 		{
-			_gene.push_back(std::make_unique<Poke>(poke));
+			_gene.push_back(std::make_shared<Poke>(poke));
 		}
 		void push(Sample&& sample)
 		{
-			_gene.push_back(std::make_unique<Sample>(sample));
-		}
-
-		void read_poke(unsigned int offset, unsigned int value) override
-		{
-			push({ offset, value });
-		}
-		void read_sample(size_t size) override
-		{
-			push({ size });
+			_gene.push_back(std::make_shared<Sample>(sample));
 		}
 
 		void swap(int x, int y)
 		{
-			get(x).swap(get(y));
+			_gene[x].swap(_gene[y]);
 		}
 
 		std::string output()
@@ -98,7 +98,17 @@ namespace IESFX
 			return output;
 		}
 
+	protected:
+		void read_poke(unsigned int offset, unsigned int value) override
+		{
+			push({ offset, value });
+		}
+		void read_sample(size_t size) override
+		{
+			push({ size });
+		}
+
 	private:
-		std::vector<std::unique_ptr<Command>> _gene;
+		std::vector<std::shared_ptr<Command>> _gene;
 	};
 }

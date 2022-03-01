@@ -39,6 +39,7 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 	private: System::Windows::Forms::ToolStripButton^ mutateButton;
 	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
+
 	private: System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
