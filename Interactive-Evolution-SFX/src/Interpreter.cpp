@@ -2,11 +2,6 @@
 
 using namespace IESFX;
 
-Interpreter::Interpreter()
-{
-
-}
-
 void Interpreter::clear()
 {
     _variables.clear();
@@ -257,11 +252,12 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
     }
 }
 
-std::vector<SoundGene> Interpreter::read_file(const std::string& filename)
+template<class T, typename std::enable_if_t<std::is_base_of_v<Interpretable, T>>>
+std::vector<T> Interpreter::read_file(const std::string& filename)
 {
     clear();
 
-    std::vector<SoundGene> result;
+    std::vector<T> result;
     std::queue<std::string> lines;
 
     std::string line;
@@ -275,7 +271,7 @@ std::vector<SoundGene> Interpreter::read_file(const std::string& filename)
                 lines.push(line);
             else
             {
-                result.push_back(SoundGene());
+                result.push_back(T());
                 _ptr = &result[result.size() - 1];
 
                 tokenize(lines);

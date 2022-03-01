@@ -2,14 +2,9 @@
 
 using namespace IESFX;
 
-void Sound::reset()
-{
-	_sound.resetBuffer();
-}
-
 void Sound::create_buffer(SoundGene& gene)
 {
-	reset();
+	_gene = &gene;
 
 	std::vector<sf::Int16> buffer(SoundData().buffer(gene));
 

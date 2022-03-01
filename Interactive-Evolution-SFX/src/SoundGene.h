@@ -88,7 +88,7 @@ namespace IESFX
 			_gene[x].swap(_gene[y]);
 		}
 
-		std::string output()
+		std::string output() const
 		{
 			std::string output;
 

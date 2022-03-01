@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "Sound.h"
-#include "SoundData.h"
 #include "SoundGene.h"
 
 namespace IESFX
@@ -14,19 +13,27 @@ namespace IESFX
 		Evolution();
 		~Evolution();
 
-		void set_mutation_rate(double value)
+		void add_model(SoundGene* gene)
 		{
-			_mutation_rate = value;
+			_models.push_back(gene);
 		}
-		void set_mutation_size(double value)
+		void remove_model(SoundGene* gene)
 		{
-			_mutation_size = value;
+			_models.erase(std::remove_if(_models.begin(), _models.end(), [gene](SoundGene* model)
+			{
+				return gene == model;
+			}), _models.end());
 		}
+
+		void set_mutation_rate(double value) { _mutation_rate = value; }
+		void set_mutation_size(double value) { _mutation_size = value; }
 
 		void reset();
 
 		void execute();
-		std::vector<SoundGene>* output(size_t size, size_t step);
+		std::vector<SoundGene> output(size_t size, size_t step);
+
+		bool save(const std::string& filename) const;
 
 	private:
 
@@ -60,9 +67,9 @@ namespace IESFX
 
 	private:
 		double _mutation_rate, _mutation_size;
-		std::vector<std::pair<SoundData, double>> _population;
+		std::vector<std::pair<SoundGene, double>> _population;
 
-		//std::vector<Sound
+		std::vector<SoundGene*> _models;
 	};
 }
 

@@ -11,6 +11,8 @@
 #include "Interpretable.h"
 #include "SoundGene.h"
 
+#include "Interpreter.h"
+
 namespace IESFX
 {
 	class SoundData : public Interpretable
@@ -34,18 +36,7 @@ namespace IESFX
 			_sid->reset();
 			_samples.clear();
 
-			for (int i = 0; i < gene.size(); ++i)
-			{
-				Sample* sample;
-				Poke* poke;
-
-				if (!gene.get(i))
-					continue;
-				else if (poke = dynamic_cast<Poke*>(gene.get(i)))
-					read_poke(poke->offset, poke->value);
-				else if (sample = dynamic_cast<Sample*>(gene.get(i)))
-					read_sample(sample->size);
-			}
+			Interpreter().read_str(this, gene.output());
 
 			_samples.resize(util::get_size(_size), 0);
 			_index = 0;
@@ -62,11 +53,6 @@ namespace IESFX
 			return _samples;
 		}
 
-		void enqueue(std::function<void()> action)
-		{
-			_commands.push_back(action);
-		}
-
 	protected:
 		void read_poke(RESID::reg8 offset, RESID::reg8 value) override
 		{
@@ -79,6 +65,11 @@ namespace IESFX
 		}
 
 	private:
+		void enqueue(std::function<void()> action)
+		{
+			_commands.push_back(action);
+		}
+
 		void poke(RESID::reg8 offset, RESID::reg8 value)
 		{
 			_sid->write(offset, value);

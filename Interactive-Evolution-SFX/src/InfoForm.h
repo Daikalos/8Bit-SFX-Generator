@@ -35,6 +35,7 @@ namespace IESFX
 	private: System::Windows::Forms::PictureBox^ pictureBox4;
 	private: System::Windows::Forms::PictureBox^ pictureBox3;
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
+	private: System::Windows::Forms::PictureBox^ pictureBox5;
 
 
 	protected:
@@ -57,17 +58,20 @@ namespace IESFX
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->pictureBox5 = (gcnew System::Windows::Forms::PictureBox());
 			this->panel1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox4))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox5))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// panel1
 			// 
 			this->panel1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->panel1->Controls->Add(this->pictureBox5);
 			this->panel1->Controls->Add(this->pictureBox4);
 			this->panel1->Controls->Add(this->pictureBox3);
 			this->panel1->Controls->Add(this->pictureBox2);
@@ -76,14 +80,14 @@ namespace IESFX
 			this->panel1->Controls->Add(this->label2);
 			this->panel1->Location = System::Drawing::Point(12, 12);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(460, 606);
+			this->panel1->Size = System::Drawing::Size(460, 642);
 			this->panel1->TabIndex = 0;
 			// 
 			// pictureBox4
 			// 
 			this->pictureBox4->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox4->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox4.Image")));
-			this->pictureBox4->Location = System::Drawing::Point(414, 219);
+			this->pictureBox4->Location = System::Drawing::Point(414, 248);
 			this->pictureBox4->Name = L"pictureBox4";
 			this->pictureBox4->Size = System::Drawing::Size(40, 40);
 			this->pictureBox4->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -94,7 +98,7 @@ namespace IESFX
 			// 
 			this->pictureBox3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox3->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox3.Image")));
-			this->pictureBox3->Location = System::Drawing::Point(414, 338);
+			this->pictureBox3->Location = System::Drawing::Point(414, 370);
 			this->pictureBox3->Name = L"pictureBox3";
 			this->pictureBox3->Size = System::Drawing::Size(40, 40);
 			this->pictureBox3->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -105,7 +109,7 @@ namespace IESFX
 			// 
 			this->pictureBox2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox2->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox2.Image")));
-			this->pictureBox2->Location = System::Drawing::Point(414, 386);
+			this->pictureBox2->Location = System::Drawing::Point(414, 420);
 			this->pictureBox2->Name = L"pictureBox2";
 			this->pictureBox2->Size = System::Drawing::Size(40, 40);
 			this->pictureBox2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -116,7 +120,7 @@ namespace IESFX
 			// 
 			this->pictureBox1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox1.Image")));
-			this->pictureBox1->Location = System::Drawing::Point(414, 274);
+			this->pictureBox1->Location = System::Drawing::Point(414, 309);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(40, 40);
 			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -132,7 +136,7 @@ namespace IESFX
 			this->label1->Location = System::Drawing::Point(10, 36);
 			this->label1->MaximumSize = System::Drawing::Size(400, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(400, 546);
+			this->label1->Size = System::Drawing::Size(400, 580);
 			this->label1->TabIndex = 2;
 			this->label1->Text = resources->GetString(L"label1.Text");
 			// 
@@ -148,13 +152,24 @@ namespace IESFX
 			this->label2->TabIndex = 1;
 			this->label2->Text = L"Tutorial";
 			// 
+			// pictureBox5
+			// 
+			this->pictureBox5->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->pictureBox5->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox5.Image")));
+			this->pictureBox5->Location = System::Drawing::Point(414, 118);
+			this->pictureBox5->Name = L"pictureBox5";
+			this->pictureBox5->Size = System::Drawing::Size(40, 40);
+			this->pictureBox5->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox5->TabIndex = 7;
+			this->pictureBox5->TabStop = false;
+			// 
 			// InfoForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->CausesValidation = false;
-			this->ClientSize = System::Drawing::Size(484, 630);
+			this->ClientSize = System::Drawing::Size(484, 666);
 			this->Controls->Add(this->panel1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
@@ -168,6 +183,7 @@ namespace IESFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox3))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox5))->EndInit();
 			this->ResumeLayout(false);
 
 		}

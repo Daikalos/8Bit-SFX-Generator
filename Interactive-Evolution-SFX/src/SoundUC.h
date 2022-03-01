@@ -24,6 +24,8 @@ namespace IESFX
 			_player = player;
 			_evolution = evolution;
 			_id = id;
+
+			_selected = false;
 		}
 
 	protected:
@@ -37,7 +39,7 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStrip^ stripTool;
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
-	private: System::Windows::Forms::ToolStripButton^ mutateButton;
+
 	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
 
 	private: System::ComponentModel::Container^ components;
@@ -56,7 +58,6 @@ namespace IESFX
 			this->stripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->exportButton = (gcnew System::Windows::Forms::ToolStripButton());
-			this->mutateButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->soundWave = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			this->stripTool->SuspendLayout();
@@ -67,10 +68,7 @@ namespace IESFX
 			// 
 			this->stripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->stripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
-			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
-				this->playButton, this->exportButton,
-					this->mutateButton
-			});
+			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->playButton, this->exportButton });
 			this->stripTool->Location = System::Drawing::Point(0, 155);
 			this->stripTool->Name = L"stripTool";
 			this->stripTool->RenderMode = System::Windows::Forms::ToolStripRenderMode::System;
@@ -102,20 +100,6 @@ namespace IESFX
 			this->exportButton->Size = System::Drawing::Size(45, 22);
 			this->exportButton->Text = L"Export";
 			this->exportButton->Click += gcnew System::EventHandler(this, &SoundUC::exportButton_Click);
-			// 
-			// mutateButton
-			// 
-			this->mutateButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
-			this->mutateButton->AutoToolTip = false;
-			this->mutateButton->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->mutateButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
-			this->mutateButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
-			this->mutateButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->mutateButton->Name = L"mutateButton";
-			this->mutateButton->Size = System::Drawing::Size(49, 22);
-			this->mutateButton->Text = L"Mutate";
-			this->mutateButton->Click += gcnew System::EventHandler(this, &SoundUC::mutateButton_Click);
 			// 
 			// soundWave
 			// 
@@ -181,6 +165,7 @@ namespace IESFX
 			this->soundWave->Series->Add(series1);
 			this->soundWave->Size = System::Drawing::Size(150, 155);
 			this->soundWave->TabIndex = 2;
+			this->soundWave->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &SoundUC::soundWave_MouseDown);
 			// 
 			// SoundUC
 			// 
@@ -238,15 +223,6 @@ namespace IESFX
 			if (!_player->active() || _player->position() != _id)
 				_player->play(_id);
 		}
-		System::Void mutateButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			DialogResult dialogueResult = MessageBox::Show("Are you sure you want to mutate this SFX?", "Mutate?", MessageBoxButtons::YesNo);
-
-			if (dialogueResult == DialogResult::Yes)
-			{
-				
-			}
-		}
 		System::Void exportButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			SaveFileDialog saveFileDialog;
@@ -259,11 +235,29 @@ namespace IESFX
 					MessageBox::Show("Could not export.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 		}
+		System::Void soundWave_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
+		{
+			if (e->Button != System::Windows::Forms::MouseButtons::Left)
+				return;
+
+			if (_selected = !_selected)
+			{
+				_evolution->add_model(_player[_id]->get());
+				stripTool->BackColor = Color::Aquamarine;
+			}
+			else
+			{
+				_evolution->remove_model(_player[_id]->get());
+				stripTool->BackColor = Color::White;
+			}
+		}
 
 	private:
 		size_t _id;
 
 		Player^ _player;
 		Evolution* _evolution;
+
+		bool _selected;
 };
 }

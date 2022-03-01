@@ -71,6 +71,8 @@ namespace IESFX
 	private: System::Windows::Forms::Panel^ modifiersPanel;
 	private: System::Windows::Forms::PictureBox^ pictureBox1;
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
+	private: System::Windows::Forms::ToolStripButton^ evolveButton;
+
 
 	private: System::ComponentModel::Container^ components;
 	
@@ -93,6 +95,7 @@ namespace IESFX
 			this->pauseButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->showNextButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->resetButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->evolveButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutationSizeSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->mutationSizeTextLabel = (gcnew System::Windows::Forms::Label());
@@ -215,9 +218,9 @@ namespace IESFX
 			this->botStripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->botStripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
 			this->botStripTool->ImageScalingSize = System::Drawing::Size(36, 36);
-			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
+			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
 				this->playButton, this->pauseButton,
-					this->showNextButton, this->resetButton
+					this->showNextButton, this->resetButton, this->evolveButton
 			});
 			this->botStripTool->Location = System::Drawing::Point(0, 541);
 			this->botStripTool->Name = L"botStripTool";
@@ -260,7 +263,7 @@ namespace IESFX
 			this->showNextButton->Name = L"showNextButton";
 			this->showNextButton->Size = System::Drawing::Size(40, 41);
 			this->showNextButton->Text = L"Next";
-			this->showNextButton->ToolTipText = L"Next Subset";
+			this->showNextButton->ToolTipText = L"Show Next Subset";
 			this->showNextButton->Click += gcnew System::EventHandler(this, &MainForm::showNextButton_Click);
 			// 
 			// resetButton
@@ -275,6 +278,19 @@ namespace IESFX
 			this->resetButton->Text = L"Reset";
 			this->resetButton->ToolTipText = L"Reset";
 			this->resetButton->Click += gcnew System::EventHandler(this, &MainForm::resetButton_Click);
+			// 
+			// evolveButton
+			// 
+			this->evolveButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->evolveButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->evolveButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"evolveButton.Image")));
+			this->evolveButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->evolveButton->Margin = System::Windows::Forms::Padding(0, 2, 190, 2);
+			this->evolveButton->Name = L"evolveButton";
+			this->evolveButton->Size = System::Drawing::Size(40, 41);
+			this->evolveButton->Text = L"Evolve";
+			this->evolveButton->ToolTipText = L"Evolve";
+			this->evolveButton->Click += gcnew System::EventHandler(this, &MainForm::evolveButton_Click);
 			// 
 			// mutationSizeSlider
 			// 
@@ -499,7 +515,8 @@ namespace IESFX
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-
+				if (!_evolution->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
+					MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 			}
 		}
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -524,6 +541,30 @@ namespace IESFX
 			_player->set_is_playing(false);
 		}
 
+		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			System::Windows::Forms::DialogResult result = MessageBox::Show(
+				"Do you want to evolve using the selected candidates?",
+				"Evolve?",
+				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
+
+			if (result == System::Windows::Forms::DialogResult::Yes)
+			{
+				_prev = _step = 0;
+				_color = Color::White;
+
+				std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
+
+				if (genes.size() != 0)
+				{
+					_evolution->execute();
+					_player->update(genes);
+				}
+				else
+					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
@@ -536,15 +577,13 @@ namespace IESFX
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, _step);
+			_step += _soundUCs->Length;
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _step);
 			
-			if (genes != nullptr)
-			{
-				_step += _soundUCs->Length;
-				_player->update(*_evolution->output(_soundUCs->Length, _step));
-			}
+			if (genes.size() != 0)
+				_player->update(genes);
 			else
-				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				MessageBox::Show("No (further) candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
@@ -575,22 +614,6 @@ namespace IESFX
 	public:
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
-
-		void evolve()
-		{
-			_prev = _step = 0;
-			_color = Color::White;
-
-			std::vector<SoundGene>* genes = _evolution->output(_soundUCs->Length, 0);
-
-			if (genes != nullptr)
-			{
-				_evolution->execute();
-				_player->update(*_evolution->output(_soundUCs->Length, 0));
-			}
-			else
-				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-		}
 
 		void reset() 
 		{ 

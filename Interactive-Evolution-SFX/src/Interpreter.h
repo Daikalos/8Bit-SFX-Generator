@@ -13,18 +13,16 @@
 
 #include "Interpretable.h"
 
-#include "SoundData.h"
-#include "SoundGene.h"
-
 namespace IESFX
 {
 	class Interpreter
 	{
 	public:
-		Interpreter();
+		Interpreter() = default;
 		~Interpreter() = default;
-
-		std::vector<SoundGene> read_file(const std::string& filename);
+		
+		template<class T, typename std::enable_if_t<std::is_base_of_v<Interpretable, T>>>
+		std::vector<T> read_file(const std::string& filename);
 
 		void read_file(Interpretable* ptr, const std::string& filename);
 		void read_str(Interpretable* ptr, const std::string& str);

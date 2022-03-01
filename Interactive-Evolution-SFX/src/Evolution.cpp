@@ -20,11 +20,24 @@ void Evolution::reset()
 
 void Evolution::execute()
 {
-
+	
 }
 
-std::vector<SoundGene>* Evolution::output(size_t size, size_t step)
+std::vector<SoundGene> Evolution::output(size_t size, size_t step)
 {
+	std::vector<SoundGene> genes;
+	genes.reserve(size);
 
-	return nullptr;
+
+	return genes;
+}
+
+bool Evolution::save(const std::string& filename) const
+{
+	if (filename.empty())
+		return false;
+
+	
+
+	return true;
 }

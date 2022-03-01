@@ -15,10 +15,10 @@ namespace IESFX
 	class Sound
 	{
 	public:
-		Sound() = default;
+		Sound() : _gene(nullptr) {}
 		~Sound() = default;
 
-		void reset();
+		SoundGene* get() const { return _gene; }
 
 		// only create buffer after write
 		//

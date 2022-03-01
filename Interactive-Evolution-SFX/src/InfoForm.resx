@@ -118,6 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBox5.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
   <data name="pictureBox4.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -286,7 +325,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>This software generates 8-bit sound effects by an evolutionary process. You will be the one to steer the evolution towards the sound you desire to create.
 
-12 different sound effects will be presented to you for evaluation and is the core of the evolutionary process.
+12 different sound effects will be presented to you for evaluation and is the core of the evolutionary process. Select the ones you prefer by clicking on them and finally pressing the evolve button when ready. Click on them again to deselect.
 
 To assist you in the process, there are several buttons on the interface which include: save, load, play, pause, reset, next, mutation rate, mutation size, and volume.
 
