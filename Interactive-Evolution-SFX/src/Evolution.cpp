@@ -54,10 +54,9 @@ bool Evolution::save(const std::string& filename) const
 	out.open(filename, std::ofstream::trunc);
 
 	out << "// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS\n";
-	for (int i = _population.size() - 1; i >= 0; --i)
+	for (size_t i = 0; i < _population.size(); ++i)
 	{
-		out << "poke 24 14\n";
-		for (int j = _population[i].size() - 1; j >= 0; --j)
+		for (size_t j = 0; j < _population[i].size(); ++j)
 		{
 			out << _population[i].get(j)->print() + '\n';
 		}
