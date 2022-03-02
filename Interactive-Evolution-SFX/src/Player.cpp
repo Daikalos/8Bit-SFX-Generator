@@ -21,32 +21,6 @@ Player::~Player()
 	_thread->Join();
 }
 
-void Player::initialize()
-{
-	std::vector<SoundGene> genes(_size);
-	Interpreter interpreter;
-
-	for (int i = 0; i < _size; ++i)
-	{
-		//interpreter.read_file(&data[i], "../test.txt");
-
-		genes[i].push({ 24, 15 }); // always volume on
-
-		size_t commands = util::random(0, 128);
-		for (size_t j = 0; j < commands; ++j)
-		{
-			if (util::random(0.0, 1.0) > 0.1)
-				genes[i].push({ 
-					util::random<RESID::reg8>(0, 23), 
-					util::random<RESID::reg8>(0, 100) });
-			else
-				genes[i].push({ util::random<size_t>(0, 1000) });
-		}
-	}
-
-	update(genes);
-}
-
 void Player::reset()
 {
 	_callback_done();
@@ -71,8 +45,6 @@ void Player::set_is_playing(bool value)
 {
 	if (value && _is_playing)
 		return;
-
-	initialize();
 
 	value ? play() : pause();
 	_is_playing = value;
@@ -104,25 +76,25 @@ void Player::iterate()
 	(++_position >= _size) ? reset() : play();
 }
 
-bool Player::load(String^ file)
-{
-	String^ ext = Path::GetExtension(file)->ToLower();
-
-	_is_playing = false;
-
-	if (ext->Equals(".txt"))
-		return load_txt(file);
-	if (ext->Equals(".wav"))
-		return load_wav(file);
-
-	return false;
-}
-
-bool Player::save(String^ name)
-{
-
-	return false;
-}
+//bool Player::load(String^ file)
+//{
+//	String^ ext = Path::GetExtension(file)->ToLower();
+//
+//	_is_playing = false;
+//
+//	if (ext->Equals(".txt"))
+//		return load_txt(file);
+//	if (ext->Equals(".wav"))
+//		return load_wav(file);
+//
+//	return false;
+//}
+//
+//bool Player::save(String^ name)
+//{
+//
+//	return false;
+//}
 
 void Player::update(std::vector<SoundGene>& genes)
 {
@@ -145,28 +117,21 @@ void Player::player_loop()
 	}
 }
 
-bool Player::load_wav(String^ file)
-{
-	std::string filename = msclr::interop::marshal_as<std::string>(file);
-
-	std::ifstream stream(filename, std::ios::binary);
-
-	if (stream.is_open())
-	{
-		std::istream_iterator<char> start(stream), end;
-		std::vector<sf::Int16> buffer(start, end);
-
-
-
-		stream.close();
-	}
-
-	return true;
-}
-
-bool Player::load_txt(String^ file)
-{
-
-
-	return true;
-}
+//bool Player::load_wav(String^ file)
+//{
+//	std::string filename = msclr::interop::marshal_as<std::string>(file);
+//
+//	std::ifstream stream(filename, std::ios::binary);
+//
+//	if (stream.is_open())
+//	{
+//		std::istream_iterator<char> start(stream), end;
+//		std::vector<sf::Int16> buffer(start, end);
+//
+//
+//
+//		stream.close();
+//	}
+//
+//	return true;
+//}

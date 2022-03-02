@@ -35,6 +35,7 @@ namespace IESFX
 		{
 			_sid->reset();
 			_samples.clear();
+			_commands.clear();
 
 			Interpreter().read_str(this, gene.output());
 

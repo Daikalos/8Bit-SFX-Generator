@@ -527,8 +527,10 @@ namespace IESFX
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-				if (!_player->load(openFileDialog.FileName))
+				if (!_evolution->load(Interpreter().read_file<SoundGene>(msclr::interop::marshal_as<std::string>(openFileDialog.FileName))))
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				else
+					_player->update(_evolution->output(_soundUCs->Length, 0));
 			}
 		}
 
@@ -550,6 +552,15 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
+				int result = _evolution->execute();
+
+				switch (result)
+				{
+				case -1:
+					MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					return;
+				}
+
 				_prev = _step = 0;
 				_color = Color::White;
 
@@ -573,7 +584,15 @@ namespace IESFX
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
-				reset();
+			{
+				_player->reset();
+				_evolution->reset();
+
+				_prev = _step = 0;
+				_color = Color::White;
+
+				_player->update(_evolution->output(_soundUCs->Length, 0));
+			}
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
@@ -583,7 +602,7 @@ namespace IESFX
 			if (genes.size() != 0)
 				_player->update(genes);
 			else
-				MessageBox::Show("No (further) candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				MessageBox::Show("No (further) candidates could be presnted.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
@@ -614,15 +633,6 @@ namespace IESFX
 	public:
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
-
-		void reset() 
-		{ 
-			_player->reset(); 
-			_evolution->reset(); 
-
-			_prev = _step = 0;
-			_color = Color::White;
-		}
 
 	private:
 		bool initialize();

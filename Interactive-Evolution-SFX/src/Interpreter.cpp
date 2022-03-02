@@ -252,41 +252,6 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
     }
 }
 
-template<class T, typename std::enable_if_t<std::is_base_of_v<Interpretable, T>>>
-std::vector<T> Interpreter::read_file(const std::string& filename)
-{
-    clear();
-
-    std::vector<T> result;
-    std::queue<std::string> lines;
-
-    std::string line;
-    std::ifstream file(filename);
-    if (file.is_open())
-    {
-        while (file.good())
-        {
-            getline(file, line);
-            if (line != "RUN" && line != "")
-                lines.push(line);
-            else
-            {
-                result.push_back(T());
-                _ptr = &result[result.size() - 1];
-
-                tokenize(lines);
-
-                std::queue<std::string>().swap(lines);
-            }
-        }
-        file.close();
-    }
-    else
-        throw std::runtime_error("unable to open file");
-
-    return result;
-}
-
 void Interpreter::read_file(Interpretable* ptr, const std::string& filename)
 {
     clear();

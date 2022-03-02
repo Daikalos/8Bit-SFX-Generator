@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 
 #include "Sound.h"
 #include "SoundGene.h"
@@ -30,10 +31,11 @@ namespace IESFX
 
 		void reset();
 
-		void execute();
+		int execute();
 		std::vector<SoundGene> output(size_t size, size_t step);
 
 		bool save(const std::string& filename) const;
+		bool load(const std::vector<SoundGene>& genes);
 
 	private:
 

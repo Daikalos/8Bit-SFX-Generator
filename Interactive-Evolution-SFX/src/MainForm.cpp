@@ -26,7 +26,7 @@ bool MainForm::initialize()
 	_player->_callback_done += gcnew Player::callback_done(this, &MainForm::player_done);
 	_player->_callback_update += gcnew Player::callback_update(this, &MainForm::player_update);
 
-	_player->initialize();
+	_player->update(_evolution->output(_soundUCs->Length, 0));
 
 	return true;
 }

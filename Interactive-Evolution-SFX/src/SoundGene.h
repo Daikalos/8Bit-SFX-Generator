@@ -66,13 +66,17 @@ namespace IESFX
 			return _gene.size();
 		}
 
+		void set(int index, nullptr_t)
+		{
+			_gene[index].reset();
+		}
 		void set(int index, Poke&& poke)
 		{
-			_gene[index] = std::make_unique<Poke>(poke);
+			_gene[index] = std::make_shared<Poke>(poke);
 		}
 		void set(int index, Sample&& sample)
 		{
-			_gene[index] = std::make_unique<Sample>(sample);
+			_gene[index] = std::make_shared<Sample>(sample);
 		}
 		void push(Poke&& poke)
 		{
@@ -96,6 +100,23 @@ namespace IESFX
 				output += s->print() + '\n';
 
 			return output;
+		}
+
+		SoundGene& operator=(const SoundGene& rhs)
+		{
+			_gene.resize(rhs.size());
+			for (int i = 0; i < rhs.size(); ++i)
+			{
+				Poke* poke = nullptr; Sample* sample = nullptr;
+
+				if (!rhs.get(i))
+					continue;
+				else if (poke = dynamic_cast<Poke*>(rhs.get(i)))
+					set(i, { poke->offset, poke->value });
+				else if (sample = dynamic_cast<Sample*>(rhs.get(i)))
+					set(i, { sample->size });
+			}
+			return *this;
 		}
 
 	protected:

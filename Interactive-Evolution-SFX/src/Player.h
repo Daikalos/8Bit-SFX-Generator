@@ -27,8 +27,6 @@ namespace IESFX
 		Player(Evolution* evolution, size_t size, double volume);
 		~Player();
 
-		void initialize();
-
 		void reset();
 
 		void set_volume(double volume);
@@ -41,8 +39,8 @@ namespace IESFX
 
 		void iterate();
 
-		bool load(String^ file);
-		bool save(String^ name);
+		//bool load(String^ file);
+		//bool save(String^ name);
 
 		void update(std::vector<SoundGene>& genes);
 
@@ -65,9 +63,6 @@ namespace IESFX
 
 	private:
 		void player_loop();
-
-		bool load_wav(String^ file);
-		bool load_txt(String^ file);
 
 	private:
 		size_t _position, _size;
