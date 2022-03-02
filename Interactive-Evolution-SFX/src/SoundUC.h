@@ -111,6 +111,7 @@ namespace IESFX
 			chartArea1->AlignmentStyle = System::Windows::Forms::DataVisualization::Charting::AreaAlignmentStyles::Position;
 			chartArea1->AxisX->InterlacedColor = System::Drawing::Color::Transparent;
 			chartArea1->AxisX->IsLabelAutoFit = false;
+			chartArea1->AxisX->IsMarginVisible = false;
 			chartArea1->AxisX->LabelStyle->Enabled = false;
 			chartArea1->AxisX->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
@@ -127,7 +128,9 @@ namespace IESFX
 				static_cast<System::Byte>(0)));
 			chartArea1->AxisY->LineWidth = 0;
 			chartArea1->AxisY->MajorTickMark->Enabled = false;
+			chartArea1->AxisY->Maximum = 20000;
 			chartArea1->AxisY->MaximumAutoSize = 100;
+			chartArea1->AxisY->Minimum = -20000;
 			chartArea1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			chartArea1->BackImageAlignment = System::Windows::Forms::DataVisualization::Charting::ChartImageAlignmentStyle::Center;

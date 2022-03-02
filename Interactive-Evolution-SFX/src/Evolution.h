@@ -35,7 +35,7 @@ namespace IESFX
 		std::vector<SoundGene> output(size_t size, size_t step);
 
 		bool save(const std::string& filename) const;
-		bool load(const std::vector<SoundGene>& genes);
+		bool load(const std::string& filename);
 
 	private:
 
@@ -69,7 +69,7 @@ namespace IESFX
 
 	private:
 		double _mutation_rate, _mutation_size;
-		std::vector<std::pair<SoundGene, double>> _population;
+		std::vector<SoundGene> _population;
 
 		std::vector<SoundGene*> _models;
 	};

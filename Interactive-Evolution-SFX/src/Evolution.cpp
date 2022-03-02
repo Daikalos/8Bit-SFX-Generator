@@ -39,7 +39,7 @@ std::vector<SoundGene> Evolution::output(size_t size, size_t step)
 		if ((step + i) >= _population.size())
 			return std::vector<SoundGene>();
 
-		genes.push_back(_population[step + i].first);
+		genes.push_back(_population[step + i]);
 	}
 
 	return genes;
@@ -56,9 +56,10 @@ bool Evolution::save(const std::string& filename) const
 	out << "// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS\n";
 	for (int i = _population.size() - 1; i >= 0; --i)
 	{
-		for (int j = _population[i].first.size() - 1; j >= 0; --j)
+		out << "poke 24 14\n";
+		for (int j = _population[i].size() - 1; j >= 0; --j)
 		{
-			out << _population[i].first.get(j)->print() + '\n';
+			out << _population[i].get(j)->print() + '\n';
 		}
 		out << "RUN\n";
 	}
@@ -67,13 +68,14 @@ bool Evolution::save(const std::string& filename) const
 
 	return true;
 }
-bool Evolution::load(const std::vector<SoundGene>& genes)
+bool Evolution::load(const std::string& filename)
 {
+	std::vector<SoundGene> genes = Interpreter().read_file<SoundGene>(filename);
+
 	if (genes.size() != _population.size())
 		return false;
 
-	for (size_t i = 0; i < _population.size(); ++i)
-		_population[i].first = genes[i];
+	_population = genes;
 
 	return true;
 }
@@ -84,17 +86,17 @@ void Evolution::initialize()
 
 	for (int i = _population.size() - 1; i >= 0; --i)
 	{
-		_population[i].first.push({ 24, 15 }); // always volume on
+		_population[i].push({ 24, 14 }); // always volume on
 
 		size_t commands = util::random(0, 128);
 		for (size_t j = 0; j < commands; ++j)
 		{
 			if (util::random(0.0, 1.0) > 0.1)
-				_population[i].first.push({
+				_population[i].push({
 					util::random<RESID::reg8>(0, 23),
 					util::random<RESID::reg8>(0, 100) });
 			else
-				_population[i].first.push({ util::random<size_t>(0, 1000) });
+				_population[i].push({ util::random<size_t>(0, 1000) });
 		}
 	}
 }

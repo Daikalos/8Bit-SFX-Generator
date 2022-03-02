@@ -70,14 +70,16 @@ namespace IESFX
 		{
 			_gene[index].reset();
 		}
-		void set(int index, Poke&& poke)
+		void set(int index, unsigned int offset, unsigned int value)
 		{
-			_gene[index] = std::make_shared<Poke>(poke);
+			static_cast<Poke*>(_gene[index].get())->offset = offset;
+			static_cast<Poke*>(_gene[index].get())->value = value;
 		}
-		void set(int index, Sample&& sample)
+		void set(int index, size_t size)
 		{
-			_gene[index] = std::make_shared<Sample>(sample);
+			static_cast<Sample*>(_gene[index].get())->size = size;
 		}
+
 		void push(Poke&& poke)
 		{
 			_gene.push_back(std::make_shared<Poke>(poke));
@@ -102,23 +104,6 @@ namespace IESFX
 			return output;
 		}
 
-		SoundGene& operator=(const SoundGene& rhs)
-		{
-			_gene.resize(rhs.size());
-			for (int i = 0; i < rhs.size(); ++i)
-			{
-				Poke* poke = nullptr; Sample* sample = nullptr;
-
-				if (!rhs.get(i))
-					continue;
-				else if (poke = dynamic_cast<Poke*>(rhs.get(i)))
-					set(i, { poke->offset, poke->value });
-				else if (sample = dynamic_cast<Sample*>(rhs.get(i)))
-					set(i, { sample->size });
-			}
-			return *this;
-		}
-
 	protected:
 		void read_poke(unsigned int offset, unsigned int value) override
 		{
@@ -131,5 +116,8 @@ namespace IESFX
 
 	private:
 		std::vector<std::shared_ptr<Command>> _gene;
+		double _fitness;
+
+		friend class Evolution;
 	};
 }

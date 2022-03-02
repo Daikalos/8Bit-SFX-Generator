@@ -29,11 +29,15 @@ namespace IESFX
 		{
 			InitializeComponent();
 
+			statusLabel->Text = "...Loading";
+
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
 
 			_color = Color::White;
 			_prev = 0;
+
+			statusLabel->Text = "Ready";
 		}
 
 	protected:
@@ -192,10 +196,10 @@ namespace IESFX
 			// statusLabel
 			// 
 			this->statusLabel->BackColor = System::Drawing::Color::White;
-			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->statusLabel->Name = L"statusLabel";
-			this->statusLabel->Size = System::Drawing::Size(75, 21);
+			this->statusLabel->Size = System::Drawing::Size(81, 21);
 			this->statusLabel->Text = L"...Loading";
 			// 
 			// pnlItems
@@ -507,6 +511,12 @@ namespace IESFX
 			_soundUCs[i]->add_data(samples);
 		}
 
+		void update_status(String^ status)
+		{
+			statusLabel->Text = status;
+			Refresh();
+		}
+
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			SaveFileDialog saveFileDialog;
@@ -515,8 +525,12 @@ namespace IESFX
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
+				update_status("...Loading");
+
 				if (!_evolution->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
 					MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+				update_status("Ready");
 			}
 		}
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -527,10 +541,14 @@ namespace IESFX
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-				if (!_evolution->load(Interpreter().read_file<SoundGene>(msclr::interop::marshal_as<std::string>(openFileDialog.FileName))))
+				update_status("...Loading");
+
+				if (!_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 					_player->update(_evolution->output(_soundUCs->Length, 0));
+
+				update_status("Ready");
 			}
 		}
 
@@ -552,13 +570,18 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
+				update_status("...Loading");
 				int result = _evolution->execute();
 
-				switch (result)
+				if (result != 0)
 				{
-				case -1:
-					MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-					return;
+					switch (result)
+					{
+					case -1:
+						MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+						return;
+					}
+					update_status("Ready");
 				}
 
 				_prev = _step = 0;
@@ -573,6 +596,8 @@ namespace IESFX
 				}
 				else
 					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+				update_status("Ready");
 			}
 		}
 
@@ -585,6 +610,8 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
+				update_status("...Loading");
+
 				_player->reset();
 				_evolution->reset();
 
@@ -592,10 +619,14 @@ namespace IESFX
 				_color = Color::White;
 
 				_player->update(_evolution->output(_soundUCs->Length, 0));
+
+				update_status("Ready");
 			}
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			update_status("...Loading");
+
 			_step += _soundUCs->Length;
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _step);
 			
@@ -603,6 +634,8 @@ namespace IESFX
 				_player->update(genes);
 			else
 				MessageBox::Show("No (further) candidates could be presnted.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+			update_status("Ready");
 		}
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 

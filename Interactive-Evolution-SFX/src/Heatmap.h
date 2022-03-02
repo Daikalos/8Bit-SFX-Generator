@@ -111,7 +111,7 @@ namespace IESFX
 			//		gene.push({ util::random<size_t>(0, 1000) });
 			//}
 
-			std::vector<sf::Int16> buffer = SoundData().buffer(gene);
+			std::vector<sf::Int16> buffer = SoundData()(gene);
 
 			int x0 = 0, y0 = 0;
 			for (int x1 = 0; x1 < width; ++x1)

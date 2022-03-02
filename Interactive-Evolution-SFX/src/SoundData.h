@@ -31,16 +31,10 @@ namespace IESFX
 			delete _sid;
 		}
 
-		std::vector<sf::Int16> buffer(const SoundGene& gene)
+		std::vector<sf::Int16>& operator()(const SoundGene& gene)
 		{
-			_sid->reset();
-			_samples.clear();
-			_commands.clear();
-
 			Interpreter().read_str(this, gene.output());
-
 			_samples.resize(util::get_size(_size), 0);
-			_index = 0;
 
 			for (auto& comm : _commands)
 				comm();
@@ -81,15 +75,12 @@ namespace IESFX
 			_index += _sid->clock(delta_t, _samples.data() + _index, util::get_size(size));
 		}
 
-	public:
-		size_t _size;
-
 	private:
 		RESID::SID* _sid;
 
 		std::vector<std::function<void()>> _commands;
-		size_t _index;
-
 		std::vector<sf::Int16> _samples;
+
+		size_t _size, _index;
 	};
 }
