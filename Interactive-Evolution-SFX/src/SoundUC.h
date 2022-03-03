@@ -193,8 +193,13 @@ namespace IESFX
 	public:
 		void reset()
 		{
-			for (int i = soundWave->Series->Count - 1; i >= 0; ++i)
-				soundWave->Series[i]->Points->Clear();
+			if (_selected)
+			{
+				_evolution->remove_model(_player[_id]->get());
+				stripTool->BackColor = Color::White;
+
+				_selected = false;
+			}
 		}
 		void set_color(Color color)
 		{
@@ -232,7 +237,7 @@ namespace IESFX
 		System::Void exportButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			SaveFileDialog saveFileDialog;
-			saveFileDialog.Filter = "WAV File|*.wav";
+			saveFileDialog.Filter = "WAV File|*.wav|TXT File|*.txt";
 			saveFileDialog.Title = "Export";
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)

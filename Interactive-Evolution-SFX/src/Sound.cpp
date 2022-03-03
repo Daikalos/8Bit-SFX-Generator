@@ -4,7 +4,7 @@ using namespace IESFX;
 
 void Sound::create_buffer(SoundGene& gene)
 {
-	_gene = &gene;
+	_gene = gene;
 
 	std::vector<sf::Int16> buffer(SoundData()(gene));
 
@@ -43,10 +43,39 @@ void Sound::stop()
 	_sound.stop();
 }
 
-bool Sound::save(const std::string& filename)
+bool Sound::save(const std::string& filename) const
 {
-	if (_buffer.getSamples() == nullptr || filename.empty())
+	if (filename.empty())
+		return false;
+
+	std::string ext = std::filesystem::path(filename).extension().string();
+
+	if (ext == ".wav")
+		return save_wav(filename);
+	if (ext == ".txt")
+		return save_txt(filename);
+
+	return false;
+}
+bool Sound::save_wav(const std::string& filename) const
+{
+	if (_buffer.getSamples() == nullptr)
 		return false;
 
 	return _buffer.saveToFile(filename);
+}
+bool Sound::save_txt(const std::string& filename) const
+{
+	if (_gene.size() == 0)
+		return false;
+
+	std::ofstream out;
+	out.open(filename, std::ofstream::trunc);
+
+	for (size_t i = 0; i < _gene.size(); ++i)
+		out << _gene.get(i)->print() + '\n';
+
+	out.close();
+
+	return true;
 }

@@ -76,6 +76,7 @@ namespace IESFX
 	private: System::Windows::Forms::PictureBox^ pictureBox1;
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
 	private: System::Windows::Forms::ToolStripButton^ evolveButton;
+	private: System::Windows::Forms::ToolStripButton^ showPrevButton;
 
 
 	private: System::ComponentModel::Container^ components;
@@ -98,6 +99,7 @@ namespace IESFX
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->pauseButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->showNextButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->showPrevButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->resetButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->evolveButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutationSizeSlider = (gcnew System::Windows::Forms::TrackBar());
@@ -222,9 +224,9 @@ namespace IESFX
 			this->botStripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->botStripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
 			this->botStripTool->ImageScalingSize = System::Drawing::Size(36, 36);
-			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {
+			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {
 				this->playButton, this->pauseButton,
-					this->showNextButton, this->resetButton, this->evolveButton
+					this->showNextButton, this->showPrevButton, this->resetButton, this->evolveButton
 			});
 			this->botStripTool->Location = System::Drawing::Point(0, 541);
 			this->botStripTool->Name = L"botStripTool";
@@ -263,12 +265,25 @@ namespace IESFX
 			this->showNextButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
 			this->showNextButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"showNextButton.Image")));
 			this->showNextButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->showNextButton->Margin = System::Windows::Forms::Padding(6, 2, 0, 2);
+			this->showNextButton->Margin = System::Windows::Forms::Padding(0, 2, 0, 2);
 			this->showNextButton->Name = L"showNextButton";
 			this->showNextButton->Size = System::Drawing::Size(40, 41);
 			this->showNextButton->Text = L"Next";
 			this->showNextButton->ToolTipText = L"Show Next Subset";
 			this->showNextButton->Click += gcnew System::EventHandler(this, &MainForm::showNextButton_Click);
+			// 
+			// showPrevButton
+			// 
+			this->showPrevButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->showPrevButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->showPrevButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"showPrevButton.Image")));
+			this->showPrevButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->showPrevButton->Margin = System::Windows::Forms::Padding(4, 2, 0, 2);
+			this->showPrevButton->Name = L"showPrevButton";
+			this->showPrevButton->Size = System::Drawing::Size(40, 41);
+			this->showPrevButton->Text = L"Prev";
+			this->showPrevButton->ToolTipText = L"Show Previous Subset";
+			this->showPrevButton->Click += gcnew System::EventHandler(this, &MainForm::showPrevButton_Click);
 			// 
 			// resetButton
 			// 
@@ -289,7 +304,7 @@ namespace IESFX
 			this->evolveButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
 			this->evolveButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"evolveButton.Image")));
 			this->evolveButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->evolveButton->Margin = System::Windows::Forms::Padding(0, 2, 190, 2);
+			this->evolveButton->Margin = System::Windows::Forms::Padding(0, 2, 153, 2);
 			this->evolveButton->Name = L"evolveButton";
 			this->evolveButton->Size = System::Drawing::Size(40, 41);
 			this->evolveButton->Text = L"Evolve";
@@ -628,13 +643,43 @@ namespace IESFX
 		{
 			update_status("...Loading");
 
-			_step += _soundUCs->Length;
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _step);
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step + _soundUCs->Length));
 			
 			if (genes.size() != 0)
+			{
+				_player->reset();
 				_player->update(genes);
+
+				_step += _soundUCs->Length;
+
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+			}
 			else
-				MessageBox::Show("No (further) candidates could be presnted.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+			update_status("Ready");
+		}
+		System::Void showPrevButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			update_status("...Loading");
+
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step - _soundUCs->Length));
+
+			if (genes.size() != 0)
+			{
+				_player->reset();
+				_player->update(genes);
+
+				_step -= _soundUCs->Length;
+
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+			}
+			else
+				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+
 
 			update_status("Ready");
 		}

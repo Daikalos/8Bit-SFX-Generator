@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Config.h" />
     <ClInclude Include="Evolution.h" />
+    <ClInclude Include="GeneExamples.h" />
     <ClInclude Include="Heatmap.h" />
     <ClInclude Include="Interpretable.h" />
     <ClInclude Include="Interpreter.h" />

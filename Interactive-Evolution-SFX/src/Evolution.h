@@ -2,12 +2,17 @@
 
 #include <vector>
 #include <fstream>
+#include <execution>
 
 #include "Sound.h"
 #include "SoundGene.h"
+#include "GeneExamples.h"
 
 namespace IESFX
 {
+	static const size_t MAX_GENERATIONS = 100;
+	static const size_t MAX_QUALITY = 1.0;
+
 	class Evolution
 	{
 	public:
@@ -49,7 +54,7 @@ namespace IESFX
 
 		// evaluate each candidates fitness
 		//
-		void evaluate(std::pair<SoundData, double>& candidate);
+		void evaluate(SoundGene& candidate);
 
 		// rank based selection (we can do it because we sort before selection)
 		//
@@ -65,7 +70,7 @@ namespace IESFX
 
 		// stop if maximum generations are reached or there is an individual with sufficient quality
 		//
-		bool complete(int current_gen, double current_quality);
+		bool complete(int generation, double quality);
 
 	private:
 		double _mutation_rate, _mutation_size;

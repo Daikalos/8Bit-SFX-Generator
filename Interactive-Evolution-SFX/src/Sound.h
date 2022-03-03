@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <SFML/Audio.hpp>
+#include <filesystem>
 
 #include <resid/sid.h>
 
@@ -15,10 +16,10 @@ namespace IESFX
 	class Sound
 	{
 	public:
-		Sound() : _gene(nullptr) {}
+		Sound() = default;
 		~Sound() = default;
 
-		SoundGene* get() const { return _gene; }
+		SoundGene* get() { return &_gene; }
 
 		// only create buffer after write
 		//
@@ -36,12 +37,14 @@ namespace IESFX
 		void pause();
 		void stop();
 
-		bool save(const std::string& filename);
+		bool save(const std::string& filename) const;
+		bool save_wav(const std::string& filename) const;
+		bool save_txt(const std::string& filename) const;
 
 	private:
 		sf::Sound _sound;
 		sf::SoundBuffer _buffer;
 
-		SoundGene* _gene;
+		SoundGene _gene;
 	};
 }

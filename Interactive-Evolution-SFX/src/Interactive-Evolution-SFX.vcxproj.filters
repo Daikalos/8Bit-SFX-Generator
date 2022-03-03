@@ -83,5 +83,8 @@
     <ClInclude Include="Interpretable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GeneExamples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
