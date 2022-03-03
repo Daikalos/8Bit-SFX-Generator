@@ -53,21 +53,38 @@ void Evolution::initialize()
 	_population.resize(POPULATION_SIZE);
 
 	Interpreter interpreter;
-	for (int i = _population.size() - 1; i >= 0; --i)
+	for (int i = 0; i < _population.size(); ++i)
 	{
 		//interpreter.read_str(&_population[i], examples[0]);
 
 		_population[i].push({ 24, 14 }); // always volume on
 
+		std::vector<RESID::reg8> rand;
+		for (RESID::reg8 i = 0; i < 24; ++i)
+			rand.push_back(i);
+		std::shuffle(rand.begin(), rand.end(), util::dre);
+
 		size_t commands = util::random(0, 128);
+		int index = 0;
+
 		for (size_t j = 0; j < commands; ++j)
 		{
-			if (util::random(0.0, 1.0) > 0.1)
-				_population[i].push({
-					util::random<RESID::reg8>(0, 23),
-					util::random<RESID::reg8>(0, 100) });
+			if (util::random(0.0, 1.0) > 0.125 && index < (rand.size() - 6))
+			{
+				++index;
+				_population[i].push({ rand[index], util::random<RESID::reg8>(0, 100) });
+			}
 			else
+			{
 				_population[i].push({ util::random<size_t>(0, 1000) });
+
+				rand.clear();
+				for (RESID::reg8 i = 0; i < 24; ++i)
+					rand.push_back(i);
+				std::shuffle(rand.begin(), rand.end(), util::dre);
+
+				index = 0;
+			}
 		}
 	}
 }

@@ -40,9 +40,14 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
 
-	private: System::ComponentModel::BackgroundWorker^ backgroundWorker1;
 
-	private: System::ComponentModel::Container^ components;
+	private: System::Windows::Forms::ToolStripLabel^ timeLabel;
+	private: System::Windows::Forms::Timer^ timer;
+
+	private: System::ComponentModel::IContainer^ components;
+
+
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -51,6 +56,7 @@ namespace IESFX
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(SoundUC::typeid));
 			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
 			System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
@@ -58,8 +64,9 @@ namespace IESFX
 			this->stripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->exportButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->timeLabel = (gcnew System::Windows::Forms::ToolStripLabel());
 			this->soundWave = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
-			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
+			this->timer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->stripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->soundWave))->BeginInit();
 			this->SuspendLayout();
@@ -68,7 +75,10 @@ namespace IESFX
 			// 
 			this->stripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->stripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
-			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->playButton, this->exportButton });
+			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
+				this->playButton, this->exportButton,
+					this->timeLabel
+			});
 			this->stripTool->Location = System::Drawing::Point(0, 155);
 			this->stripTool->Name = L"stripTool";
 			this->stripTool->Padding = System::Windows::Forms::Padding(0);
@@ -103,6 +113,17 @@ namespace IESFX
 			this->exportButton->Size = System::Drawing::Size(48, 22);
 			this->exportButton->Text = L"Export";
 			this->exportButton->Click += gcnew System::EventHandler(this, &SoundUC::exportButton_Click);
+			// 
+			// timeLabel
+			// 
+			this->timeLabel->BackColor = System::Drawing::SystemColors::Control;
+			this->timeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->timeLabel->ForeColor = System::Drawing::SystemColors::ControlText;
+			this->timeLabel->Margin = System::Windows::Forms::Padding(1, 1, 0, 2);
+			this->timeLabel->Name = L"timeLabel";
+			this->timeLabel->Size = System::Drawing::Size(47, 22);
+			this->timeLabel->Text = L"0.1/1.0s";
 			// 
 			// soundWave
 			// 
@@ -173,6 +194,11 @@ namespace IESFX
 			this->soundWave->TabIndex = 2;
 			this->soundWave->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &SoundUC::soundWave_MouseDown);
 			// 
+			// timer
+			// 
+			this->timer->Enabled = true;
+			this->timer->Tick += gcnew System::EventHandler(this, &SoundUC::timer_Tick);
+			// 
 			// SoundUC
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -215,10 +241,18 @@ namespace IESFX
 			else
 				ad(samples);
 		}
+		void set_time(float time, float duration)
+		{
+			if (InvokeRequired)
+				Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
+			else
+				st(time, duration);
+		}
 
 	private: 
 		delegate void set_color_del(Color);
 		delegate void add_data_del(array<short>^);
+		delegate void set_time_del(float, float);
 
 		void sc(Color color)
 		{
@@ -227,6 +261,12 @@ namespace IESFX
 		void ad(array<short>^ samples)
 		{
 			soundWave->Series[0]->Points->DataBindY(samples);
+		}
+		void st(float time, float duration)
+		{
+			timeLabel->Text = 
+				String::Format(System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(time), 1)) + "/" +
+				String::Format(System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(duration), 1))+ "s";
 		}
 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -261,6 +301,10 @@ namespace IESFX
 				_evolution->remove_model(_player[_id]->get());
 				stripTool->BackColor = Color::White;
 			}
+		}
+		System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e)
+		{
+			set_time(_player[_id]->time(), _player[_id]->duration());
 		}
 
 	private:

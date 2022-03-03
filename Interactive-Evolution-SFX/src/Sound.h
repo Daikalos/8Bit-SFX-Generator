@@ -37,6 +37,9 @@ namespace IESFX
 		void pause();
 		void stop();
 
+		float time() const { return _sound.getPlayingOffset().asSeconds(); }
+		float duration() const { return _buffer.getDuration().asSeconds(); }
+
 		bool save(const std::string& filename) const;
 		bool save_wav(const std::string& filename) const;
 		bool save_txt(const std::string& filename) const;
