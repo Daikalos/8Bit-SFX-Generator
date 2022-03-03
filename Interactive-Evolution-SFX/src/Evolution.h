@@ -2,11 +2,15 @@
 
 #include <vector>
 #include <fstream>
+
+#ifdef NATIVE_CODE
 #include <execution>
+#endif
 
 #include "Sound.h"
 #include "SoundGene.h"
 #include "GeneExamples.h"
+#include "Utilities.h"
 
 namespace IESFX
 {

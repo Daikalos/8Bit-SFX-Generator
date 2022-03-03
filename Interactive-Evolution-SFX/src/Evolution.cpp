@@ -1,3 +1,4 @@
+#define NATIVE_CODE
 #include "Evolution.h"
 
 using namespace IESFX;
