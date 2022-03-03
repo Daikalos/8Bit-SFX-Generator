@@ -57,9 +57,8 @@ bool Evolution::save(const std::string& filename) const
 	for (size_t i = 0; i < _population.size(); ++i)
 	{
 		for (size_t j = 0; j < _population[i].size(); ++j)
-		{
 			out << _population[i].get(j)->print() + '\n';
-		}
+
 		out << "RUN\n";
 	}
 

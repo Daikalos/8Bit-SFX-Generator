@@ -579,9 +579,10 @@ namespace IESFX
 					{
 					case -1:
 						MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-						return;
+						break;
 					}
 					update_status("Ready");
+					return;
 				}
 
 				_prev = _step = 0;

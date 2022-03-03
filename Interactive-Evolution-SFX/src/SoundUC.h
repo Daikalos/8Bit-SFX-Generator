@@ -71,6 +71,7 @@ namespace IESFX
 			this->stripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->playButton, this->exportButton });
 			this->stripTool->Location = System::Drawing::Point(0, 155);
 			this->stripTool->Name = L"stripTool";
+			this->stripTool->Padding = System::Windows::Forms::Padding(0);
 			this->stripTool->RenderMode = System::Windows::Forms::ToolStripRenderMode::System;
 			this->stripTool->Size = System::Drawing::Size(150, 25);
 			this->stripTool->TabIndex = 0;
@@ -94,10 +95,12 @@ namespace IESFX
 			this->exportButton->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			this->exportButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Text;
-			this->exportButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 8, System::Drawing::FontStyle::Bold));
+			this->exportButton->Font = (gcnew System::Drawing::Font(L"Segoe UI", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->exportButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->exportButton->Margin = System::Windows::Forms::Padding(0, 1, 2, 2);
 			this->exportButton->Name = L"exportButton";
-			this->exportButton->Size = System::Drawing::Size(45, 22);
+			this->exportButton->Size = System::Drawing::Size(48, 22);
 			this->exportButton->Text = L"Export";
 			this->exportButton->Click += gcnew System::EventHandler(this, &SoundUC::exportButton_Click);
 			// 
@@ -128,9 +131,9 @@ namespace IESFX
 				static_cast<System::Byte>(0)));
 			chartArea1->AxisY->LineWidth = 0;
 			chartArea1->AxisY->MajorTickMark->Enabled = false;
-			chartArea1->AxisY->Maximum = 20000;
+			chartArea1->AxisY->Maximum = 16000;
 			chartArea1->AxisY->MaximumAutoSize = 100;
-			chartArea1->AxisY->Minimum = -20000;
+			chartArea1->AxisY->Minimum = -16000;
 			chartArea1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
 			chartArea1->BackImageAlignment = System::Windows::Forms::DataVisualization::Charting::ChartImageAlignmentStyle::Center;
@@ -246,7 +249,7 @@ namespace IESFX
 			if (_selected = !_selected)
 			{
 				_evolution->add_model(_player[_id]->get());
-				stripTool->BackColor = Color::Aquamarine;
+				stripTool->BackColor = Color::CornflowerBlue;
 			}
 			else
 			{

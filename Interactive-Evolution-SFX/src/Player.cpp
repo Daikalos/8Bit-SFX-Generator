@@ -36,6 +36,9 @@ void Player::reset()
 
 void Player::set_volume(double volume)
 {
+	if (volume == _volume)
+		return;
+
 	_volume = volume;
 
 	for (int i = 0; i < _size; ++i)
