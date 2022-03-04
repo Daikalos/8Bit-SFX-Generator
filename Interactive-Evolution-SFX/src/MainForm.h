@@ -29,7 +29,7 @@ namespace IESFX
 		{
 			InitializeComponent();
 
-			statusLabel->Text = "...Loading";
+			update_status("...Loading");
 
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
@@ -37,7 +37,7 @@ namespace IESFX
 			_color = Color::White;
 			_prev = 0;
 
-			statusLabel->Text = "Ready";
+			update_status("Ready");
 		}
 
 	protected:
@@ -586,6 +586,7 @@ namespace IESFX
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
 				update_status("...Loading");
+
 				int result = _evolution->execute();
 
 				if (result != 0)
