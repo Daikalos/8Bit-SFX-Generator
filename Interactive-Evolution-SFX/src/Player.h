@@ -29,7 +29,7 @@ namespace IESFX
 
 		void reset();
 
-		void set_volume(double volume);
+		void set_volume(float volume);
 		void set_is_playing(bool value);
 
 		Sound* play(size_t id);

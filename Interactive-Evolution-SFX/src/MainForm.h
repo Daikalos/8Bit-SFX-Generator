@@ -697,7 +697,7 @@ namespace IESFX
 
 		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			_player->set_volume(util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
+			_player->set_volume((float)util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
 		}
 
 		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e)

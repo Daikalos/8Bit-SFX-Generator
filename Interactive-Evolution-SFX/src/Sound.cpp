@@ -25,7 +25,7 @@ sf::SoundSource::Status Sound::status() const
 {
 	return _sound.getStatus();
 }
-void Sound::set_volume(double volume)
+void Sound::set_volume(float volume)
 {
 	_sound.setVolume(volume * 100);
 }

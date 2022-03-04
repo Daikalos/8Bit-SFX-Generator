@@ -34,7 +34,7 @@ void Player::reset()
 	_sound = nullptr;
 }
 
-void Player::set_volume(double volume)
+void Player::set_volume(float volume)
 {
 	if (volume == _volume)
 		return;
