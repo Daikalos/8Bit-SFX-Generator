@@ -52,21 +52,41 @@ namespace IESFX
 		SoundGene() = default;
 		~SoundGene() = default;
 
-		Command* get(int index) const
+		SoundGene(const SoundGene& rhs)
 		{
-			return _gene[index].get();
-		}
-		Command* get(int index)
-		{
-			return _gene[index].get();
+			_fitness = rhs._fitness;
+			for (size_t i = 0; i < rhs.size(); ++i)
+			{
+				Poke* poke = dynamic_cast<Poke*>(rhs.get(i));
+				Sample* sample = dynamic_cast<Sample*>(rhs.get(i));
+
+				if (poke != nullptr)		push(*poke);
+				else if (sample != nullptr) push(*sample);
+			}
 		}
 
-		size_t size() const
+		auto begin() { return _gene.begin(); }
+		auto end()	 { return _gene.end(); }
+
+		Command* get(int index) const noexcept { return _gene[index].get(); }
+		Command* get(int index) noexcept	   { return _gene[index].get(); }
+
+		size_t size() const noexcept { return _gene.size(); }
+
+		void resize(const size_t size)
 		{
-			return _gene.size();
+			_gene.resize(size);
+		}
+		void shrink()
+		{
+			_gene.erase(std::remove_if(_gene.begin(), _gene.end(), 
+				[](std::shared_ptr<Command>& command) 
+				{
+					return command.get() == nullptr;
+				}), _gene.end());
 		}
 
-		void set(int index, nullptr_t)
+		void set(int index, std::nullptr_t)
 		{
 			_gene[index].reset();
 		}
@@ -79,12 +99,16 @@ namespace IESFX
 		{
 			static_cast<Sample*>(_gene[index].get())->size = size;
 		}
+		void set(int index, Command* command)
+		{
+			(*_gene[index].get()) = *command;
+		}
 
-		void push(Poke&& poke)
+		void push(const Poke& poke)
 		{
 			_gene.push_back(std::make_shared<Poke>(poke));
 		}
-		void push(Sample&& sample)
+		void push(const Sample& sample)
 		{
 			_gene.push_back(std::make_shared<Sample>(sample));
 		}
@@ -116,7 +140,7 @@ namespace IESFX
 
 	private:
 		std::vector<std::shared_ptr<Command>> _gene;
-		double _fitness;
+		double _fitness{0.0};
 
 		friend class Evolution;
 	};

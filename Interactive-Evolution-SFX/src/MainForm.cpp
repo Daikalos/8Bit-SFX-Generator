@@ -5,12 +5,11 @@ using namespace IESFX;
 bool MainForm::initialize()
 {
 	size_t size = row_count * column_count;
-	double volume = util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum);
 
-	_evolution = new Evolution();
+	_evolution = new Evolution(mutation_rate(), mutation_size());
 
 	_soundUCs = gcnew array<SoundUC^>(size);
-	_player = gcnew Player(_evolution, size, volume);
+	_player = gcnew Player(_evolution, size, volume());
 
 	for (size_t i = 0; i < size; ++i)
 	{

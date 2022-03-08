@@ -8,7 +8,7 @@ void Sound::create_buffer(SoundGene& gene)
 
 	std::vector<sf::Int16> buffer(SoundData()(gene));
 
-	if (buffer.size() == 0)
+	if (buffer.size() <= 128)
 		buffer.resize(128, 0);
 
 	_buffer.loadFromSamples(buffer.data(), buffer.size(), 1, SAMPLE_RATE);

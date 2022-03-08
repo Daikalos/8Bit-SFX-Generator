@@ -335,7 +335,7 @@ Play starts playing each of the sound effects incrementally from top left to bot
 
 Reset completely restarts the process, starting from scratch. A warning will show before confirmation.
 
-Next presents new candidates in the current configuration.
+Next clears the selection and presents new candidates in the current configuration.
 
 Mutation rate and size modifies the randomness of the process. Smaller values make generated sounds less varied and vice versa.
 

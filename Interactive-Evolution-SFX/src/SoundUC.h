@@ -35,20 +35,13 @@ namespace IESFX
 		}
 
 	public: System::Windows::Forms::DataVisualization::Charting::Chart^ soundWave;
-
 	private: System::Windows::Forms::ToolStrip^ stripTool;
 	private: System::Windows::Forms::ToolStripButton^ exportButton;
 	private: System::Windows::Forms::ToolStripButton^ playButton;
-
-
 	private: System::Windows::Forms::ToolStripLabel^ timeLabel;
 	private: System::Windows::Forms::Timer^ timer;
 	private: System::Windows::Forms::ToolStripLabel^ durationLabel;
-
 	private: System::ComponentModel::IContainer^ components;
-
-
-
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -317,7 +310,7 @@ namespace IESFX
 		}
 		System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e)
 		{
-			set_time(_player[_id]->time(), _player[_id]->duration());
+			st(_player[_id]->time(), _player[_id]->duration());
 		}
 
 	private:

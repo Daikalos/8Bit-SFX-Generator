@@ -43,6 +43,11 @@ namespace util
 		return size * IESFX::CLOCKS_PER_SAMPLE;
 	}
 
+	static float time(size_t size)
+	{
+		return get_size(size) / (float)IESFX::SAMPLE_RATE;
+	}
+
 	template<typename T> 
 	static T clamp(T val, const T min, const T max)
 	{

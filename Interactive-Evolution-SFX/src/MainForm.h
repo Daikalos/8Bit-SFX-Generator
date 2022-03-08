@@ -53,7 +53,6 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
 	private: System::Windows::Forms::Panel^ pnlItems;
 	private: System::Windows::Forms::ToolStripMenuItem^ otherToolStripMenuItem;
-
 	private: System::Windows::Forms::ToolStripMenuItem^ helpButton;
 	private: System::Windows::Forms::ToolStrip^ botStripTool;
 	private: System::Windows::Forms::ToolStripButton^ showNextButton;
@@ -67,18 +66,13 @@ namespace IESFX
 	private: System::Windows::Forms::Label^ mutationRateLabel;
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
-
-
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
 	private: System::Windows::Forms::Panel^ volumePanel;
-
 	private: System::Windows::Forms::Panel^ modifiersPanel;
 	private: System::Windows::Forms::PictureBox^ pictureBox1;
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
 	private: System::Windows::Forms::ToolStripButton^ evolveButton;
 	private: System::Windows::Forms::ToolStripButton^ showPrevButton;
-
-
 	private: System::ComponentModel::Container^ components;
 	
 #pragma region Windows Form Designer generated code
@@ -314,23 +308,25 @@ namespace IESFX
 			// mutationSizeSlider
 			// 
 			this->mutationSizeSlider->Location = System::Drawing::Point(0, 28);
-			this->mutationSizeSlider->Maximum = 50;
+			this->mutationSizeSlider->Maximum = 200;
 			this->mutationSizeSlider->Minimum = 1;
 			this->mutationSizeSlider->Name = L"mutationSizeSlider";
 			this->mutationSizeSlider->Size = System::Drawing::Size(300, 45);
 			this->mutationSizeSlider->TabIndex = 4;
-			this->mutationSizeSlider->Value = 1;
+			this->mutationSizeSlider->TickFrequency = 2;
+			this->mutationSizeSlider->Value = 2;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationRateSlider
 			// 
 			this->mutationRateSlider->Location = System::Drawing::Point(300, 28);
-			this->mutationRateSlider->Maximum = 50;
+			this->mutationRateSlider->Maximum = 200;
 			this->mutationRateSlider->Minimum = 1;
 			this->mutationRateSlider->Name = L"mutationRateSlider";
 			this->mutationRateSlider->Size = System::Drawing::Size(300, 45);
 			this->mutationRateSlider->TabIndex = 5;
-			this->mutationRateSlider->Value = 1;
+			this->mutationRateSlider->TickFrequency = 2;
+			this->mutationRateSlider->Value = 2;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -371,9 +367,9 @@ namespace IESFX
 			this->mutationRateLabel->Location = System::Drawing::Point(439, 0);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
-			this->mutationRateLabel->Size = System::Drawing::Size(52, 25);
+			this->mutationRateLabel->Size = System::Drawing::Size(68, 25);
 			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 2%";
+			this->mutationRateLabel->Text = L"- 1.0%";
 			// 
 			// mutationSizeLabel
 			// 
@@ -385,9 +381,9 @@ namespace IESFX
 			this->mutationSizeLabel->Location = System::Drawing::Point(135, 0);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(52, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(68, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 2%";
+			this->mutationSizeLabel->Text = L"- 1.0%";
 			// 
 			// volumeSlider
 			// 
@@ -579,7 +575,7 @@ namespace IESFX
 		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Do you want to evolve using the selected candidates?",
+				"Do you wish to evolve using the selected candidates?",
 				"Evolve?",
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
@@ -687,18 +683,24 @@ namespace IESFX
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			mutationSizeLabel->Text = "- " + static_cast<int>(mutation_size() * 100.0).ToString() + "%";
+			mutationSizeLabel->Text = "- " + String::Format(
+				System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", 
+				Decimal::Round(System::Decimal(mutation_size() * 100), 1)) + "%";
+
 			_evolution->set_mutation_size(mutation_size());
 		}
 		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			mutationRateLabel->Text = "- " + static_cast<int>(mutation_rate() * 100.0).ToString() + "%";
+			mutationRateLabel->Text = "- " + String::Format(
+				System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}",
+				Decimal::Round(System::Decimal(mutation_rate() * 100), 1)) + "%";
+
 			_evolution->set_mutation_rate(mutation_rate());
 		}
 
 		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
-			_player->set_volume((float)util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum));
+			_player->set_volume(volume());
 		}
 
 		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -713,6 +715,7 @@ namespace IESFX
 	public:
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
+		inline float volume() { return (float)util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum); }
 
 	private:
 		bool initialize();

@@ -36,11 +36,6 @@ namespace IESFX
 	private: System::Windows::Forms::PictureBox^ pictureBox3;
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
 	private: System::Windows::Forms::PictureBox^ pictureBox5;
-
-
-	protected:
-
-
 	private: System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
@@ -80,14 +75,14 @@ namespace IESFX
 			this->panel1->Controls->Add(this->label2);
 			this->panel1->Location = System::Drawing::Point(12, 12);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(460, 642);
+			this->panel1->Size = System::Drawing::Size(526, 618);
 			this->panel1->TabIndex = 0;
 			// 
 			// pictureBox5
 			// 
 			this->pictureBox5->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox5->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox5.Image")));
-			this->pictureBox5->Location = System::Drawing::Point(414, 118);
+			this->pictureBox5->Location = System::Drawing::Point(478, 114);
 			this->pictureBox5->Name = L"pictureBox5";
 			this->pictureBox5->Size = System::Drawing::Size(40, 40);
 			this->pictureBox5->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -98,7 +93,7 @@ namespace IESFX
 			// 
 			this->pictureBox4->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox4->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox4.Image")));
-			this->pictureBox4->Location = System::Drawing::Point(414, 252);
+			this->pictureBox4->Location = System::Drawing::Point(478, 254);
 			this->pictureBox4->Name = L"pictureBox4";
 			this->pictureBox4->Size = System::Drawing::Size(40, 40);
 			this->pictureBox4->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -109,7 +104,7 @@ namespace IESFX
 			// 
 			this->pictureBox3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox3->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox3.Image")));
-			this->pictureBox3->Location = System::Drawing::Point(414, 372);
+			this->pictureBox3->Location = System::Drawing::Point(478, 346);
 			this->pictureBox3->Name = L"pictureBox3";
 			this->pictureBox3->Size = System::Drawing::Size(40, 40);
 			this->pictureBox3->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -120,7 +115,7 @@ namespace IESFX
 			// 
 			this->pictureBox2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox2->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox2.Image")));
-			this->pictureBox2->Location = System::Drawing::Point(414, 421);
+			this->pictureBox2->Location = System::Drawing::Point(478, 392);
 			this->pictureBox2->Name = L"pictureBox2";
 			this->pictureBox2->Size = System::Drawing::Size(40, 40);
 			this->pictureBox2->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -131,7 +126,7 @@ namespace IESFX
 			// 
 			this->pictureBox1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox1.Image")));
-			this->pictureBox1->Location = System::Drawing::Point(414, 314);
+			this->pictureBox1->Location = System::Drawing::Point(478, 300);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(40, 40);
 			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -145,9 +140,9 @@ namespace IESFX
 			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->label1->Location = System::Drawing::Point(10, 36);
-			this->label1->MaximumSize = System::Drawing::Size(400, 0);
+			this->label1->MaximumSize = System::Drawing::Size(460, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(400, 580);
+			this->label1->Size = System::Drawing::Size(460, 546);
 			this->label1->TabIndex = 2;
 			this->label1->Text = resources->GetString(L"label1.Text");
 			// 
@@ -169,7 +164,7 @@ namespace IESFX
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->CausesValidation = false;
-			this->ClientSize = System::Drawing::Size(484, 666);
+			this->ClientSize = System::Drawing::Size(550, 642);
 			this->Controls->Add(this->panel1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
@@ -188,5 +183,6 @@ namespace IESFX
 
 		}
 #pragma endregion
-	};
+
+};
 }

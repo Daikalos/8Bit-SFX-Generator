@@ -14,13 +14,10 @@
 
 namespace IESFX
 {
-	static const size_t MAX_GENERATIONS = 100;
-	static const size_t MAX_QUALITY = 1.0;
-
 	class Evolution
 	{
 	public:
-		Evolution();
+		Evolution(double mutation_rate, double mutation_size);
 		~Evolution();
 
 		void add_model(SoundGene* gene)
@@ -40,7 +37,7 @@ namespace IESFX
 
 		void reset();
 
-		int execute();
+		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
 		std::vector<SoundGene> output(size_t size, size_t step);
 
 		bool save(const std::string& filename) const;
@@ -64,7 +61,7 @@ namespace IESFX
 		//
 		void selection();
 
-		// create new offspring from existing candidates
+		// create new offspring from existing candidates, uniform crossover
 		//
 		void crossover();
 
@@ -72,12 +69,19 @@ namespace IESFX
 		//
 		void mutation();
 
-		// stop if maximum generations are reached or there is an individual with sufficient quality
+		// stop if maximum generations are reached or there is a a individual with sufficient quality
 		//
-		bool complete(int generation, double quality);
+		bool complete(int current_generation, double current_quality);
 
 	private:
-		double _mutation_rate, _mutation_size;
+		size_t 
+			_offspring_size,  
+			_max_generations;
+		double 
+			_max_quality, 
+			_mutation_rate, 
+			_mutation_size;
+
 		std::vector<SoundGene> _population;
 
 		std::vector<SoundGene*> _models;
