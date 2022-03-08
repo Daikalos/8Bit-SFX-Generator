@@ -64,39 +64,35 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 void Evolution::initialize()
 {
-	_population.resize(POPULATION_SIZE);
-	
-	size_t size = sizeof(examples) / sizeof(examples[0]);
-
-	_models.clear();
-	_models.resize(size);
-
 	Interpreter interpreter;
-	for (int i = 0; i < size; ++i)
-		interpreter.read_str((_models[i] = new SoundGene()), examples[i]);
+	for (int i = 0; i < util::size(examples); ++i)
+		interpreter.read_str(_models.emplace_back(new SoundGene()), examples[i]);
 
-	for (int i = 0; i < _population.size(); ++i)
+	_population.reserve(POPULATION_SIZE);
+	for (int i = 0; i < POPULATION_SIZE; ++i)
 	{
+		_population.push_back({});
+
 		_population[i].push({ 24, 14 }); // always volume on
 
-		std::vector<RESID::reg8> rand;
+		std::vector<RESID::reg8> offsets;
 		for (RESID::reg8 i = 0; i < 24; ++i)
-			rand.push_back(i);
-		std::shuffle(rand.begin(), rand.end(), util::dre);
+			offsets.push_back(i);
+		std::shuffle(offsets.begin(), offsets.end(), util::dre);
 
 		size_t commands = util::random(0, 128);
 		for (size_t j = 0, index = 0; j < commands; ++j)
 		{
-			if (util::random(0.0, 1.0) > 0.125 && index < (rand.size() - 6))
-				_population[i].push({ rand[index++], util::random<RESID::reg8>(0, 100) });
+			if (util::random(0.0, 1.0) > 0.125 && index < offsets.size())
+				_population[i].push({ offsets[index++], util::random<RESID::reg8>(0, 100) });
 			else
 			{
 				_population[i].push({ util::random<size_t>(0, 1000) });
 
-				rand.clear();
+				offsets.clear();
 				for (RESID::reg8 i = 0; i < 24; ++i)
-					rand.push_back(i);
-				std::shuffle(rand.begin(), rand.end(), util::dre);
+					offsets.push_back(i);
+				std::shuffle(offsets.begin(), offsets.end(), util::dre);
 
 				index = 0;
 			}
@@ -105,7 +101,7 @@ void Evolution::initialize()
 
 	execute();
 
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < _models.size(); ++i)
 		delete _models[i];
 
 	_models.clear();
@@ -118,8 +114,6 @@ void Evolution::shuffle()
 
 void Evolution::evaluate(SoundGene& candidate)
 {
-	candidate._fitness = ((candidate.size() == 0) ? 1 : (double)candidate.size());
-
 	double time = 0.0;
 	for (size_t i = 0; i < candidate.size(); ++i)
 	{
@@ -131,10 +125,10 @@ void Evolution::evaluate(SoundGene& candidate)
 
 		}
 		else if (sample != nullptr)
-		{
-
-		}
+			time += util::time(sample->size);
 	}
+
+	candidate._fitness = 1.0 / time;
 }
 
 void Evolution::selection()
@@ -150,10 +144,9 @@ void Evolution::selection()
 			return g1._fitness > g2._fitness;
 		});
 
-	size_t size = _population.size();
-	for (ptrdiff_t i = _population.size() - 1; i >= 0; --i)
+	for (ptrdiff_t i = POPULATION_SIZE - 1; i >= 0; --i)
 	{
-		double chance = (i + 1) / (double)size; // rank
+		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
 		if (util::random(0.0, 1.0) <= chance && _population.size() > 2) // ensure always two parents
 			_population.erase(_population.begin() + i);
@@ -165,15 +158,15 @@ void Evolution::selection()
 
 void Evolution::crossover()
 {
-	_offspring_size = POPULATION_SIZE - _population.size();
+	size_t elite_size = _population.size();
+	_offspring_size = POPULATION_SIZE - elite_size;
 
-	int elite_size = _population.size();
 	for (int i = POPULATION_SIZE - 1; i >= elite_size; i -= 2)
 	{
-		int p0 = 0, p1 = 0;
+		size_t p0 = 0, p1 = 0;
 
-		p0 = util::random(0, elite_size - 1);
-		do p1 = util::random(0, elite_size - 1);
+		p0 = util::random<size_t>(0, elite_size - 1);
+		do p1 = util::random<size_t>(0, elite_size - 1);
 		while (p0 == p1); // two random parents from the elite
 
 		SoundGene child1(_population[p0]);
@@ -181,11 +174,14 @@ void Evolution::crossover()
 
 		size_t gene_length = std::max<size_t>(_population[p0].size(), _population[p1].size());
 
-		child1.resize(gene_length);
+		if (gene_length == 0)
+			continue;
+
+		child1.resize(gene_length); // resize to keep same length and allow for swap range
 		child2.resize(gene_length);
 
 		size_t c0 = util::random<size_t>(0, gene_length - 1);
-		size_t c1 = util::random<size_t>(0, gene_length - 1);
+		size_t c1 = util::random<size_t>(0, gene_length - 1) + 1;
 
 		if (c0 > c1)
 			std::swap(c0, c1);
@@ -239,9 +235,9 @@ void Evolution::mutation()
 			else
 			{
 				if (poke != nullptr)
-					_population[i].set(mp, util::random(0.0, 1000.0));
-				else if (sample != nullptr)
 					_population[i].set(mp, util::random(0, 23), util::random(0, 100));
+				else if (sample != nullptr)
+					_population[i].set(mp, util::random(0, 1000));
 			}
 		}
 	}
@@ -255,6 +251,8 @@ bool Evolution::complete(int current_generation, double current_quality)
 void Evolution::reset()
 {
 	_population.clear();
+	_models.clear();
+
 	initialize();
 }
 

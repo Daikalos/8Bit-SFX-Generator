@@ -1,5 +1,4 @@
 #include "MainForm.h"
-
 #include <windows.h>
 
 using namespace IESFX;

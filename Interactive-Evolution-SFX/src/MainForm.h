@@ -28,16 +28,6 @@ namespace IESFX
 		MainForm(void)
 		{
 			InitializeComponent();
-
-			update_status("...Loading");
-
-			if (!initialize())
-				throw gcnew WarningException("failed to initialize system");
-
-			_color = Color::White;
-			_prev = 0;
-
-			update_status("Ready");
 		}
 
 	protected:
@@ -472,6 +462,7 @@ namespace IESFX
 			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"8-bit SFX Generator";
+			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
 			this->statusStrip->ResumeLayout(false);
@@ -528,6 +519,18 @@ namespace IESFX
 			Refresh();
 		}
 
+		System::Void MainForm_Shown(System::Object^ sender, System::EventArgs^ e)
+		{
+			update_status("...Loading");
+
+			if (!initialize())
+				throw gcnew WarningException("failed to initialize system");
+
+			_color = Color::White;
+			_prev = 0;
+
+			update_status("Ready");
+		}
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
 			SaveFileDialog saveFileDialog;
