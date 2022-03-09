@@ -75,14 +75,13 @@ void Evolution::initialize()
 
 		std::vector<RESID::reg8> offsets = util::random<RESID::reg8>(24);
 
-		size_t commands = util::random(0, 128);
-		for (size_t j = 0, index = 0; j < commands; ++j)
+		for (size_t j = 0, index = 0, size = util::random(0, 128); j < size; ++j)
 		{
-			if (util::random(0.0, 1.0) > 0.125 && index < offsets.size())
-				_population[i].push({ offsets[index++], util::random<RESID::reg8>(0, 100) });
+			if (util::random() > 0.125 && index < offsets.size())
+				_population[i].push({ offsets[index++], util::rvpoke() });
 			else
 			{
-				_population[i].push({ util::random<size_t>(50, 1000) });
+				_population[i].push({ util::rsample() });
 
 				offsets = util::random<RESID::reg8>(24);
 				index = 0;
@@ -105,8 +104,8 @@ void Evolution::shuffle()
 
 void Evolution::evaluate(SoundGene& candidate)
 {
-	const float time_mul = 15.0;
-	const float simi_mul = 1.0;
+	const double time_mul = 5.0;
+	const double simi_mul = 2.0;
 
 	double time = 0.0;
 	for (size_t i = 0; i < candidate.size(); ++i)
@@ -128,7 +127,14 @@ void Evolution::evaluate(SoundGene& candidate)
 						break;
 
 					if (m_poke->offset == poke->offset)
-						candidate._fitness += (1.0 / (std::abs((int)m_poke->value - (int)poke->value) + 1)) * simi_mul;
+					{
+						int difference = std::abs((int)m_poke->value - (int)poke->value);
+
+						if (difference == 0) // exact similiarity is not supported
+							candidate._fitness += -1.0;
+						else
+							candidate._fitness += (1.0 / (double)difference) * simi_mul;
+					}
 				}
 			}
 		}
@@ -165,7 +171,7 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random(0.0, 1.0) <= chance && _population.size() > 2) // ensure always two parents
+		if (util::random() <= chance && _population.size() > 2) // ensure always two parents
 			_population.erase(_population.begin() + i);
 	}
 
@@ -237,11 +243,11 @@ void Evolution::mutation()
 			Poke* poke = dynamic_cast<Poke*>(_population[i].get(mp));
 			Sample* sample = dynamic_cast<Sample*>(_population[i].get(mp));
 
-			if (util::random(0.0, 1.0) > COMMAND_MUTATION_CHANCE)
+			if (util::random() > COMMAND_MUTATION_CHANCE)
 			{
 				if (poke != nullptr)
 				{
-					if (util::random(0.0, 1.0) > OFFSET_MUTATION_CHANCE)
+					if (util::random() > OFFSET_MUTATION_CHANCE)
 						poke->offset = util::random(0, 23);
 					else
 						poke->value += (poke->value > 0) ? util::random(-1, 1) : 1;
@@ -252,9 +258,9 @@ void Evolution::mutation()
 			else
 			{
 				if (poke != nullptr)
-					_population[i].set(mp, util::random(0, 23), util::random(0, 100));
+					_population[i].set(mp, util::ropoke(), util::rvpoke());
 				else if (sample != nullptr)
-					_population[i].set(mp, util::random(50, 1000));
+					_population[i].set(mp, util::rsample());
 			}
 		}
 	}

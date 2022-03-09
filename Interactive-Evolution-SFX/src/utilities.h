@@ -80,6 +80,12 @@ namespace util
 		return result;
 	}
 
+	static RESID::reg8 ropoke() { return util::random<RESID::reg8>(0, IESFX::POKE_OFFSET); }
+	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(0, IESFX::POKE_VALUE); }
+	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
+
+	static double random() { return random(0.0, 1.0); }
+
 #if _DEBUG
 	template<class T>
 	static void print(const T& output)
