@@ -92,8 +92,10 @@ namespace IESFX
 		}
 		void set(int index, unsigned int offset, unsigned int value)
 		{
-			static_cast<Poke*>(_gene[index].get())->offset = offset;
-			static_cast<Poke*>(_gene[index].get())->value = value;
+			Poke* poke = static_cast<Poke*>(_gene[index].get());
+
+			poke->offset = offset;
+			poke->value = value;
 		}
 		void set(int index, size_t size)
 		{

@@ -98,18 +98,23 @@ namespace IESFX
 
 			//interpreter.read_file(&data, "../test.txt");
 
-			//gene.push({ 24, 15 }); // always volume on
+			gene.push({ 24, 14 }); // always volume on
 
-			//size_t commands = util::random(0, 128);
-			//for (size_t j = 0; j < commands; ++j)
-			//{
-			//	if (util::random(0.0, 1.0) > 0.1)
-			//		gene.push({
-			//			util::random<RESID::reg8>(0, 23),
-			//			util::random<RESID::reg8>(0, 100) });
-			//	else
-			//		gene.push({ util::random<size_t>(0, 1000) });
-			//}
+			std::vector<RESID::reg8> offsets = util::random<RESID::reg8>(24);
+
+			size_t commands = util::random(0, 128);
+			for (size_t j = 0, index = 0; j < commands; ++j)
+			{
+				if (util::random(0.0, 1.0) > 0.125 && index < offsets.size())
+					gene.push({ offsets[index++], util::random<RESID::reg8>(0, 100) });
+				else
+				{
+					gene.push({ util::random<size_t>(50, 1000) });
+
+					offsets = util::random<RESID::reg8>(24);
+					index = 0;
+				}
+			}
 
 			std::vector<sf::Int16> buffer = SoundData()(gene);
 

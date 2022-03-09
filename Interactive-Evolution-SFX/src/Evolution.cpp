@@ -65,20 +65,15 @@ int Evolution::execute(size_t max_generations, double max_quality)
 void Evolution::initialize()
 {
 	Interpreter interpreter;
-	for (int i = 0; i < util::size(examples); ++i)
+	for (int i = 0; i < util::arr_size(examples); ++i)
 		interpreter.read_str(_models.emplace_back(new SoundGene()), examples[i]);
 
-	_population.reserve(POPULATION_SIZE);
+	_population.resize(POPULATION_SIZE);
 	for (int i = 0; i < POPULATION_SIZE; ++i)
 	{
-		_population.push_back({});
-
 		_population[i].push({ 24, 14 }); // always volume on
 
-		std::vector<RESID::reg8> offsets;
-		for (RESID::reg8 i = 0; i < 24; ++i)
-			offsets.push_back(i);
-		std::shuffle(offsets.begin(), offsets.end(), util::dre);
+		std::vector<RESID::reg8> offsets = util::random<RESID::reg8>(24);
 
 		size_t commands = util::random(0, 128);
 		for (size_t j = 0, index = 0; j < commands; ++j)
@@ -87,13 +82,9 @@ void Evolution::initialize()
 				_population[i].push({ offsets[index++], util::random<RESID::reg8>(0, 100) });
 			else
 			{
-				_population[i].push({ util::random<size_t>(0, 1000) });
+				_population[i].push({ util::random<size_t>(50, 1000) });
 
-				offsets.clear();
-				for (RESID::reg8 i = 0; i < 24; ++i)
-					offsets.push_back(i);
-				std::shuffle(offsets.begin(), offsets.end(), util::dre);
-
+				offsets = util::random<RESID::reg8>(24);
 				index = 0;
 			}
 		}
@@ -114,6 +105,9 @@ void Evolution::shuffle()
 
 void Evolution::evaluate(SoundGene& candidate)
 {
+	const float time_mul = 15.0;
+	const float simi_mul = 1.0;
+
 	double time = 0.0;
 	for (size_t i = 0; i < candidate.size(); ++i)
 	{
@@ -122,13 +116,36 @@ void Evolution::evaluate(SoundGene& candidate)
 
 		if (poke != nullptr)
 		{
+			for (size_t j = 0; j < _models.size(); ++j)
+			{
+				SoundGene* gene = _models[j];
+				for (size_t k = i; k < gene->size(); ++k)
+				{
+					Poke* m_poke = dynamic_cast<Poke*>(gene->get(k));
+					Sample* m_sample = dynamic_cast<Sample*>(gene->get(k));
 
+					if (m_sample != nullptr)
+						break;
+
+					if (m_poke->offset == poke->offset)
+						candidate._fitness += (1.0 / (std::abs((int)m_poke->value - (int)poke->value) + 1)) * simi_mul;
+				}
+			}
 		}
 		else if (sample != nullptr)
-			time += util::time(sample->size);
+			time += (double)util::time(sample->size);
 	}
 
-	candidate._fitness = 1.0 / time;
+	// adjust fitness based on length of audio
+	//
+	if (time == 0.0)
+		candidate._fitness = 0.0;
+	else if (time < 0.3)
+		candidate._fitness -= (0.3 / time) * time_mul;
+	else if (time > 1.5)
+		candidate._fitness -= (time / 1.5) * time_mul;
+	else
+		candidate._fitness += time_mul;
 }
 
 void Evolution::selection()
@@ -237,7 +254,7 @@ void Evolution::mutation()
 				if (poke != nullptr)
 					_population[i].set(mp, util::random(0, 23), util::random(0, 100));
 				else if (sample != nullptr)
-					_population[i].set(mp, util::random(0, 1000));
+					_population[i].set(mp, util::random(50, 1000));
 			}
 		}
 	}

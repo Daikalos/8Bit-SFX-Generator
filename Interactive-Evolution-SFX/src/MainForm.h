@@ -600,15 +600,18 @@ namespace IESFX
 					return;
 				}
 
-				_prev = _step = 0;
-				_color = Color::White;
-
 				std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
 
 				if (genes.size() != 0)
 				{
-					_evolution->execute();
+					_prev = _step = 0;
+					_color = Color::White;
+
+					_player->reset();
 					_player->update(genes);
+
+					for (int i = 0; i < _soundUCs->Length; ++i)
+						_soundUCs[i]->reset();
 				}
 				else
 					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);

@@ -28,10 +28,10 @@ namespace util
 		return ((out_max - out_min) / static_cast<double>(in_max - in_min)) * (x - in_min) + out_min;
 	}
 
-	template<class T>
-	static int size(const T& arr)
+	template<class T, size_t size>
+	static constexpr size_t arr_size(const T(&)[size])
 	{
-		return sizeof(arr) / sizeof(T);
+		return size;
 	}
 
 	static int get_cycles(size_t size)
@@ -67,6 +67,17 @@ namespace util
 	{
 		std::uniform_int_distribution<> uid(min, max);
 		return (T)uid(dre);
+	}
+
+	template<typename T, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	static std::vector<T> random(T size)
+	{
+		std::vector<T> result;
+		for (T i = 0; i < size; ++i)
+			result.push_back(i);
+		std::shuffle(result.begin(), result.end(), util::dre);
+
+		return result;
 	}
 
 #if _DEBUG
