@@ -1,11 +1,8 @@
 #pragma once
 
-#include <resid/siddefs.h>
-#include <string>
 #include <vector>
 #include <numeric>
 #include <utility>
-#include <memory>
 #include <sstream>
 
 #ifdef NATIVE_CODE
@@ -13,52 +10,10 @@
 #endif
 
 #include "Interpretable.h"
+#include "Command.h"
 
 namespace IESFX
 {
-	struct Command
-	{
-		Command() { }
-		virtual ~Command() { }
-
-		virtual std::string print() const = 0;
-		virtual std::shared_ptr<Command> clone() const = 0;
-	};
-
-	struct Poke : public Command
-	{ 
-		Poke(RESID::reg8 o, RESID::reg8 v) 
-			: offset(o), value(v) { }
-
-		std::string print() const override
-		{
-			return std::string("poke " + 
-				std::to_string(offset) + " " + 
-				std::to_string(value));
-		}
-		std::shared_ptr<Command> clone() const override
-		{
-			return std::make_shared<Poke>(*this);
-		}
-
-		RESID::reg8 offset, value;
-	};
-	struct Sample : public Command
-	{ 
-		Sample(size_t s) : size(s) { }
-
-		std::string print() const override
-		{
-			return std::string("sample " + std::to_string(size));
-		}
-		std::shared_ptr<Command> clone() const override
-		{
-			return std::make_shared<Sample>(*this);
-		}
-
-		size_t size;
-	};
-
 	class SoundGene : public Interpretable
 	{
 	public:
@@ -77,6 +32,9 @@ namespace IESFX
 
 		Command* get(int index) const noexcept { return _gene[index].get(); }
 		Command* get(int index) noexcept	   { return _gene[index].get(); }
+
+		void push(const Poke& poke)		{ _gene.push_back(poke.clone()); }
+		void push(const Sample& sample) { _gene.push_back(sample.clone()); }
 
 		void set(int index, std::nullptr_t)
 		{
@@ -98,13 +56,9 @@ namespace IESFX
 			(*_gene[index].get()) = *command;
 		}
 
-		void push(const Poke& poke)
+		void flip(int index)
 		{
-			_gene.push_back(std::make_shared<Poke>(poke));
-		}
-		void push(const Sample& sample)
-		{
-			_gene.push_back(std::make_shared<Sample>(sample));
+			_gene[index] = get(index)->flip();
 		}
 
 		std::string output() const;
