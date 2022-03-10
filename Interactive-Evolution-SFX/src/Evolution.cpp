@@ -42,19 +42,19 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 		crossover();
 
-		mutation();
+		//mutation();
 
 		double sum = 0.0;
 		std::for_each(
 			std::execution::par_unseq, 
 			_population.begin(), 
-			_population.begin() + 12, 
+			_population.begin() + AVERAGE_SAMPLE,
 			[&sum](const SoundGene& gene)
 			{ 
 				sum += gene._fitness;
 			});
 
-		quality = sum / 12.0;
+		quality = sum / (double)AVERAGE_SAMPLE;
 		++generations;
 	}
 
@@ -116,7 +116,7 @@ void Evolution::evaluate(SoundGene& candidate)
 {
 	candidate._fitness = 0;
 
-	const double time_mul = 2.5;
+	const double time_mul = 3.5;
 	const double simi_mul = 5.0;
 
 	double time = 0.0;
@@ -162,7 +162,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	//
 	if (time == 0.0)
 		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
-	else if (time < 0.3)
+	else if (time < 0.1)
 		candidate._fitness -= (0.3 / time) * time_mul;
 	else if (time > 1.5)
 		candidate._fitness -= (time / 1.5) * time_mul;
@@ -252,53 +252,57 @@ void Evolution::crossover()
 		child1.shrink();
 		child2.shrink();
 
-		evaluate(_population.emplace_back(child1)); // add new children to the population
-		evaluate(_population.emplace_back(child2));
+		evaluate(_population.emplace_back(std::move(child1))); // add new children to the population
+		evaluate(_population.emplace_back(std::move(child2)));
 	}
 }
 
 void Evolution::mutation()
 {
-	for (int i = _population.size() - 1; i >= (_population.size() - _offspring_size); --i)
-	{
-		if (util::random(0.0, 1.0) > _mutation_rate)
-			continue;
-
-		size_t gene_length;
-		if (!(gene_length = _population[i].size()))
-			continue;
-
-		int size = std::ceil((double)gene_length / (1.0 / _mutation_size));
-		int length = util::random(1, size);
-
-		for (size_t j = 0; j < length; ++j)
+	std::for_each(std::execution::par_unseq,
+		_population.begin() + _offspring_size,
+		_population.end(),
+		[&](SoundGene& gene) 
 		{
-			size_t mp = util::random<size_t>(0, gene_length - 1);
+			if (util::random(0.0, 1.0) > _mutation_rate)
+				return;
 
-			Poke* poke = dynamic_cast<Poke*>(_population[i].get(mp));
-			Sample* sample = dynamic_cast<Sample*>(_population[i].get(mp));
+			size_t gene_length = gene.size();
 
-			if (util::random() > COMMAND_MUTATION_CHANCE)
+			if (gene_length == 0)
+				return;
+
+			int size = std::ceil((double)gene_length / (1.0 / _mutation_size));
+			int length = util::random(1, size);
+
+			for (size_t j = 0; j < length; ++j)
 			{
-				if (poke != nullptr)
+				size_t mp = util::random<size_t>(0, gene_length - 1);
+
+				Poke* poke = dynamic_cast<Poke*>(gene.get(mp));
+				Sample* sample = dynamic_cast<Sample*>(gene.get(mp));
+
+				if (util::random() > COMMAND_MUTATION_CHANCE)
 				{
-					if (util::random() > OFFSET_MUTATION_CHANCE)
-						poke->offset = util::ropoke();
-					else
-						poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
+					if (poke != nullptr)
+					{
+						if (util::random() > OFFSET_MUTATION_CHANCE)
+							poke->offset = util::ropoke();
+						else
+							poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
+					}
+					else if (sample != nullptr)
+						sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
 				}
-				else if (sample != nullptr)
-					sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
+				else
+				{
+					if (poke != nullptr)
+						gene.set(mp, util::ropoke(), util::rvpoke());
+					else if (sample != nullptr)
+						gene.set(mp, util::rsample());
+				}
 			}
-			else
-			{
-				if (poke != nullptr)
-					_population[i].set(mp, util::ropoke(), util::rvpoke());
-				else if (sample != nullptr)
-					_population[i].set(mp, util::rsample());
-			}
-		}
-	}
+		});
 }
 
 bool Evolution::complete(int current_generation, double current_quality)

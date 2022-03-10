@@ -14,7 +14,7 @@
 
 namespace util
 {
-	static std::default_random_engine dre(std::chrono::steady_clock::now().time_since_epoch().count());
+	static std::mt19937_64 dre(std::chrono::steady_clock::now().time_since_epoch().count());
 
 	template<class T>
 	static double scale(T value, T min, T max)
