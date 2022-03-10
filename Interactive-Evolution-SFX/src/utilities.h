@@ -80,6 +80,13 @@ namespace util
 		return result;
 	}
 
+	template<typename T, typename... Args, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+	static T random_arg(Args... args)
+	{
+		std::vector<T> x { { args... } };
+		return x[util::random<size_t>(0, x.size() - 1)];
+	}
+
 	static RESID::reg8 ropoke() { return util::random<RESID::reg8>(0, IESFX::POKE_OFFSET); }
 	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(0, IESFX::POKE_VALUE); }
 	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }

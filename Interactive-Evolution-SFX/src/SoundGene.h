@@ -8,6 +8,10 @@
 #include <memory>
 #include <sstream>
 
+#ifdef NATIVE_CODE
+#include <execution>
+#endif
+
 #include "Interpretable.h"
 
 namespace IESFX
@@ -18,6 +22,7 @@ namespace IESFX
 		virtual ~Command() { }
 
 		virtual std::string print() const = 0;
+		virtual std::shared_ptr<Command> clone() const = 0;
 	};
 
 	struct Poke : public Command
@@ -31,6 +36,10 @@ namespace IESFX
 				std::to_string(offset) + " " + 
 				std::to_string(value));
 		}
+		std::shared_ptr<Command> clone() const override
+		{
+			return std::make_shared<Poke>(*this);
+		}
 
 		RESID::reg8 offset, value;
 	};
@@ -42,6 +51,10 @@ namespace IESFX
 		{
 			return std::string("sample " + std::to_string(size));
 		}
+		std::shared_ptr<Command> clone() const override
+		{
+			return std::make_shared<Sample>(*this);
+		}
 
 		size_t size;
 	};
@@ -52,39 +65,18 @@ namespace IESFX
 		SoundGene() = default;
 		~SoundGene() = default;
 
-		SoundGene(const SoundGene& rhs)
-		{
-			_fitness = rhs._fitness;
-			for (size_t i = 0; i < rhs.size(); ++i)
-			{
-				Poke* poke = dynamic_cast<Poke*>(rhs.get(i));
-				Sample* sample = dynamic_cast<Sample*>(rhs.get(i));
+		SoundGene(const SoundGene& rhs);
 
-				if (poke != nullptr)		push(*poke);
-				else if (sample != nullptr) push(*sample);
-			}
-		}
+		void resize(const size_t size);
+		void shrink();
+
+		size_t size() const noexcept { return _gene.size(); }
 
 		auto begin() { return _gene.begin(); }
 		auto end()	 { return _gene.end(); }
 
 		Command* get(int index) const noexcept { return _gene[index].get(); }
 		Command* get(int index) noexcept	   { return _gene[index].get(); }
-
-		size_t size() const noexcept { return _gene.size(); }
-
-		void resize(const size_t size)
-		{
-			_gene.resize(size);
-		}
-		void shrink()
-		{
-			_gene.erase(std::remove_if(_gene.begin(), _gene.end(), 
-				[](std::shared_ptr<Command>& command) 
-				{
-					return command.get() == nullptr;
-				}), _gene.end());
-		}
 
 		void set(int index, std::nullptr_t)
 		{
@@ -115,20 +107,7 @@ namespace IESFX
 			_gene.push_back(std::make_shared<Sample>(sample));
 		}
 
-		void swap(int x, int y)
-		{
-			_gene[x].swap(_gene[y]);
-		}
-
-		std::string output() const
-		{
-			std::string output;
-
-			for (const auto& s : _gene)
-				output += s->print() + '\n';
-
-			return output;
-		}
+		std::string output() const;
 
 	protected:
 		void read_poke(unsigned int offset, unsigned int value) override
@@ -143,6 +122,7 @@ namespace IESFX
 	private:
 		std::vector<std::shared_ptr<Command>> _gene;
 		double _fitness{0.0};
+		bool _dead{false};
 
 		friend class Evolution;
 	};

@@ -78,14 +78,14 @@
     <IntDir>$(SolutionDir)bin\$(Configuration)\$(PlatformTarget)\Intermediates\</IntDir>
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
-    <TargetName>8-bit sfx generator</TargetName>
+    <TargetName>8-bit SFX Generator</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(PlatformTarget)\</OutDir>
     <IntDir>$(SolutionDir)bin\$(Configuration)\$(PlatformTarget)\Intermediates\</IntDir>
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
-    <TargetName>8-bit sfx generator</TargetName>
+    <TargetName>8-bit SFX Generator</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -138,6 +138,8 @@
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <CompileAsManaged>true</CompileAsManaged>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <AdditionalDependencies>resid.lib;sfml-system-s.lib;sfml-audio-s.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib</AdditionalDependencies>
@@ -160,12 +162,22 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="Interpreter.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+    </ClCompile>
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="InfoForm.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Sound.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="SoundGene.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+    </ClCompile>
     <ClCompile Include="SoundUC.cpp" />
   </ItemGroup>
   <ItemGroup>

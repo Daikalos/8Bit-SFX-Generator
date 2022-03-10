@@ -96,20 +96,17 @@ namespace IESFX
 		{
 			SoundGene gene;
 
-			//interpreter.read_file(&data, "../test.txt");
-
 			gene.push({ 24, 14 }); // always volume on
 
-			std::vector<RESID::reg8> offsets = util::random<RESID::reg8>(24);
+			std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-			size_t commands = util::random(0, 128);
-			for (size_t j = 0, index = 0; j < commands; ++j)
+			for (size_t j = 0, index = 0, size = util::random(0, 128); j < size; ++j)
 			{
-				if (util::random(0.0, 1.0) > 0.125 && index < offsets.size())
-					gene.push({ offsets[index++], util::random<RESID::reg8>(0, 100) });
+				if (util::random() > 0.1 && index < offsets.size())
+					gene.push({ offsets[index++], util::rvpoke() });
 				else
 				{
-					gene.push({ util::random<size_t>(50, 1000) });
+					gene.push({ util::rsample() });
 
 					offsets = util::random<RESID::reg8>(24);
 					index = 0;

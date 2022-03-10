@@ -44,7 +44,17 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 		mutation();
 
-		quality = _population.front()._fitness;
+		double sum = 0.0;
+		std::for_each(
+			std::execution::par_unseq, 
+			_population.begin(), 
+			_population.begin() + 12, 
+			[&sum](const SoundGene& gene)
+			{ 
+				sum += gene._fitness;
+			});
+
+		quality = sum / 12.0;
 		++generations;
 	}
 
@@ -73,11 +83,11 @@ void Evolution::initialize()
 	{
 		_population[i].push({ 24, 14 }); // always volume on
 
-		std::vector<RESID::reg8> offsets = util::random<RESID::reg8>(24);
+		std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
 		for (size_t j = 0, index = 0, size = util::random(0, 128); j < size; ++j)
 		{
-			if (util::random() > 0.125 && index < offsets.size())
+			if (util::random() > 0.1 && index < offsets.size())
 				_population[i].push({ offsets[index++], util::rvpoke() });
 			else
 			{
@@ -104,11 +114,13 @@ void Evolution::shuffle()
 
 void Evolution::evaluate(SoundGene& candidate)
 {
-	const double time_mul = 5.0;
-	const double simi_mul = 2.0;
+	candidate._fitness = 0;
+
+	const double time_mul = 2.5;
+	const double simi_mul = 5.0;
 
 	double time = 0.0;
-	for (size_t i = 0; i < candidate.size(); ++i)
+	for (size_t i = 0, index = 0; i < candidate.size(); ++i)
 	{
 		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
 		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
@@ -118,20 +130,21 @@ void Evolution::evaluate(SoundGene& candidate)
 			for (size_t j = 0; j < _models.size(); ++j)
 			{
 				SoundGene* gene = _models[j];
-				for (size_t k = i; k < gene->size(); ++k)
+				for (size_t k = 0, m_index = 0; k < gene->size(); ++k)
 				{
 					Poke* m_poke = dynamic_cast<Poke*>(gene->get(k));
 					Sample* m_sample = dynamic_cast<Sample*>(gene->get(k));
 
 					if (m_sample != nullptr)
-						break;
-
-					if (m_poke->offset == poke->offset)
+						++m_index;
+					else if (index != m_index)
+						continue;
+					else if (m_poke->offset == poke->offset)
 					{
 						int difference = std::abs((int)m_poke->value - (int)poke->value);
 
-						if (difference == 0) // exact similiarity is not supported
-							candidate._fitness += -1.0;
+						if (difference == 0) // exact similiarity is not good
+							candidate._fitness +=  1.0;
 						else
 							candidate._fitness += (1.0 / (double)difference) * simi_mul;
 					}
@@ -139,13 +152,16 @@ void Evolution::evaluate(SoundGene& candidate)
 			}
 		}
 		else if (sample != nullptr)
+		{
 			time += (double)util::time(sample->size);
+			++index;
+		}
 	}
 
 	// adjust fitness based on length of audio
 	//
 	if (time == 0.0)
-		candidate._fitness = 0.0;
+		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.3)
 		candidate._fitness -= (0.3 / time) * time_mul;
 	else if (time > 1.5)
@@ -171,12 +187,20 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random() <= chance && _population.size() > 2) // ensure always two parents
-			_population.erase(_population.begin() + i);
+		if (util::random() <= chance) // ensure always two parents
+			_population.at(i)._dead = true;
 	}
 
+	_population.erase(std::remove_if(
+		std::execution::par_unseq,
+		_population.begin(), _population.end(),
+		[&](const SoundGene& gene)
+		{
+			return gene._dead && _population.size() > 2;
+		}), _population.end());
+
 	if (_population.size() % 2 != 0) // remove worst lone parent to keep things even for creating offspring
-		_population.erase(_population.end() - 1);
+		_population.pop_back();
 }
 
 void Evolution::crossover()
@@ -203,16 +227,27 @@ void Evolution::crossover()
 		child1.resize(gene_length); // resize to keep same length and allow for swap range
 		child2.resize(gene_length);
 
-		size_t c0 = util::random<size_t>(0, gene_length - 1);
-		size_t c1 = util::random<size_t>(0, gene_length - 1) + 1;
+		std::vector<size_t> n_points(util::random(1, N_POINTS) * 2);
 
-		if (c0 > c1)
-			std::swap(c0, c1);
+		for (size_t j = 0; j < n_points.size(); j += 2)
+		{
+			n_points[j]		= util::random<size_t>(0, gene_length - 1);
+			n_points[j + 1] = util::random<size_t>(0, gene_length - 1) + 1;
+		}
 
-		std::swap_ranges(std::execution::par_unseq, 
-			child1.begin() + c0, 
-			child1.begin() + c1, 
-			child2.begin() + c0);
+		std::sort(std::execution::par_unseq, // sort in ascending order
+			n_points.begin(), n_points.end());
+
+		for (size_t j = 0; j < n_points.size(); j += 2)
+		{
+			size_t c0 = n_points[j];
+			size_t c1 = n_points[j + 1];
+
+			std::swap_ranges(std::execution::par_unseq,
+				child1.begin() + c0,
+				child1.begin() + c1,
+				child2.begin() + c0);
+		}
 
 		child1.shrink();
 		child2.shrink();
@@ -248,12 +283,12 @@ void Evolution::mutation()
 				if (poke != nullptr)
 				{
 					if (util::random() > OFFSET_MUTATION_CHANCE)
-						poke->offset = util::random(0, 23);
+						poke->offset = util::ropoke();
 					else
-						poke->value += (poke->value > 0) ? util::random(-1, 1) : 1;
+						poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
 				}
 				else if (sample != nullptr)
-					sample->size += (sample->size >= 5) ? util::random(-5, 5) : 5;
+					sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
 			}
 			else
 			{

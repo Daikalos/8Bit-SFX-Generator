@@ -50,10 +50,10 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ pauseButton;
 	private: System::Windows::Forms::ToolStripButton^ resetButton;
 	private: System::Windows::Forms::TrackBar^ mutationSizeSlider;
-	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
+
 	private: System::Windows::Forms::Label^ mutationSizeTextLabel;
-	private: System::Windows::Forms::Label^ mutationRateTextLabel;
-	private: System::Windows::Forms::Label^ mutationRateLabel;
+
+
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
@@ -63,6 +63,11 @@ namespace IESFX
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
 	private: System::Windows::Forms::ToolStripButton^ evolveButton;
 	private: System::Windows::Forms::ToolStripButton^ showPrevButton;
+	private: System::Windows::Forms::Panel^ panel1;
+	private: System::Windows::Forms::Label^ mutationRateLabel;
+
+	private: System::Windows::Forms::Label^ label4;
+	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
 	private: System::ComponentModel::Container^ components;
 	
 #pragma region Windows Form Designer generated code
@@ -87,27 +92,29 @@ namespace IESFX
 			this->resetButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->evolveButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutationSizeSlider = (gcnew System::Windows::Forms::TrackBar());
-			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->mutationSizeTextLabel = (gcnew System::Windows::Forms::Label());
-			this->mutationRateTextLabel = (gcnew System::Windows::Forms::Label());
-			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->mutationSizeLabel = (gcnew System::Windows::Forms::Label());
 			this->volumeSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->modifiersPanel = (gcnew System::Windows::Forms::Panel());
 			this->volumePanel = (gcnew System::Windows::Forms::Panel());
 			this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->panel1 = (gcnew System::Windows::Forms::Panel());
+			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
 			this->botStripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->BeginInit();
 			this->modifiersPanel->SuspendLayout();
 			this->volumePanel->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
+			this->panel1->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -297,81 +304,40 @@ namespace IESFX
 			// 
 			// mutationSizeSlider
 			// 
-			this->mutationSizeSlider->Location = System::Drawing::Point(0, 28);
+			this->mutationSizeSlider->Location = System::Drawing::Point(-2, 30);
 			this->mutationSizeSlider->Maximum = 200;
 			this->mutationSizeSlider->Minimum = 1;
 			this->mutationSizeSlider->Name = L"mutationSizeSlider";
-			this->mutationSizeSlider->Size = System::Drawing::Size(300, 45);
+			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
 			this->mutationSizeSlider->Value = 2;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
-			// mutationRateSlider
-			// 
-			this->mutationRateSlider->Location = System::Drawing::Point(300, 28);
-			this->mutationRateSlider->Maximum = 200;
-			this->mutationRateSlider->Minimum = 1;
-			this->mutationRateSlider->Name = L"mutationRateSlider";
-			this->mutationRateSlider->Size = System::Drawing::Size(300, 45);
-			this->mutationRateSlider->TabIndex = 5;
-			this->mutationRateSlider->TickFrequency = 2;
-			this->mutationRateSlider->Value = 2;
-			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
-			// 
 			// mutationSizeTextLabel
 			// 
 			this->mutationSizeTextLabel->AutoSize = true;
-			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->mutationSizeTextLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->mutationSizeTextLabel->Location = System::Drawing::Point(3, 0);
+			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->mutationSizeTextLabel->ForeColor = System::Drawing::Color::Aqua;
+			this->mutationSizeTextLabel->Location = System::Drawing::Point(1, 2);
 			this->mutationSizeTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeTextLabel->Name = L"mutationSizeTextLabel";
-			this->mutationSizeTextLabel->Size = System::Drawing::Size(135, 25);
+			this->mutationSizeTextLabel->Size = System::Drawing::Size(128, 25);
 			this->mutationSizeTextLabel->TabIndex = 6;
 			this->mutationSizeTextLabel->Text = L"Mutation Size";
-			// 
-			// mutationRateTextLabel
-			// 
-			this->mutationRateTextLabel->AutoSize = true;
-			this->mutationRateTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Underline)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->mutationRateTextLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->mutationRateTextLabel->Location = System::Drawing::Point(303, 0);
-			this->mutationRateTextLabel->Margin = System::Windows::Forms::Padding(0);
-			this->mutationRateTextLabel->Name = L"mutationRateTextLabel";
-			this->mutationRateTextLabel->Size = System::Drawing::Size(139, 25);
-			this->mutationRateTextLabel->TabIndex = 7;
-			this->mutationRateTextLabel->Text = L"Mutation Rate";
-			// 
-			// mutationRateLabel
-			// 
-			this->mutationRateLabel->AutoSize = true;
-			this->mutationRateLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->mutationRateLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->mutationRateLabel->Location = System::Drawing::Point(439, 0);
-			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
-			this->mutationRateLabel->Name = L"mutationRateLabel";
-			this->mutationRateLabel->Size = System::Drawing::Size(68, 25);
-			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 1.0%";
 			// 
 			// mutationSizeLabel
 			// 
 			this->mutationSizeLabel->AutoSize = true;
-			this->mutationSizeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->mutationSizeLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->mutationSizeLabel->Location = System::Drawing::Point(135, 0);
+			this->mutationSizeLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->mutationSizeLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(128)),
+				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
+			this->mutationSizeLabel->Location = System::Drawing::Point(129, 2);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(68, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(65, 25);
 			this->mutationSizeLabel->TabIndex = 9;
 			this->mutationSizeLabel->Text = L"- 1.0%";
 			// 
@@ -385,7 +351,7 @@ namespace IESFX
 			this->volumeSlider->Size = System::Drawing::Size(45, 508);
 			this->volumeSlider->TabIndex = 10;
 			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
-			this->volumeSlider->Value = 15;
+			this->volumeSlider->Value = 8;
 			this->volumeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::volumeSlider_ValueChanged);
 			// 
 			// modifiersPanel
@@ -395,12 +361,9 @@ namespace IESFX
 			this->modifiersPanel->Controls->Add(this->mutationSizeTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationSizeSlider);
 			this->modifiersPanel->Controls->Add(this->mutationSizeLabel);
-			this->modifiersPanel->Controls->Add(this->mutationRateLabel);
-			this->modifiersPanel->Controls->Add(this->mutationRateTextLabel);
-			this->modifiersPanel->Controls->Add(this->mutationRateSlider);
 			this->modifiersPanel->Location = System::Drawing::Point(13, 637);
 			this->modifiersPanel->Name = L"modifiersPanel";
-			this->modifiersPanel->Size = System::Drawing::Size(604, 65);
+			this->modifiersPanel->Size = System::Drawing::Size(325, 66);
 			this->modifiersPanel->TabIndex = 13;
 			// 
 			// volumePanel
@@ -437,12 +400,64 @@ namespace IESFX
 			this->pictureBox1->TabIndex = 11;
 			this->pictureBox1->TabStop = false;
 			// 
+			// panel1
+			// 
+			this->panel1->BackColor = System::Drawing::SystemColors::WindowFrame;
+			this->panel1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->panel1->Controls->Add(this->mutationRateLabel);
+			this->panel1->Controls->Add(this->label4);
+			this->panel1->Controls->Add(this->mutationRateSlider);
+			this->panel1->Location = System::Drawing::Point(345, 637);
+			this->panel1->Name = L"panel1";
+			this->panel1->Size = System::Drawing::Size(325, 66);
+			this->panel1->TabIndex = 14;
+			// 
+			// mutationRateLabel
+			// 
+			this->mutationRateLabel->AutoSize = true;
+			this->mutationRateLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 14.25F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->mutationRateLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(128)),
+				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
+			this->mutationRateLabel->Location = System::Drawing::Point(132, 2);
+			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
+			this->mutationRateLabel->Name = L"mutationRateLabel";
+			this->mutationRateLabel->Size = System::Drawing::Size(65, 25);
+			this->mutationRateLabel->TabIndex = 8;
+			this->mutationRateLabel->Text = L"- 1.0%";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label4->ForeColor = System::Drawing::Color::Aqua;
+			this->label4->Location = System::Drawing::Point(1, 2);
+			this->label4->Margin = System::Windows::Forms::Padding(0);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(131, 25);
+			this->label4->TabIndex = 7;
+			this->label4->Text = L"Mutation Rate";
+			// 
+			// mutationRateSlider
+			// 
+			this->mutationRateSlider->Location = System::Drawing::Point(-1, 30);
+			this->mutationRateSlider->Maximum = 200;
+			this->mutationRateSlider->Minimum = 1;
+			this->mutationRateSlider->Name = L"mutationRateSlider";
+			this->mutationRateSlider->Size = System::Drawing::Size(325, 45);
+			this->mutationRateSlider->TabIndex = 5;
+			this->mutationRateSlider->TickFrequency = 2;
+			this->mutationRateSlider->Value = 2;
+			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->ClientSize = System::Drawing::Size(675, 741);
+			this->Controls->Add(this->panel1);
 			this->Controls->Add(this->volumePanel);
 			this->Controls->Add(this->pnlItems);
 			this->Controls->Add(this->statusStrip);
@@ -471,7 +486,6 @@ namespace IESFX
 			this->botStripTool->ResumeLayout(false);
 			this->botStripTool->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->volumeSlider))->EndInit();
 			this->modifiersPanel->ResumeLayout(false);
 			this->modifiersPanel->PerformLayout();
@@ -479,6 +493,9 @@ namespace IESFX
 			this->volumePanel->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
+			this->panel1->ResumeLayout(false);
+			this->panel1->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -521,7 +538,7 @@ namespace IESFX
 
 		System::Void MainForm_Shown(System::Object^ sender, System::EventArgs^ e)
 		{
-			update_status("...Loading");
+			update_status("...Creating initial population, please wait");
 
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
@@ -695,7 +712,7 @@ namespace IESFX
 
 			_evolution->set_mutation_size(mutation_size());
 		}
-		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
+		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			mutationRateLabel->Text = "- " + String::Format(
 				System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}",

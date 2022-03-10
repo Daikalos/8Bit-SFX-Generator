@@ -2,7 +2,7 @@
 
 #include <string>
 
-static const std::string examples[12] =
+static const std::string examples[16] =
 {
 	R"(poke 24 14
 poke 1 130
@@ -376,4 +376,214 @@ poke 13 5
 poke 9 65
 poke 5 77
 sample 96)",
+
+	R"(poke 24 14
+poke 16 72
+poke 21 67
+poke 13 5
+poke 6 80
+poke 5 88
+poke 8 44
+poke 18 22
+poke 16 13
+poke 18 19
+poke 15 31
+poke 19 10
+poke 2 43
+poke 4 91
+poke 0 27
+poke 17 3
+poke 8 17
+poke 9 36
+poke 2 36
+sample 915
+poke 14 72
+poke 4 17
+poke 7 34
+poke 8 69
+poke 2 79
+sample 229)",
+
+	R"(poke 24 14
+poke 18 22
+poke 3 60
+poke 2 25
+poke 11 13
+poke 8 20
+poke 1 50
+poke 20 26
+poke 6 60
+poke 14 59
+poke 0 63
+poke 23 4
+poke 22 11
+poke 5 47
+poke 3 7
+poke 19 54
+sample 285
+poke 8 8
+poke 4 23
+poke 1 23
+poke 21 41
+poke 22 57
+poke 23 43
+poke 13 92
+poke 2 30
+poke 15 49
+poke 10 5
+poke 19 44
+poke 6 21
+poke 18 21
+poke 5 100
+poke 13 92
+poke 0 21
+poke 20 57
+poke 6 96
+poke 10 56
+poke 5 80
+poke 1 20
+poke 15 2
+poke 8 30
+poke 11 56
+sample 107
+poke 11 23
+poke 22 77
+poke 21 75
+poke 16 69
+poke 22 52
+poke 10 50
+poke 8 35
+poke 7 54
+poke 23 67
+sample 160
+poke 14 42
+poke 1 76
+poke 13 26
+poke 6 93
+sample 483)",
+
+	R"(poke 24 14
+poke 6 40
+poke 1 62
+poke 22 32
+poke 18 19
+poke 12 89
+poke 10 43
+poke 19 38
+poke 20 13
+poke 9 38
+poke 3 50
+poke 15 50
+poke 0 7
+poke 18 22
+poke 21 22
+poke 7 33
+poke 8 14
+poke 17 98
+poke 13 86
+poke 7 45
+poke 16 62
+poke 6 84
+sample 391
+poke 4 42
+poke 13 91
+poke 20 76
+poke 10 91
+poke 21 46
+poke 6 11
+poke 2 10
+poke 23 64
+poke 19 27
+poke 13 95
+poke 6 94
+poke 20 45
+poke 6 59
+poke 9 85
+poke 14 36
+poke 7 80
+poke 17 36
+poke 4 100
+poke 5 85
+poke 1 15
+poke 17 52
+poke 8 84
+poke 5 63
+poke 10 23
+poke 21 41
+poke 6 22
+poke 23 56
+poke 1 14
+poke 12 49
+poke 3 28
+poke 16 63
+poke 0 89
+poke 7 20
+poke 9 93
+poke 15 33
+poke 20 9
+poke 11 10
+poke 22 66
+poke 4 25
+sample 51
+poke 16 85
+poke 21 60
+sample 791)",
+
+	R"(poke 24 14
+poke 14 38
+poke 19 46
+poke 13 47
+poke 22 75
+poke 3 67
+poke 17 74
+poke 16 87
+poke 14 8
+poke 4 29
+poke 6 67
+poke 20 51
+poke 2 11
+poke 10 15
+poke 19 82
+poke 12 83
+poke 15 2
+sample 61
+poke 19 2
+poke 4 1
+poke 4 21
+poke 14 51
+poke 8 3
+poke 17 39
+sample 46
+poke 7 18
+poke 21 8
+poke 9 58
+poke 16 78
+poke 6 79
+sample 351
+poke 20 36
+poke 2 26
+poke 4 28
+poke 7 64
+poke 8 93
+poke 19 29
+poke 12 7
+poke 14 94
+poke 11 91
+poke 17 55
+poke 16 26
+poke 1 18
+poke 9 21
+sample 629
+poke 22 52
+poke 15 21
+poke 0 61
+poke 17 58
+poke 23 100
+poke 6 58
+sample 162
+sample 516
+poke 9 2
+poke 15 8
+poke 17 49
+sample 802)"
 };
