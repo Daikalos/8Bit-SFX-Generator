@@ -9,11 +9,6 @@ Evolution::Evolution(double mutation_rate, double mutation_size)
 	initialize();
 }
 
-Evolution::~Evolution()
-{
-
-}
-
 void Evolution::add_model(SoundGene& gene)
 {
 	_models.push_back(gene);
@@ -21,7 +16,8 @@ void Evolution::add_model(SoundGene& gene)
 
 void Evolution::remove_model(const SoundGene& gene)
 {
-	_models.erase(std::remove_if(std::execution::par_unseq, 
+	_models.erase(std::remove_if(
+		std::execution::par_unseq, 
 		_models.begin(), _models.end(), 
 		[&gene](const SoundGene& model)
 		{
@@ -34,16 +30,17 @@ int Evolution::execute(size_t max_generations, double max_quality)
 	if (_models.size() == 0)
 		return -1;
 
+	_active = true;
+
 	_old_population = _population;
-	_old_models = _models;
 
 	_max_generations = max_generations;
 	_max_quality = max_quality;
 
-	size_t generations = 0;
-	double quality = 0;
+	_generations = 0;
+	_quality = 0;
 
-	while (!complete(generations, quality))
+	while (!complete())
 	{
 		shuffle();
 
@@ -72,8 +69,8 @@ int Evolution::execute(size_t max_generations, double max_quality)
 				sum += gene._fitness;
 			});
 
-		quality = sum / (double)AVERAGE_SAMPLE;
-		++generations;
+		_quality = sum / (double)AVERAGE_SAMPLE;
+		++_generations;
 	}
 
 	// sort before finished
@@ -86,6 +83,13 @@ int Evolution::execute(size_t max_generations, double max_quality)
 		{
 			return g1._fitness > g2._fitness;
 		});
+
+	_models.clear();
+
+	_generations = 0;
+	_quality = 0;
+
+	_active = false;
 
 	return 0;
 }
@@ -120,10 +124,6 @@ void Evolution::initialize()
 			}
 		}
 	}
-
-	execute();
-
-	_models.clear();
 }
 
 void Evolution::shuffle()
@@ -315,9 +315,9 @@ void Evolution::mutation()
 		});
 }
 
-bool Evolution::complete(int current_generation, double current_quality)
+bool Evolution::complete()
 {
-	return (current_generation >= _max_generations || current_quality >= _max_quality);
+	return (_generations >= _max_generations || _quality >= _max_quality);
 }
 
 void Evolution::reset()
@@ -330,7 +330,8 @@ void Evolution::reset()
 
 void Evolution::retry()
 {
-
+	_population = _old_population;
+	_models.clear();
 }
 
 std::vector<SoundGene> Evolution::output(size_t size, size_t step)

@@ -18,13 +18,18 @@ namespace IESFX
 	{
 	public:
 		Evolution(double mutation_rate, double mutation_size);
-		~Evolution();
-
-		void add_model(SoundGene& gene);
-		void remove_model(const SoundGene& gene);
+		~Evolution() = default;
 
 		void set_mutation_rate(double value) { _mutation_rate = value; }
 		void set_mutation_size(double value) { _mutation_size = value; }
+
+		size_t generation() const { return _generations; }
+		double quality() const { return _quality; }
+
+		bool active() const { return _active; }
+
+		void add_model(SoundGene& gene);
+		void remove_model(const SoundGene& gene);
 
 		void reset();
 		void retry();
@@ -63,22 +68,25 @@ namespace IESFX
 
 		// stop if maximum generations are reached or there is a a individual with sufficient quality
 		//
-		bool complete(int current_generation, double current_quality);
+		bool complete();
 
 	private:
 		size_t 
-			_offspring_size,  
-			_max_generations;
+			_offspring_size{0},
+			_generations{0},
+			_max_generations{0};
 		double 
-			_max_quality, 
+			_quality{0.0},
+			_max_quality{0.0},
 			_mutation_rate, 
 			_mutation_size;
+		bool
+			_active{false};
 
 		std::vector<SoundGene> _population;
 		std::vector<SoundGene> _models;
 
 		std::vector<SoundGene> _old_population;
-		std::vector<SoundGene> _old_models;
 	};
 }
 

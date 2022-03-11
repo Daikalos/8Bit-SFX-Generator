@@ -33,6 +33,9 @@ namespace IESFX
 	protected:
 		~MainForm()
 		{
+			_shutdown = true;
+			_evolution_thread->Join();
+
 			delete components;
 		}
 
@@ -50,10 +53,7 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ pauseButton;
 	private: System::Windows::Forms::ToolStripButton^ resetButton;
 	private: System::Windows::Forms::TrackBar^ mutationSizeSlider;
-
 	private: System::Windows::Forms::Label^ mutationSizeTextLabel;
-
-
 	private: System::Windows::Forms::Label^ mutationSizeLabel;
 	private: System::Windows::Forms::TrackBar^ volumeSlider;
 	private: System::Windows::Forms::ToolStripMenuItem^ saveButton;
@@ -65,16 +65,20 @@ namespace IESFX
 	private: System::Windows::Forms::ToolStripButton^ showPrevButton;
 	private: System::Windows::Forms::Panel^ panel1;
 	private: System::Windows::Forms::Label^ mutationRateLabel;
-
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
 	private: System::Windows::Forms::ToolStripButton^ retryButton;
-	private: System::ComponentModel::Container^ components;
+	private: System::Windows::Forms::ToolStripStatusLabel^ evoluionStatusLabel;
+	private: System::Windows::Forms::Timer^ statusTimer;
+	private: System::ComponentModel::IContainer^ components;
+
+
 	
 #pragma region Windows Form Designer generated code
 	private:
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MainForm::typeid));
 			this->menuStrip = (gcnew System::Windows::Forms::MenuStrip());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -84,12 +88,14 @@ namespace IESFX
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
 			this->statusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->evoluionStatusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
 			this->botStripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->pauseButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->showNextButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->showPrevButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->retryButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->resetButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->evolveButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->mutationSizeSlider = (gcnew System::Windows::Forms::TrackBar());
@@ -104,7 +110,7 @@ namespace IESFX
 			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
-			this->retryButton = (gcnew System::Windows::Forms::ToolStripButton());
+			this->statusTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -178,24 +184,37 @@ namespace IESFX
 			// 
 			this->statusStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) { this->statusLabel });
-			this->statusStrip->Location = System::Drawing::Point(0, 715);
+			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->statusLabel, this->evoluionStatusLabel });
+			this->statusStrip->Location = System::Drawing::Point(0, 716);
 			this->statusStrip->Name = L"statusStrip";
-			this->statusStrip->RenderMode = System::Windows::Forms::ToolStripRenderMode::Professional;
-			this->statusStrip->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->statusStrip->Size = System::Drawing::Size(675, 26);
+			this->statusStrip->Size = System::Drawing::Size(675, 25);
 			this->statusStrip->SizingGrip = false;
 			this->statusStrip->TabIndex = 2;
 			this->statusStrip->Text = L"statusStrip";
 			// 
 			// statusLabel
 			// 
-			this->statusLabel->BackColor = System::Drawing::Color::White;
-			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
+			this->statusLabel->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12.75F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->statusLabel->Margin = System::Windows::Forms::Padding(0, 1, 0, 1);
 			this->statusLabel->Name = L"statusLabel";
-			this->statusLabel->Size = System::Drawing::Size(81, 21);
-			this->statusLabel->Text = L"...Loading";
+			this->statusLabel->Size = System::Drawing::Size(89, 23);
+			this->statusLabel->Text = L"Loading...";
+			// 
+			// evoluionStatusLabel
+			// 
+			this->evoluionStatusLabel->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->evoluionStatusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12.75F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->evoluionStatusLabel->Margin = System::Windows::Forms::Padding(15, 1, 0, 1);
+			this->evoluionStatusLabel->Name = L"evoluionStatusLabel";
+			this->evoluionStatusLabel->Size = System::Drawing::Size(556, 23);
+			this->evoluionStatusLabel->Spring = true;
+			this->evoluionStatusLabel->Text = L"Gen: 10 | Quality: 50";
+			this->evoluionStatusLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			// 
 			// pnlItems
 			// 
@@ -277,6 +296,19 @@ namespace IESFX
 			this->showPrevButton->Text = L"Prev";
 			this->showPrevButton->ToolTipText = L"Show Previous Subset";
 			this->showPrevButton->Click += gcnew System::EventHandler(this, &MainForm::showPrevButton_Click);
+			// 
+			// retryButton
+			// 
+			this->retryButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->retryButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->retryButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"retryButton.Image")));
+			this->retryButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->retryButton->Margin = System::Windows::Forms::Padding(0, 2, 2, 2);
+			this->retryButton->Name = L"retryButton";
+			this->retryButton->Size = System::Drawing::Size(40, 41);
+			this->retryButton->Text = L"Retry";
+			this->retryButton->ToolTipText = L"Retry";
+			this->retryButton->Click += gcnew System::EventHandler(this, &MainForm::retryButton_Click);
 			// 
 			// resetButton
 			// 
@@ -363,7 +395,7 @@ namespace IESFX
 			this->modifiersPanel->Controls->Add(this->mutationSizeTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationSizeSlider);
 			this->modifiersPanel->Controls->Add(this->mutationSizeLabel);
-			this->modifiersPanel->Location = System::Drawing::Point(13, 637);
+			this->modifiersPanel->Location = System::Drawing::Point(13, 638);
 			this->modifiersPanel->Name = L"modifiersPanel";
 			this->modifiersPanel->Size = System::Drawing::Size(325, 66);
 			this->modifiersPanel->TabIndex = 13;
@@ -409,7 +441,7 @@ namespace IESFX
 			this->panel1->Controls->Add(this->mutationRateLabel);
 			this->panel1->Controls->Add(this->label4);
 			this->panel1->Controls->Add(this->mutationRateSlider);
-			this->panel1->Location = System::Drawing::Point(345, 637);
+			this->panel1->Location = System::Drawing::Point(345, 638);
 			this->panel1->Name = L"panel1";
 			this->panel1->Size = System::Drawing::Size(325, 66);
 			this->panel1->TabIndex = 14;
@@ -453,17 +485,10 @@ namespace IESFX
 			this->mutationRateSlider->Value = 2;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
 			// 
-			// retryButton
+			// statusTimer
 			// 
-			this->retryButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
-			this->retryButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			this->retryButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"retryButton.Image")));
-			this->retryButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->retryButton->Margin = System::Windows::Forms::Padding(0, 2, 2, 2);
-			this->retryButton->Name = L"retryButton";
-			this->retryButton->Size = System::Drawing::Size(40, 41);
-			this->retryButton->Text = L"Retry";
-			this->retryButton->ToolTipText = L"Retry";
+			this->statusTimer->Enabled = true;
+			this->statusTimer->Tick += gcnew System::EventHandler(this, &MainForm::statusTimer_Tick);
 			// 
 			// MainForm
 			// 
@@ -517,50 +542,10 @@ namespace IESFX
 #pragma endregion
 
 	private: 
-		void player_next()
-		{
-			int next = _player->position();
-
-			_soundUCs[_prev]->set_color(_color);
-			_color = _soundUCs[next]->soundWave->BackColor;
-			_soundUCs[next]->set_color(Color::Gray);
-
-			_prev = next;
-		}
-		void player_done()
-		{
-			_soundUCs[_prev]->set_color(_color);
-		}
-		void player_update(Sound* sound, int i)
-		{
-			size_t offset = 50;
-
-			size_t size = sound->buffer_count();
-			array<short>^ samples = gcnew array<short>(size / offset);
-
-			for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
-				samples[i] = sound->buffer_samples()[j];
-
-			_soundUCs[i]->add_data(samples);
-		}
-
-		void update_status(String^ status)
-		{
-			statusLabel->Text = status;
-			Refresh();
-		}
-
 		System::Void MainForm_Shown(System::Object^ sender, System::EventArgs^ e)
 		{
-			update_status("...Creating initial population, please wait");
-
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
-
-			_color = Color::White;
-			_prev = 0;
-
-			update_status("Ready");
 		}
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
@@ -608,54 +593,44 @@ namespace IESFX
 
 		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
+			if (!ready())
+				return;
+
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
 				"Do you wish to evolve using the selected candidates?",
 				"Evolve?",
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
-			{
-				update_status("...Loading");
-
-				int result = _evolution->execute();
-
-				if (result != 0)
-				{
-					switch (result)
-					{
-					case -1:
-						MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-						break;
-					}
-					update_status("Ready");
-					return;
-				}
-
-				std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
-
-				if (genes.size() != 0)
-				{
-					_prev = _step = 0;
-					_color = Color::White;
-
-					_player->reset();
-					_player->update(genes);
-
-					for (int i = 0; i < _soundUCs->Length; ++i)
-						_soundUCs[i]->reset();
-				}
-				else
-					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-				update_status("Ready");
-			}
+				_execute = true;
 		}
 
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			if (!ready())
+				return;
+
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
 				"Resetting will discard all progress and present new random candidates.", 
 				"Reset?",
+				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
+
+			if (result == System::Windows::Forms::DialogResult::Yes)
+			{
+				_player->reset();
+				_evolution->reset();
+
+				_execute = true;
+			}
+		}
+		System::Void retryButton_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			if (!ready())
+				return;
+
+			System::Windows::Forms::DialogResult result = MessageBox::Show(
+				"Retry will bring you back to your previous configuration.",
+				"Retry?",
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
@@ -665,6 +640,8 @@ namespace IESFX
 				_player->reset();
 				_evolution->reset();
 
+				_evolution->retry();
+
 				_prev = _step = 0;
 				_color = Color::White;
 
@@ -673,29 +650,12 @@ namespace IESFX
 				update_status("Ready");
 			}
 		}
-		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			update_status("...Loading");
 
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step + _soundUCs->Length));
-			
-			if (genes.size() != 0)
-			{
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
-
-				_player->reset();
-				_player->update(genes);
-
-				_step += _soundUCs->Length;
-			}
-			else
-				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-			update_status("Ready");
-		}
 		System::Void showPrevButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
+			if (!ready())
+				return;
+
 			update_status("...Loading");
 
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step - _soundUCs->Length));
@@ -714,6 +674,30 @@ namespace IESFX
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
 
+
+			update_status("Ready");
+		}
+		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (!ready())
+				return;
+
+			update_status("...Loading");
+
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step + _soundUCs->Length));
+			
+			if (genes.size() != 0)
+			{
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+
+				_player->reset();
+				_player->update(genes);
+
+				_step += _soundUCs->Length;
+			}
+			else
+				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
 			update_status("Ready");
 		}
@@ -749,10 +733,144 @@ namespace IESFX
 				_info->Show();
 		}
 
+		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e)
+		{
+			if (!_status && !_execute)
+				return;
+
+			if (_execute)
+			{
+				update_evolution_status("Gen: " + _evolution->generation() + " | Quality: " + String::Format(
+					System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(_evolution->quality()), 1)));
+				_status = true;
+			}
+			else
+			{
+				update_evolution_status("");
+				_status = false;
+			}
+		}
+
+	private:
+		void player_next()
+		{
+			int next = _player->position();
+
+			_soundUCs[_prev]->set_color(_color);
+			_color = _soundUCs[next]->soundWave->BackColor;
+			_soundUCs[next]->set_color(Color::Gray);
+
+			_prev = next;
+		}
+		void player_done()
+		{
+			_soundUCs[_prev]->set_color(_color);
+		}
+		void player_update(Sound* sound, int i)
+		{
+			size_t offset = 50;
+
+			size_t size = sound->buffer_count();
+			array<short>^ samples = gcnew array<short>(size / offset);
+
+			for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
+				samples[i] = sound->buffer_samples()[j];
+
+			_soundUCs[i]->add_data(samples);
+		}
+
+		bool ready()
+		{
+			if (_execute)
+			{
+				MessageBox::Show("System is not ready yet.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return false;
+			}
+			return true;
+		}
+
+		void update_status(String^ status)
+		{
+			if (this->InvokeRequired)
+				Invoke(gcnew update_status_del(this, &MainForm::us), status);
+			else
+				us(status);
+		}
+		void us(String^ status)
+		{
+			statusLabel->Text = status;
+			Refresh();
+		}
+
+		void update_evolution_status(String^ status)
+		{
+			if (this->InvokeRequired)
+				Invoke(gcnew update_status_del(this, &MainForm::ues), status);
+			else
+				ues(status);
+		}
+		void ues(String^ status)
+		{
+			evoluionStatusLabel->Text = status;
+			Refresh();
+		}
+
+		void evolution_loop()
+		{
+			while (!_shutdown)
+			{
+				if (!_execute)
+					continue;
+
+				update_status("Loading...");
+
+				int result = _evolution->execute();
+
+				if (result != 0)
+				{
+					switch (result)
+					{
+					case -1:
+						MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+						break;
+					}
+
+					_execute = false;
+					update_status("Ready");
+
+					continue;
+				}
+
+				std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
+
+				if (genes.size() != 0)
+				{
+					_prev = _step = 0;
+					_color = Color::White;
+
+					_player->reset();
+					_player->update(genes);
+
+					for (int i = 0; i < _soundUCs->Length; ++i)
+						_soundUCs[i]->reset();
+				}
+				else
+					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+				_execute = false;
+
+				update_status("Ready");
+			}
+		}
+
 	public:
 		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
 		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
 		inline float volume() { return (float)util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum); }
+
+	private:
+		delegate void update_status_del(String^ status);
+		delegate void update_evolution_status_del(String^ status);
 
 	private:
 		bool initialize();
@@ -769,5 +887,8 @@ namespace IESFX
 
 		Player^ _player;
 		Evolution* _evolution;
+
+		Thread^ _evolution_thread;
+		bool _shutdown, _execute, _status;
 };
 }

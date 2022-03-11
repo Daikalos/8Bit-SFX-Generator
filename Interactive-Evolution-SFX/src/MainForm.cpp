@@ -25,7 +25,13 @@ bool MainForm::initialize()
 	_player->_callback_done += gcnew Player::callback_done(this, &MainForm::player_done);
 	_player->_callback_update += gcnew Player::callback_update(this, &MainForm::player_update);
 
-	_player->update(_evolution->output(_soundUCs->Length, 0));
+	_shutdown = false;
+	_execute = true;
+	_status = false;
+
+	_evolution_thread = gcnew Thread(gcnew ThreadStart(this, &MainForm::evolution_loop));
+	_evolution_thread->IsBackground = true;
+	_evolution_thread->Start();
 
 	return true;
 }

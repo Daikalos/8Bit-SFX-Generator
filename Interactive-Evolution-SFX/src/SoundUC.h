@@ -297,6 +297,12 @@ namespace IESFX
 			if (e->Button != System::Windows::Forms::MouseButtons::Left)
 				return;
 
+			if (_evolution->active())
+			{
+				MessageBox::Show("System is not ready yet.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return;
+			}
+
 			if (_selected = !_selected)
 			{
 				_evolution->add_model(_player[_id]->get());
