@@ -14,6 +14,21 @@ Evolution::~Evolution()
 
 }
 
+void Evolution::add_model(SoundGene& gene)
+{
+	_models.push_back(gene);
+}
+
+void Evolution::remove_model(const SoundGene& gene)
+{
+	_models.erase(std::remove_if(std::execution::par_unseq, 
+		_models.begin(), _models.end(), 
+		[&gene](const SoundGene& model)
+		{
+			return gene == model;
+		}), _models.end());
+}
+
 int Evolution::execute(size_t max_generations, double max_quality)
 {
 	if (_models.size() == 0)
@@ -74,9 +89,13 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 void Evolution::initialize()
 {
+	size_t size = util::arr_size(examples);
+
+	_models.resize(size);
+
 	Interpreter interpreter;
-	for (int i = 0; i < util::arr_size(examples); ++i)
-		interpreter.read_str(_models.emplace_back(new SoundGene()), examples[i]);
+	for (int i = 0; i < size; ++i)
+		interpreter.read_str(&_models[i], examples[i]);
 
 	_population.resize(POPULATION_SIZE);
 	for (int i = 0; i < POPULATION_SIZE; ++i)
@@ -101,9 +120,6 @@ void Evolution::initialize()
 
 	execute();
 
-	for (int i = 0; i < _models.size(); ++i)
-		delete _models[i];
-
 	_models.clear();
 }
 
@@ -116,8 +132,8 @@ void Evolution::evaluate(SoundGene& candidate)
 {
 	candidate._fitness = 0;
 
-	const double time_mul = 3.5;
-	const double simi_mul = 5.0;
+	const double time_mul = 4.5;
+	const double simi_mul = 5.5;
 
 	double time = 0.0;
 	for (size_t i = 0, index = 0; i < candidate.size(); ++i)
@@ -129,11 +145,11 @@ void Evolution::evaluate(SoundGene& candidate)
 		{
 			for (size_t j = 0; j < _models.size(); ++j)
 			{
-				SoundGene* gene = _models[j];
-				for (size_t k = 0, m_index = 0; k < gene->size(); ++k)
+				SoundGene& model = _models[j];
+				for (size_t k = 0, m_index = 0; k < model.size(); ++k)
 				{
-					Poke* m_poke = dynamic_cast<Poke*>(gene->get(k));
-					Sample* m_sample = dynamic_cast<Sample*>(gene->get(k));
+					Poke* m_poke = dynamic_cast<Poke*>(model.get(k));
+					Sample* m_sample = dynamic_cast<Sample*>(model.get(k));
 
 					if (m_sample != nullptr)
 						++m_index;
@@ -142,11 +158,7 @@ void Evolution::evaluate(SoundGene& candidate)
 					else if (m_poke->offset == poke->offset)
 					{
 						int difference = std::abs((int)m_poke->value - (int)poke->value);
-
-						if (difference == 0) // exact similiarity is not good
-							candidate._fitness +=  1.0;
-						else
-							candidate._fitness += (1.0 / (double)difference) * simi_mul;
+						candidate._fitness += ((difference == 0) ? 0.5 : (1.0 / (double)difference)) * simi_mul;
 					}
 				}
 			}
@@ -162,8 +174,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	//
 	if (time == 0.0)
 		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
-	else if (time < 0.1)
-		candidate._fitness -= (0.3 / time) * time_mul;
+	else if (time < 0.2)
+		candidate._fitness -= (0.2 / time) * time_mul;
 	else if (time > 1.5)
 		candidate._fitness -= (time / 1.5) * time_mul;
 	else

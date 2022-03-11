@@ -19,6 +19,15 @@ std::shared_ptr<Command> Poke::flip() const
 {
 	return std::make_shared<Sample>(Sample(util::rsample()));
 }
+bool Poke::equal_to(const Command* rhs) const
+{
+	const Poke* poke = dynamic_cast<const Poke*>(rhs);
+
+	if (poke == nullptr)
+		return false;
+
+	return this->offset == poke->offset && this->value == poke->value;
+}
 
 Sample::Sample(size_t s)
 	: size(s) { }
@@ -34,4 +43,13 @@ std::shared_ptr<Command> Sample::clone() const
 std::shared_ptr<Command> Sample::flip() const
 {
 	return std::make_shared<Poke>(Poke(util::ropoke(), util::rvpoke()));
+}
+bool Sample::equal_to(const Command* rhs) const
+{
+	const Sample* sample = dynamic_cast<const Sample*>(rhs);
+
+	if (sample == nullptr)
+		return false;
+
+	return this->size == sample->size;
 }

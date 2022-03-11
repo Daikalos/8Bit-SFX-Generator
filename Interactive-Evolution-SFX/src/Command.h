@@ -14,6 +14,11 @@ struct Command
 	virtual std::string print() const = 0;
 	virtual std::shared_ptr<Command> clone() const = 0;
 	virtual std::shared_ptr<Command> flip() const = 0;
+
+	virtual bool equal_to(const Command* rhs) const = 0;
+
+	bool operator==(const Command* rhs) const { return equal_to(rhs); }
+	bool operator!=(const Command* rhs) const { return !equal_to(rhs); }
 };
 
 struct Poke : public Command
@@ -23,6 +28,8 @@ struct Poke : public Command
 	std::string print() const override;
 	std::shared_ptr<Command> clone() const override;
 	std::shared_ptr<Command> flip() const override;
+
+	bool equal_to(const Command* rhs) const override;
 
 	RESID::reg8 offset{0}, value{0};
 };
@@ -34,6 +41,8 @@ struct Sample : public Command
 	std::string print() const override;
 	std::shared_ptr<Command> clone() const override;
 	std::shared_ptr<Command> flip() const override;
+
+	bool equal_to(const Command* rhs) const override;
 
 	size_t size{0};
 };

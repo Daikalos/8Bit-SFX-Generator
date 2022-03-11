@@ -35,3 +35,17 @@ std::string SoundGene::output() const
 
 	return output;
 }
+
+SoundGene& SoundGene::operator=(const SoundGene& rhs)
+{
+	_fitness = rhs._fitness;
+	_dead = rhs._dead;
+
+	_gene.clear();
+
+	_gene.reserve(rhs.size());
+	for (size_t i = 0; i < rhs.size(); ++i)
+		_gene.push_back(rhs.get(i)->clone());
+
+	return *this;
+}

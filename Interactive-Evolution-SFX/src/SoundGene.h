@@ -25,6 +25,10 @@ namespace IESFX
 		void resize(const size_t size);
 		void shrink();
 
+		std::string output() const;
+
+		SoundGene& operator=(const SoundGene& rhs);
+
 		size_t size() const noexcept { return _gene.size(); }
 
 		auto begin() { return _gene.begin(); }
@@ -61,7 +65,19 @@ namespace IESFX
 			_gene[index] = get(index)->flip();
 		}
 
-		std::string output() const;
+		friend bool operator==(const SoundGene& lhs, const SoundGene& rhs)
+		{
+			if (lhs.size() != rhs.size())
+				return false;
+
+			for (size_t i = 0; i < rhs.size(); ++i)
+			{
+				if (*lhs.get(i) != rhs.get(i))
+					return false;
+			}
+
+			return true;
+		}
 
 	protected:
 		void read_poke(unsigned int offset, unsigned int value) override

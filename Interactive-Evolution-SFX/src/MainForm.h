@@ -667,13 +667,13 @@ namespace IESFX
 			
 			if (genes.size() != 0)
 			{
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+
 				_player->reset();
 				_player->update(genes);
 
 				_step += _soundUCs->Length;
-
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
 			}
 			else
 				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -688,13 +688,13 @@ namespace IESFX
 
 			if (genes.size() != 0)
 			{
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+
 				_player->reset();
 				_player->update(genes);
 
 				_step -= _soundUCs->Length;
-
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
 			}
 			else
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);

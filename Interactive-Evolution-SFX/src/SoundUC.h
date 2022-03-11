@@ -228,7 +228,7 @@ namespace IESFX
 		{
 			if (_selected)
 			{
-				_evolution->remove_model(_player[_id]->get());
+				_evolution->remove_model(*_player[_id]->get());
 				stripTool->BackColor = Color::White;
 
 				_selected = false;
@@ -299,12 +299,12 @@ namespace IESFX
 
 			if (_selected = !_selected)
 			{
-				_evolution->add_model(_player[_id]->get());
+				_evolution->add_model(*_player[_id]->get());
 				stripTool->BackColor = Color::CornflowerBlue;
 			}
 			else
 			{
-				_evolution->remove_model(_player[_id]->get());
+				_evolution->remove_model(*_player[_id]->get());
 				stripTool->BackColor = Color::White;
 			}
 		}

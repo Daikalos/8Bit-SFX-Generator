@@ -20,17 +20,8 @@ namespace IESFX
 		Evolution(double mutation_rate, double mutation_size);
 		~Evolution();
 
-		void add_model(SoundGene* gene)
-		{
-			_models.push_back(gene);
-		}
-		void remove_model(SoundGene* gene)
-		{
-			_models.erase(std::remove_if(_models.begin(), _models.end(), [gene](SoundGene* model)
-			{
-				return gene == model;
-			}), _models.end());
-		}
+		void add_model(SoundGene& gene);
+		void remove_model(const SoundGene& gene);
 
 		void set_mutation_rate(double value) { _mutation_rate = value; }
 		void set_mutation_size(double value) { _mutation_size = value; }
@@ -83,8 +74,10 @@ namespace IESFX
 			_mutation_size;
 
 		std::vector<SoundGene> _population;
+		std::vector<SoundGene> _models;
 
-		std::vector<SoundGene*> _models;
+		std::vector<SoundGene> _old_population;
+		std::vector<SoundGene> _old_models;
 	};
 }
 
