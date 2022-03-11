@@ -19,7 +19,7 @@ namespace IESFX
 		Sound() = default;
 		~Sound() = default;
 
-		SoundGene* get() { return &_gene; }
+		SoundGene& get() { return _gene; }
 
 		// only create buffer after write
 		//

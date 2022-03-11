@@ -34,6 +34,9 @@ int Evolution::execute(size_t max_generations, double max_quality)
 	if (_models.size() == 0)
 		return -1;
 
+	_old_population = _population;
+	_old_models = _models;
+
 	_max_generations = max_generations;
 	_max_quality = max_quality;
 
@@ -323,6 +326,11 @@ void Evolution::reset()
 	_models.clear();
 
 	initialize();
+}
+
+void Evolution::retry()
+{
+
 }
 
 std::vector<SoundGene> Evolution::output(size_t size, size_t step)

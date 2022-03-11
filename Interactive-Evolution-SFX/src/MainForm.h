@@ -68,6 +68,7 @@ namespace IESFX
 
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
+	private: System::Windows::Forms::ToolStripButton^ retryButton;
 	private: System::ComponentModel::Container^ components;
 	
 #pragma region Windows Form Designer generated code
@@ -103,6 +104,7 @@ namespace IESFX
 			this->mutationRateLabel = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
+			this->retryButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->menuStrip->SuspendLayout();
 			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
@@ -215,9 +217,9 @@ namespace IESFX
 			this->botStripTool->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->botStripTool->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
 			this->botStripTool->ImageScalingSize = System::Drawing::Size(36, 36);
-			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {
+			this->botStripTool->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(7) {
 				this->playButton, this->pauseButton,
-					this->showNextButton, this->showPrevButton, this->resetButton, this->evolveButton
+					this->showNextButton, this->showPrevButton, this->retryButton, this->resetButton, this->evolveButton
 			});
 			this->botStripTool->Location = System::Drawing::Point(0, 541);
 			this->botStripTool->Name = L"botStripTool";
@@ -295,7 +297,7 @@ namespace IESFX
 			this->evolveButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
 			this->evolveButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"evolveButton.Image")));
 			this->evolveButton->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->evolveButton->Margin = System::Windows::Forms::Padding(0, 2, 153, 2);
+			this->evolveButton->Margin = System::Windows::Forms::Padding(0, 2, 110, 2);
 			this->evolveButton->Name = L"evolveButton";
 			this->evolveButton->Size = System::Drawing::Size(40, 41);
 			this->evolveButton->Text = L"Evolve";
@@ -320,7 +322,7 @@ namespace IESFX
 			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->mutationSizeTextLabel->ForeColor = System::Drawing::Color::Aqua;
-			this->mutationSizeTextLabel->Location = System::Drawing::Point(1, 2);
+			this->mutationSizeTextLabel->Location = System::Drawing::Point(1, 1);
 			this->mutationSizeTextLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeTextLabel->Name = L"mutationSizeTextLabel";
 			this->mutationSizeTextLabel->Size = System::Drawing::Size(128, 25);
@@ -334,7 +336,7 @@ namespace IESFX
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->mutationSizeLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(128)),
 				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
-			this->mutationSizeLabel->Location = System::Drawing::Point(129, 2);
+			this->mutationSizeLabel->Location = System::Drawing::Point(129, 1);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
 			this->mutationSizeLabel->Size = System::Drawing::Size(65, 25);
@@ -419,7 +421,7 @@ namespace IESFX
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->mutationRateLabel->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(128)),
 				static_cast<System::Int32>(static_cast<System::Byte>(255)), static_cast<System::Int32>(static_cast<System::Byte>(255)));
-			this->mutationRateLabel->Location = System::Drawing::Point(132, 2);
+			this->mutationRateLabel->Location = System::Drawing::Point(132, 1);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
 			this->mutationRateLabel->Size = System::Drawing::Size(65, 25);
@@ -432,7 +434,7 @@ namespace IESFX
 			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->label4->ForeColor = System::Drawing::Color::Aqua;
-			this->label4->Location = System::Drawing::Point(1, 2);
+			this->label4->Location = System::Drawing::Point(1, 1);
 			this->label4->Margin = System::Windows::Forms::Padding(0);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(131, 25);
@@ -450,6 +452,18 @@ namespace IESFX
 			this->mutationRateSlider->TickFrequency = 2;
 			this->mutationRateSlider->Value = 2;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
+			// 
+			// retryButton
+			// 
+			this->retryButton->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->retryButton->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->retryButton->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"retryButton.Image")));
+			this->retryButton->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->retryButton->Margin = System::Windows::Forms::Padding(0, 2, 2, 2);
+			this->retryButton->Name = L"retryButton";
+			this->retryButton->Size = System::Drawing::Size(40, 41);
+			this->retryButton->Text = L"Retry";
+			this->retryButton->ToolTipText = L"Retry";
 			// 
 			// MainForm
 			// 

@@ -27,6 +27,7 @@ namespace IESFX
 		void set_mutation_size(double value) { _mutation_size = value; }
 
 		void reset();
+		void retry();
 
 		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
 		std::vector<SoundGene> output(size_t size, size_t step);
