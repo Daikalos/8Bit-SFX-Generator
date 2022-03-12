@@ -23,8 +23,8 @@ namespace IESFX
 		void set_mutation_rate(double value) { _mutation_rate = value; }
 		void set_mutation_size(double value) { _mutation_size = value; }
 
-		size_t generation() const { return _generations; }
-		double quality() const { return _quality; }
+		double generation() const { return (_max_generations == 0) ? 0.0 : _generations / (double)_max_generations; }
+		double quality() const { return (_max_quality == 0) ? 0.0 : _quality / _max_quality; }
 
 		bool active() const { return _active; }
 
@@ -32,7 +32,7 @@ namespace IESFX
 		void remove_model(const SoundGene& gene);
 
 		void reset();
-		void retry();
+		bool retry();
 
 		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
 		std::vector<SoundGene> output(size_t size, size_t step);
@@ -81,7 +81,8 @@ namespace IESFX
 			_mutation_rate, 
 			_mutation_size;
 		bool
-			_active{false};
+			_active{false},
+			_initializing{true};
 
 		std::vector<SoundGene> _population;
 		std::vector<SoundGene> _models;

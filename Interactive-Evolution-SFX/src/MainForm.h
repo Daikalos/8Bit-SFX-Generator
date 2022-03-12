@@ -40,8 +40,8 @@ namespace IESFX
 		}
 
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
-	private: System::Windows::Forms::StatusStrip^ statusStrip;
-	private: System::Windows::Forms::ToolStripStatusLabel^ statusLabel;
+
+
 	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
 	private: System::Windows::Forms::Panel^ pnlItems;
@@ -68,8 +68,12 @@ namespace IESFX
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
 	private: System::Windows::Forms::ToolStripButton^ retryButton;
-	private: System::Windows::Forms::ToolStripStatusLabel^ evoluionStatusLabel;
+
 	private: System::Windows::Forms::Timer^ statusTimer;
+	private: System::Windows::Forms::ToolStrip^ toolStrip1;
+	private: System::Windows::Forms::ToolStripLabel^ statusLabel;
+	private: System::Windows::Forms::ToolStripLabel^ evolutionStatusLabel;
+
 	private: System::ComponentModel::IContainer^ components;
 
 
@@ -86,9 +90,6 @@ namespace IESFX
 			this->loadButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->otherToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpButton = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->statusStrip = (gcnew System::Windows::Forms::StatusStrip());
-			this->statusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
-			this->evoluionStatusLabel = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->pnlItems = (gcnew System::Windows::Forms::Panel());
 			this->botStripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
@@ -111,8 +112,10 @@ namespace IESFX
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->mutationRateSlider = (gcnew System::Windows::Forms::TrackBar());
 			this->statusTimer = (gcnew System::Windows::Forms::Timer(this->components));
+			this->toolStrip1 = (gcnew System::Windows::Forms::ToolStrip());
+			this->statusLabel = (gcnew System::Windows::Forms::ToolStripLabel());
+			this->evolutionStatusLabel = (gcnew System::Windows::Forms::ToolStripLabel());
 			this->menuStrip->SuspendLayout();
-			this->statusStrip->SuspendLayout();
 			this->pnlItems->SuspendLayout();
 			this->botStripTool->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationSizeSlider))->BeginInit();
@@ -123,6 +126,7 @@ namespace IESFX
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->panel1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->BeginInit();
+			this->toolStrip1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// menuStrip
@@ -179,42 +183,6 @@ namespace IESFX
 			this->helpButton->Size = System::Drawing::Size(99, 22);
 			this->helpButton->Text = L"Help";
 			this->helpButton->Click += gcnew System::EventHandler(this, &MainForm::helpButton_Click);
-			// 
-			// statusStrip
-			// 
-			this->statusStrip->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->statusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->statusLabel, this->evoluionStatusLabel });
-			this->statusStrip->Location = System::Drawing::Point(0, 716);
-			this->statusStrip->Name = L"statusStrip";
-			this->statusStrip->Size = System::Drawing::Size(675, 25);
-			this->statusStrip->SizingGrip = false;
-			this->statusStrip->TabIndex = 2;
-			this->statusStrip->Text = L"statusStrip";
-			// 
-			// statusLabel
-			// 
-			this->statusLabel->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12.75F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->statusLabel->Margin = System::Windows::Forms::Padding(0, 1, 0, 1);
-			this->statusLabel->Name = L"statusLabel";
-			this->statusLabel->Size = System::Drawing::Size(89, 23);
-			this->statusLabel->Text = L"Loading...";
-			// 
-			// evoluionStatusLabel
-			// 
-			this->evoluionStatusLabel->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)),
-				static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			this->evoluionStatusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12.75F, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->evoluionStatusLabel->Margin = System::Windows::Forms::Padding(15, 1, 0, 1);
-			this->evoluionStatusLabel->Name = L"evoluionStatusLabel";
-			this->evoluionStatusLabel->Size = System::Drawing::Size(556, 23);
-			this->evoluionStatusLabel->Spring = true;
-			this->evoluionStatusLabel->Text = L"Gen: 10 | Quality: 50";
-			this->evoluionStatusLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			// 
 			// pnlItems
 			// 
@@ -351,7 +319,7 @@ namespace IESFX
 			// mutationSizeTextLabel
 			// 
 			this->mutationSizeTextLabel->AutoSize = true;
-			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->mutationSizeTextLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->mutationSizeTextLabel->ForeColor = System::Drawing::Color::Aqua;
 			this->mutationSizeTextLabel->Location = System::Drawing::Point(1, 1);
@@ -391,7 +359,7 @@ namespace IESFX
 			// modifiersPanel
 			// 
 			this->modifiersPanel->BackColor = System::Drawing::SystemColors::WindowFrame;
-			this->modifiersPanel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->modifiersPanel->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->modifiersPanel->Controls->Add(this->mutationSizeTextLabel);
 			this->modifiersPanel->Controls->Add(this->mutationSizeSlider);
 			this->modifiersPanel->Controls->Add(this->mutationSizeLabel);
@@ -437,7 +405,7 @@ namespace IESFX
 			// panel1
 			// 
 			this->panel1->BackColor = System::Drawing::SystemColors::WindowFrame;
-			this->panel1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->panel1->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->panel1->Controls->Add(this->mutationRateLabel);
 			this->panel1->Controls->Add(this->label4);
 			this->panel1->Controls->Add(this->mutationRateSlider);
@@ -463,7 +431,7 @@ namespace IESFX
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI", 14.25F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->label4->ForeColor = System::Drawing::Color::Aqua;
 			this->label4->Location = System::Drawing::Point(1, 1);
@@ -490,16 +458,48 @@ namespace IESFX
 			this->statusTimer->Enabled = true;
 			this->statusTimer->Tick += gcnew System::EventHandler(this, &MainForm::statusTimer_Tick);
 			// 
+			// toolStrip1
+			// 
+			this->toolStrip1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+				static_cast<System::Int32>(static_cast<System::Byte>(224)));
+			this->toolStrip1->Dock = System::Windows::Forms::DockStyle::Bottom;
+			this->toolStrip1->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->toolStrip1->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
+			this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->statusLabel, this->evolutionStatusLabel });
+			this->toolStrip1->Location = System::Drawing::Point(0, 716);
+			this->toolStrip1->Name = L"toolStrip1";
+			this->toolStrip1->RenderMode = System::Windows::Forms::ToolStripRenderMode::System;
+			this->toolStrip1->ShowItemToolTips = false;
+			this->toolStrip1->Size = System::Drawing::Size(675, 25);
+			this->toolStrip1->TabIndex = 15;
+			this->toolStrip1->Text = L"toolStrip1";
+			// 
+			// statusLabel
+			// 
+			this->statusLabel->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)),
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->statusLabel->Name = L"statusLabel";
+			this->statusLabel->Size = System::Drawing::Size(80, 22);
+			this->statusLabel->Text = L"Loading...";
+			// 
+			// evolutionStatusLabel
+			// 
+			this->evolutionStatusLabel->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->evolutionStatusLabel->Name = L"evolutionStatusLabel";
+			this->evolutionStatusLabel->Size = System::Drawing::Size(154, 22);
+			this->evolutionStatusLabel->Text = L"Gen: 10 | Quality: 50";
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoValidate = System::Windows::Forms::AutoValidate::EnableAllowFocusChange;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->ClientSize = System::Drawing::Size(675, 741);
+			this->Controls->Add(this->toolStrip1);
 			this->Controls->Add(this->panel1);
 			this->Controls->Add(this->volumePanel);
 			this->Controls->Add(this->pnlItems);
-			this->Controls->Add(this->statusStrip);
 			this->Controls->Add(this->menuStrip);
 			this->Controls->Add(this->modifiersPanel);
 			this->DoubleBuffered = true;
@@ -519,8 +519,6 @@ namespace IESFX
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
-			this->statusStrip->ResumeLayout(false);
-			this->statusStrip->PerformLayout();
 			this->pnlItems->ResumeLayout(false);
 			this->botStripTool->ResumeLayout(false);
 			this->botStripTool->PerformLayout();
@@ -535,6 +533,8 @@ namespace IESFX
 			this->panel1->ResumeLayout(false);
 			this->panel1->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->mutationRateSlider))->EndInit();
+			this->toolStrip1->ResumeLayout(false);
+			this->toolStrip1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -549,13 +549,16 @@ namespace IESFX
 		}
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
+			if (!ready())
+				return;
+
 			SaveFileDialog saveFileDialog;
 			saveFileDialog.Filter = "TXT File|*.txt";
 			saveFileDialog.Title = "Save current config";
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-				update_status("...Loading");
+				update_status("Loading...");
 
 				if (!_evolution->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
 					MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -565,13 +568,16 @@ namespace IESFX
 		}
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			if (!ready())
+				return;
+
 			OpenFileDialog openFileDialog;
 			openFileDialog.Filter = "TXT File|*.txt|WAV File|*.wav";
 			openFileDialog.Title = "Load";
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
-				update_status("...Loading");
+				update_status("Loading...");
 
 				if (!_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -635,17 +641,22 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
-				update_status("...Loading");
+				update_status("Loading...");
 
-				_player->reset();
-				_evolution->reset();
+				if (!_evolution->retry())
+					MessageBox::Show("No previous configuration to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				else
+				{
+					for (int i = 0; i < _soundUCs->Length; ++i)
+						_soundUCs[i]->reset();
 
-				_evolution->retry();
+					_player->reset();
 
-				_prev = _step = 0;
-				_color = Color::White;
+					_prev = _step = 0;
+					_color = Color::White;
 
-				_player->update(_evolution->output(_soundUCs->Length, 0));
+					_player->update(_evolution->output(_soundUCs->Length, 0));
+				}
 
 				update_status("Ready");
 			}
@@ -656,7 +667,7 @@ namespace IESFX
 			if (!ready())
 				return;
 
-			update_status("...Loading");
+			update_status("Loading...");
 
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step - _soundUCs->Length));
 
@@ -682,7 +693,7 @@ namespace IESFX
 			if (!ready())
 				return;
 
-			update_status("...Loading");
+			update_status("Loading...");
 
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step + _soundUCs->Length));
 			
@@ -740,8 +751,11 @@ namespace IESFX
 
 			if (_execute)
 			{
-				update_evolution_status("Gen: " + _evolution->generation() + " | Quality: " + String::Format(
-					System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(_evolution->quality()), 1)));
+				update_evolution_status(
+					"Generation: " + String::Format(System::Globalization::CultureInfo::InvariantCulture, 
+						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->generation() * 100), 1)) + 
+					"% | Quality: " + String::Format(System::Globalization::CultureInfo::InvariantCulture,
+						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->quality() * 100), 1)) + "%");
 				_status = true;
 			}
 			else
@@ -811,7 +825,7 @@ namespace IESFX
 		}
 		void ues(String^ status)
 		{
-			evoluionStatusLabel->Text = status;
+			evolutionStatusLabel->Text = status;
 			Refresh();
 		}
 
@@ -848,11 +862,11 @@ namespace IESFX
 					_prev = _step = 0;
 					_color = Color::White;
 
-					_player->reset();
-					_player->update(genes);
-
 					for (int i = 0; i < _soundUCs->Length; ++i)
 						_soundUCs[i]->reset();
+
+					_player->reset();
+					_player->update(genes);
 				}
 				else
 					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);

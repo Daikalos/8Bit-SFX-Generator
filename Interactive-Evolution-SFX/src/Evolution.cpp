@@ -32,7 +32,10 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	_active = true;
 
-	_old_population = _population;
+	if (!_initializing) 
+		_old_population = _population;
+	else 
+		_initializing = false;
 
 	_max_generations = max_generations;
 	_max_quality = max_quality;
@@ -139,6 +142,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	const double simi_mul = 5.5;
 
 	double time = 0.0;
+	bool exact = true;
+
 	for (size_t i = 0, index = 0; i < candidate.size(); ++i)
 	{
 		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
@@ -149,6 +154,8 @@ void Evolution::evaluate(SoundGene& candidate)
 			for (size_t j = 0; j < _models.size(); ++j)
 			{
 				SoundGene& model = _models[j];
+
+				bool exact = true;
 				for (size_t k = 0, m_index = 0; k < model.size(); ++k)
 				{
 					Poke* m_poke = dynamic_cast<Poke*>(model.get(k));
@@ -162,6 +169,9 @@ void Evolution::evaluate(SoundGene& candidate)
 					{
 						int difference = std::abs((int)m_poke->value - (int)poke->value);
 						candidate._fitness += ((difference == 0) ? 0.5 : (1.0 / (double)difference)) * simi_mul;
+
+						if (difference > 0)
+							exact = false;
 					}
 				}
 			}
@@ -172,6 +182,9 @@ void Evolution::evaluate(SoundGene& candidate)
 			++index;
 		}
 	}
+
+	if (exact)
+		candidate._fitness += -simi_mul;
 
 	// adjust fitness based on length of audio
 	//
@@ -323,15 +336,24 @@ bool Evolution::complete()
 void Evolution::reset()
 {
 	_population.clear();
+	_old_population.clear();
+
 	_models.clear();
 
 	initialize();
 }
 
-void Evolution::retry()
+bool Evolution::retry()
 {
+	if (_old_population.size() == 0)
+		return false;
+
 	_population = _old_population;
+
+	_old_population.clear();
 	_models.clear();
+
+	return true;
 }
 
 std::vector<SoundGene> Evolution::output(size_t size, size_t step)
