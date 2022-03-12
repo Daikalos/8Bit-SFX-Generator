@@ -680,6 +680,8 @@ namespace IESFX
 				_player->update(genes);
 
 				_step -= _soundUCs->Length;
+
+				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
 			else
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -706,6 +708,8 @@ namespace IESFX
 				_player->update(genes);
 
 				_step += _soundUCs->Length;
+
+				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
 			else
 				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -760,7 +764,7 @@ namespace IESFX
 			}
 			else
 			{
-				update_evolution_status("");
+				update_evolution_status("0/" + POPULATION_SIZE);
 				_status = false;
 			}
 		}
