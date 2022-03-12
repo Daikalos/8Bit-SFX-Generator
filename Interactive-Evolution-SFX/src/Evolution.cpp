@@ -99,13 +99,12 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 void Evolution::initialize()
 {
-	size_t size = util::arr_size(examples);
-
-	_models.resize(size);
+	std::vector<size_t> random = util::random(util::arr_size(examples));
+	_models.resize(MODEL_SAMPLES);
 
 	Interpreter interpreter;
-	for (int i = 0; i < size; ++i)
-		interpreter.read_str(&_models[i], examples[i]);
+	for (int i = 0; i < MODEL_SAMPLES; ++i)
+		interpreter.read_str(&_models[i], examples[random[i]]);
 
 	_population.resize(POPULATION_SIZE);
 	for (int i = 0; i < POPULATION_SIZE; ++i)
@@ -144,47 +143,54 @@ void Evolution::evaluate(SoundGene& candidate)
 	double time = 0.0;
 	bool exact = true;
 
-	for (size_t i = 0, index = 0; i < candidate.size(); ++i)
+	for (size_t j = 0; j < _models.size(); ++j)
 	{
-		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
-		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
+		SoundGene& model = _models[j];
+		bool same = true;
 
-		if (poke != nullptr)
+		for (size_t k = 0, m_index = 0; k < model.size(); ++k)
 		{
-			for (size_t j = 0; j < _models.size(); ++j)
+			Poke* m_poke = dynamic_cast<Poke*>(model.get(k));
+			Sample* m_sample = dynamic_cast<Sample*>(model.get(k));
+
+			if (m_poke != nullptr)
 			{
-				SoundGene& model = _models[j];
-
-				bool exact = true;
-				for (size_t k = 0, m_index = 0; k < model.size(); ++k)
+				for (size_t i = 0, c_index = 0; i < candidate.size(); ++i)
 				{
-					Poke* m_poke = dynamic_cast<Poke*>(model.get(k));
-					Sample* m_sample = dynamic_cast<Sample*>(model.get(k));
+					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(i));
+					Sample* c_sample = dynamic_cast<Sample*>(candidate.get(i));
 
-					if (m_sample != nullptr)
-						++m_index;
-					else if (index != m_index)
+					if (c_sample != nullptr)
+						++c_index;
+					else if (c_index != m_index)
 						continue;
-					else if (m_poke->offset == poke->offset)
+					else if (m_poke->offset == c_poke->offset)
 					{
-						int difference = std::abs((int)m_poke->value - (int)poke->value);
+						int difference = std::abs((int)m_poke->value - (int)c_poke->value);
 						candidate._fitness += ((difference == 0) ? 0.5 : (1.0 / (double)difference)) * simi_mul;
 
 						if (difference > 0)
-							exact = false;
+							same = false;
 					}
 				}
 			}
+			else if (m_sample != nullptr)
+				++m_index;
 		}
-		else if (sample != nullptr)
-		{
-			time += (double)util::time(sample->size);
-			++index;
-		}
+
+		// bad fitness is given if exactly the same
+		//
+		if (same)
+			candidate._fitness += -simi_mul;
 	}
 
-	if (exact)
-		candidate._fitness += -simi_mul;
+	for (size_t i = 0; i < candidate.size(); ++i)
+	{
+		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
+
+		if (sample != nullptr)
+			time += (double)util::time(sample->size);
+	}
 
 	// adjust fitness based on length of audio
 	//
