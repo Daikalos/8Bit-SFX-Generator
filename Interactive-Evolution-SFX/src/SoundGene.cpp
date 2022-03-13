@@ -20,7 +20,7 @@ void SoundGene::shrink()
 	_gene.erase(std::remove_if(
 		std::execution::par_unseq,
 		_gene.begin(), _gene.end(),
-		[](std::shared_ptr<Command>& command)
+		[](const std::shared_ptr<Command>& command)
 		{
 			return command.get() == nullptr;
 		}), _gene.end());

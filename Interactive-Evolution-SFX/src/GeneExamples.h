@@ -254,8 +254,7 @@ poke 0 61
 poke 17 58
 poke 23 100
 poke 6 58
-sample 162
-sample 516
+sample 678
 poke 9 2
 poke 15 8
 poke 17 49

@@ -25,6 +25,21 @@ namespace IESFX
 		void resize(const size_t size);
 		void shrink();
 
+		template<class T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+		std::vector<std::tuple<T, T, T>> range() const
+		{
+			std::vector<std::tuple<T, T, T>> result;
+			for (size_t i = 0, index = 0; i < size(); ++i)
+			{
+				if (dynamic_cast<Sample*>(get(i)) != nullptr)
+				{
+					result.push_back(std::make_tuple(index + 1, i, i - index - 1));
+					index = i;
+				}
+			}
+			return result;
+		}
+
 		std::string output() const;
 
 		SoundGene& operator=(const SoundGene& rhs);

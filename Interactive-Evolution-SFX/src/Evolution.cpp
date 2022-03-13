@@ -99,12 +99,13 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 void Evolution::initialize()
 {
-	std::vector<size_t> random = util::random(util::arr_size(examples));
 	_models.resize(MODEL_SAMPLES);
+
+	std::vector<size_t> random = util::random(util::arr_size(examples));
 
 	Interpreter interpreter;
 	for (int i = 0; i < MODEL_SAMPLES; ++i)
-		interpreter.read_str(&_models[i], examples[random[i]]);
+		interpreter.read_str(&_models[i], examples[0]);
 
 	_population.resize(POPULATION_SIZE);
 	for (int i = 0; i < POPULATION_SIZE; ++i)
@@ -134,48 +135,117 @@ void Evolution::shuffle()
 }
 
 void Evolution::evaluate(SoundGene& candidate)
-{
+{	
 	candidate._fitness = 0;
 
+	if (candidate.size() == 0)
+		return;
+
+	std::vector<std::tuple<int, int, int>> c_range = candidate.range<int>();
+
+	if (c_range.size() == 0)
+		return;
+
 	const double time_mul = 4.5;
-	const double simi_mul = 5.5;
+	const double simi_mul = 10.5;
+	const double smpl_mul = 6.5;
 
 	double time = 0.0;
 	bool exact = true;
 
-	for (size_t j = 0; j < _models.size(); ++j)
+	// adjust fitness based on similiarity
+	//
+	for (size_t i = 0; i < _models.size(); ++i)
 	{
-		SoundGene& model = _models[j];
+		SoundGene& model = _models[i];
 		bool same = true;
 
-		for (size_t k = 0, m_index = 0; k < model.size(); ++k)
-		{
-			Poke* m_poke = dynamic_cast<Poke*>(model.get(k));
-			Sample* m_sample = dynamic_cast<Sample*>(model.get(k));
+		std::vector<std::tuple<int, int, int>> m_range = model.range<int>();
 
-			if (m_poke != nullptr)
+		if (m_range.size() == 0 || model.size() == 0)
+			continue;
+
+		{
+			double size_diff = (double)std::abs((int)model.size() - (int)candidate.size());
+			double size_ratio = 1.0 / (size_diff + 1.0);
+
+			candidate._fitness += size_ratio * simi_mul; // match in size
+		}
+
+		for (size_t j = 0, mi = 0; j < model.size(); ++j)
+		{
+			Poke* m_poke = dynamic_cast<Poke*>(model.get(j));
+			Sample* m_sample = dynamic_cast<Sample*>(model.get(j));
+
+			if (m_sample != nullptr)
 			{
-				for (size_t i = 0, c_index = 0; i < candidate.size(); ++i)
+				double pk_diff = std::abs(std::get<2>(m_range[mi]) - std::get<2>(c_range[mi]));
+				double pk_ratio = 1.0 / (pk_diff + 1.0);
+
+				candidate._fitness += pk_ratio * simi_mul;
+
+				if (++mi >= c_range.size())
+					break;
+			}
+			else if (m_poke != nullptr)
+			{
+				for (size_t k = std::get<0>(c_range[mi]); k < std::get<1>(c_range[mi]); ++k)
 				{
-					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(i));
-					Sample* c_sample = dynamic_cast<Sample*>(candidate.get(i));
+					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
+					if (m_poke->offset == c_poke->offset)
+					{
+						double val_diff = (double)std::abs((int)m_poke->value - (int)c_poke->value);
+						double val_ratio = 1.0 / (val_diff + 1.0);
+
+						candidate._fitness += val_ratio * simi_mul;
+
+						if (val_diff > DBL_EPSILON)
+							same = false;
+					}
+				}
+			}
+
+			/*if (m_poke != nullptr)
+			{
+				++m_p_count;
+				for (size_t k = 0, c_index = 0, c_p_count = 0; k < candidate.size(); ++k)
+				{
+					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
+					Sample* c_sample = dynamic_cast<Sample*>(candidate.get(k));
 
 					if (c_sample != nullptr)
-						++c_index;
+					{
+						if (++c_index == m_index)
+						{
+							double pk_diff = (double)std::abs((int)m_p_count - (int)c_p_count);
+							double pk_ratio = 1.0 / (pk_diff + 1.0);
+
+							candidate._fitness += pk_ratio * simi_mul;
+
+							c_p_count = 0;
+						}
+					}
 					else if (c_index != m_index)
 						continue;
 					else if (m_poke->offset == c_poke->offset)
 					{
-						int difference = std::abs((int)m_poke->value - (int)c_poke->value);
-						candidate._fitness += ((difference == 0) ? 0.5 : (1.0 / (double)difference)) * simi_mul;
+						++c_p_count;
 
-						if (difference > 0)
+						double val_diff = (double)std::abs((int)m_poke->value - (int)c_poke->value);
+						double val_ratio = 1.0 / (val_diff + 1.0);
+
+						candidate._fitness += val_ratio * simi_mul;
+
+						if (val_diff > DBL_EPSILON)
 							same = false;
 					}
 				}
 			}
 			else if (m_sample != nullptr)
+			{
 				++m_index;
+				m_p_count = 0;
+			}*/
 		}
 
 		// bad fitness is given if exactly the same
@@ -184,17 +254,37 @@ void Evolution::evaluate(SoundGene& candidate)
 			candidate._fitness += -simi_mul;
 	}
 
+	// adjust fitness based on samples
+	//
+	size_t poke_count = 0;
 	for (size_t i = 0; i < candidate.size(); ++i)
 	{
+		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
 		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
 
 		if (sample != nullptr)
+		{
 			time += (double)util::time(sample->size);
+
+			// no pokes given before sample is bad
+			// 
+			if (poke_count == 0)
+				candidate._fitness += -smpl_mul;
+
+			poke_count = 0;
+		}
+		else if (poke != nullptr)
+			++poke_count;
 	}
+
+	// pokes but no sample given is bad
+	//
+	if (poke_count > 0)
+		candidate._fitness += -smpl_mul;
 
 	// adjust fitness based on length of audio
 	//
-	if (time == 0.0)
+	if (time <= DBL_EPSILON)
 		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.2)
 		candidate._fitness -= (0.2 / time) * time_mul;
@@ -318,19 +408,26 @@ void Evolution::mutation()
 
 				if (util::random() > COMMAND_MUTATION)
 				{
-					if (poke != nullptr)
+					if (util::random() > REMOVE_MUTATION)
 					{
-						if (util::random() > OFFSET_MUTATION)
-							poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
-						else
-							poke->offset = util::ropoke();
+						if (poke != nullptr)
+						{
+							if (util::random() > OFFSET_MUTATION)
+								poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
+							else
+								poke->offset = util::ropoke();
+						}
+						else if (sample != nullptr)
+							sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
 					}
-					else if (sample != nullptr)
-						sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
+					else
+						gene.set(mp, nullptr);
 				}
-				else
+				else 
 					gene.flip(mp);
 			}
+
+			gene.shrink();
 		});
 }
 
