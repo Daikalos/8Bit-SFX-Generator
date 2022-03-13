@@ -105,7 +105,7 @@ void Evolution::initialize()
 
 	Interpreter interpreter;
 	for (int i = 0; i < MODEL_SAMPLES; ++i)
-		interpreter.read_str(&_models[i], examples[0]);
+		interpreter.read_str(&_models[i], examples[random[i]]);
 
 	_population.resize(POPULATION_SIZE);
 	for (int i = 0; i < POPULATION_SIZE; ++i)
@@ -135,7 +135,7 @@ void Evolution::shuffle()
 }
 
 void Evolution::evaluate(SoundGene& candidate)
-{	
+{
 	candidate._fitness = 0;
 
 	if (candidate.size() == 0)
@@ -146,112 +146,56 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (c_range.size() == 0)
 		return;
 
-	const double time_mul = 4.5;
-	const double simi_mul = 10.5;
-	const double smpl_mul = 6.5;
+	const double time_mul = 2.5;
+	const double simi_mul = 5.0;
+	const double smpl_mul = 3.5;
 
 	double time = 0.0;
 	bool exact = true;
 
-	// adjust fitness based on similiarity
+	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS
 	//
 	for (size_t i = 0; i < _models.size(); ++i)
 	{
-		SoundGene& model = _models[i];
+		SoundGene* model = &_models[i];
 		bool same = true;
 
-		std::vector<std::tuple<int, int, int>> m_range = model.range<int>();
+		std::vector<std::tuple<int, int, int>> m_range = model->range<int>();
 
-		if (m_range.size() == 0 || model.size() == 0)
+		if (m_range.size() == 0 || model->size() == 0)
 			continue;
 
 		{
-			double size_diff = (double)std::abs((int)model.size() - (int)candidate.size());
-			double size_ratio = 1.0 / (size_diff + 1.0);
+			double rg_diff = std::abs((int)m_range.size() - (int)c_range.size());
+			double rg_ratio = 1.0 / (rg_diff + 1.0);
 
-			candidate._fitness += size_ratio * simi_mul; // match in size
+			candidate._fitness += rg_ratio * simi_mul;
 		}
 
-		for (size_t j = 0, mi = 0; j < model.size(); ++j)
+		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si)
 		{
-			Poke* m_poke = dynamic_cast<Poke*>(model.get(j));
-			Sample* m_sample = dynamic_cast<Sample*>(model.get(j));
-
-			if (m_sample != nullptr)
+			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 			{
-				double pk_diff = std::abs(std::get<2>(m_range[mi]) - std::get<2>(c_range[mi]));
-				double pk_ratio = 1.0 / (pk_diff + 1.0);
+				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
 
-				candidate._fitness += pk_ratio * simi_mul;
-
-				if (++mi >= c_range.size())
-					break;
-			}
-			else if (m_poke != nullptr)
-			{
-				for (size_t k = std::get<0>(c_range[mi]); k < std::get<1>(c_range[mi]); ++k)
+				if (m_poke != nullptr)
 				{
-					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
-					if (m_poke->offset == c_poke->offset)
+					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 					{
-						double val_diff = (double)std::abs((int)m_poke->value - (int)c_poke->value);
-						double val_ratio = 1.0 / (val_diff + 1.0);
-
-						candidate._fitness += val_ratio * simi_mul;
-
-						if (val_diff > DBL_EPSILON)
-							same = false;
-					}
-				}
-			}
-
-			/*if (m_poke != nullptr)
-			{
-				++m_p_count;
-				for (size_t k = 0, c_index = 0, c_p_count = 0; k < candidate.size(); ++k)
-				{
-					Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
-					Sample* c_sample = dynamic_cast<Sample*>(candidate.get(k));
-
-					if (c_sample != nullptr)
-					{
-						if (++c_index == m_index)
+						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
+						if (m_poke->offset == c_poke->offset)
 						{
-							double pk_diff = (double)std::abs((int)m_p_count - (int)c_p_count);
-							double pk_ratio = 1.0 / (pk_diff + 1.0);
+							double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
+							double val_ratio = 1.0 / (val_diff + 1.0);
 
-							candidate._fitness += pk_ratio * simi_mul;
+							candidate._fitness += val_ratio * simi_mul;
 
-							c_p_count = 0;
+							break;
 						}
 					}
-					else if (c_index != m_index)
-						continue;
-					else if (m_poke->offset == c_poke->offset)
-					{
-						++c_p_count;
-
-						double val_diff = (double)std::abs((int)m_poke->value - (int)c_poke->value);
-						double val_ratio = 1.0 / (val_diff + 1.0);
-
-						candidate._fitness += val_ratio * simi_mul;
-
-						if (val_diff > DBL_EPSILON)
-							same = false;
-					}
 				}
 			}
-			else if (m_sample != nullptr)
-			{
-				++m_index;
-				m_p_count = 0;
-			}*/
 		}
-
-		// bad fitness is given if exactly the same
-		//
-		if (same)
-			candidate._fitness += -simi_mul;
 	}
 
 	// adjust fitness based on samples
@@ -287,9 +231,9 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (time <= DBL_EPSILON)
 		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.2)
-		candidate._fitness -= (0.2 / time) * time_mul;
+		candidate._fitness += -(0.2 / time) * time_mul;
 	else if (time > 1.5)
-		candidate._fitness -= (time / 1.5) * time_mul;
+		candidate._fitness += -(time / 1.5) * time_mul;
 	else
 		candidate._fitness += time_mul;
 }
@@ -423,7 +367,7 @@ void Evolution::mutation()
 					else
 						gene.set(mp, nullptr);
 				}
-				else 
+				else
 					gene.flip(mp);
 			}
 

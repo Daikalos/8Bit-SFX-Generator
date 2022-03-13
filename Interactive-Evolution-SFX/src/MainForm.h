@@ -21,6 +21,7 @@ namespace IESFX
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Threading::Tasks;
 
 	public ref class MainForm : public Form
 	{
@@ -33,15 +34,10 @@ namespace IESFX
 	protected:
 		~MainForm()
 		{
-			_shutdown = true;
-			_evolution_thread->Join();
-
 			delete components;
 		}
 
 	private: System::Windows::Forms::MenuStrip^ menuStrip;
-
-
 	private: System::Windows::Forms::ToolStripMenuItem^ optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ loadButton;
 	private: System::Windows::Forms::Panel^ pnlItems;
@@ -68,15 +64,11 @@ namespace IESFX
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TrackBar^ mutationRateSlider;
 	private: System::Windows::Forms::ToolStripButton^ retryButton;
-
 	private: System::Windows::Forms::Timer^ statusTimer;
 	private: System::Windows::Forms::ToolStrip^ toolStrip1;
 	private: System::Windows::Forms::ToolStripLabel^ statusLabel;
 	private: System::Windows::Forms::ToolStripLabel^ evolutionStatusLabel;
-
 	private: System::ComponentModel::IContainer^ components;
-
-
 	
 #pragma region Windows Form Designer generated code
 	private:
@@ -313,7 +305,7 @@ namespace IESFX
 			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
-			this->mutationSizeSlider->Value = 2;
+			this->mutationSizeSlider->Value = 12;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -339,9 +331,9 @@ namespace IESFX
 			this->mutationSizeLabel->Location = System::Drawing::Point(129, 1);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(65, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(67, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 1.0%";
+			this->mutationSizeLabel->Text = L"- 6.0%";
 			// 
 			// volumeSlider
 			// 
@@ -424,9 +416,9 @@ namespace IESFX
 			this->mutationRateLabel->Location = System::Drawing::Point(132, 1);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
-			this->mutationRateLabel->Size = System::Drawing::Size(65, 25);
+			this->mutationRateLabel->Size = System::Drawing::Size(68, 25);
 			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 1.0%";
+			this->mutationRateLabel->Text = L"- 4.0%";
 			// 
 			// label4
 			// 
@@ -450,7 +442,7 @@ namespace IESFX
 			this->mutationRateSlider->Size = System::Drawing::Size(325, 45);
 			this->mutationRateSlider->TabIndex = 5;
 			this->mutationRateSlider->TickFrequency = 2;
-			this->mutationRateSlider->Value = 2;
+			this->mutationRateSlider->Value = 8;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
 			// 
 			// statusTimer
@@ -516,6 +508,7 @@ namespace IESFX
 			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"8-bit SFX Generator";
+			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &MainForm::MainForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
@@ -590,10 +583,16 @@ namespace IESFX
 
 		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			if (!ready())
+				return;
+
 			_player->set_is_playing(true);
 		}
 		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
+			if (!ready())
+				return;
+
 			_player->set_is_playing(false);
 		}
 
@@ -608,7 +607,7 @@ namespace IESFX
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
-				_execute = true;
+				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
 		}
 
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -626,7 +625,7 @@ namespace IESFX
 				_player->reset();
 				_evolution->reset();
 
-				_execute = true;
+				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
 			}
 		}
 		System::Void retryButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -656,6 +655,8 @@ namespace IESFX
 					_color = Color::White;
 
 					_player->update(_evolution->output(_soundUCs->Length, 0));
+
+					update_evolution_status(_step + "/" + POPULATION_SIZE);
 				}
 
 				update_status("Ready");
@@ -750,10 +751,10 @@ namespace IESFX
 
 		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e)
 		{
-			if (!_status && !_execute)
+			if (!_status && !_evolution->active())
 				return;
 
-			if (_execute)
+			if (_evolution->active())
 			{
 				update_evolution_status(
 					"Generation: " + String::Format(System::Globalization::CultureInfo::InvariantCulture, 
@@ -767,6 +768,11 @@ namespace IESFX
 				update_evolution_status("0/" + POPULATION_SIZE);
 				_status = false;
 			}
+		}
+
+		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
+		{
+			_player->shutdown();
 		}
 
 	private:
@@ -799,7 +805,7 @@ namespace IESFX
 
 		bool ready()
 		{
-			if (_execute)
+			if (_evolution->active())
 			{
 				MessageBox::Show("System is not ready yet.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return false;
@@ -833,52 +839,41 @@ namespace IESFX
 			Refresh();
 		}
 
-		void evolution_loop()
+		void execute_evolution()
 		{
-			while (!_shutdown)
+			update_status("Loading...");
+
+			int result = _evolution->execute();
+
+			if (result != 0)
 			{
-				if (!_execute)
-					continue;
-
-				update_status("Loading...");
-
-				int result = _evolution->execute();
-
-				if (result != 0)
+				switch (result)
 				{
-					switch (result)
-					{
-					case -1:
-						MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-						break;
-					}
-
-					_execute = false;
-					update_status("Ready");
-
-					continue;
+				case -1:
+					MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					break;
 				}
-
-				std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
-
-				if (genes.size() != 0)
-				{
-					_prev = _step = 0;
-					_color = Color::White;
-
-					for (int i = 0; i < _soundUCs->Length; ++i)
-						_soundUCs[i]->reset();
-
-					_player->reset();
-					_player->update(genes);
-				}
-				else
-					MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-				_execute = false;
-
 				update_status("Ready");
+				return;
 			}
+
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
+
+			if (genes.size() != 0)
+			{
+				_prev = _step = 0;
+				_color = Color::White;
+
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+
+				_player->reset();
+				_player->update(genes);
+			}
+			else
+				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+			update_status("Ready");
 		}
 
 	public:
@@ -906,7 +901,6 @@ namespace IESFX
 		Player^ _player;
 		Evolution* _evolution;
 
-		Thread^ _evolution_thread;
-		bool _shutdown, _execute, _status;
+		bool _status;
 };
 }

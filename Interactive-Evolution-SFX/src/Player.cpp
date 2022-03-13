@@ -3,8 +3,7 @@
 using namespace IESFX;
 
 Player::Player(Evolution* evolution, size_t size, double volume)
-	: _evolution(evolution), _position(0), _size(size), _is_playing(false), 
-	_shutdown(false), _volume(volume), _sounds(nullptr), _sound(nullptr), _thread(nullptr)
+	: _size(size), _volume(volume), _evolution(evolution)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
 	_thread->IsBackground = true;
@@ -16,9 +15,6 @@ Player::Player(Evolution* evolution, size_t size, double volume)
 Player::~Player()
 {
 	delete[] _sounds;
-
-	_shutdown = true;
-	_thread->Join();
 }
 
 void Player::reset()

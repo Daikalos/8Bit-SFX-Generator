@@ -33,8 +33,8 @@ namespace IESFX
 			{
 				if (dynamic_cast<Sample*>(get(i)) != nullptr)
 				{
-					result.push_back(std::make_tuple(index + 1, i, i - index - 1));
-					index = i;
+					result.push_back(std::make_tuple(index, i, i - index));
+					index = i + 1;
 				}
 			}
 			return result;
@@ -77,7 +77,8 @@ namespace IESFX
 
 		void flip(int index)
 		{
-			_gene[index] = get(index)->flip();
+			if (get(index) != nullptr)
+				_gene[index] = get(index)->flip();
 		}
 
 		friend bool operator==(const SoundGene& lhs, const SoundGene& rhs)

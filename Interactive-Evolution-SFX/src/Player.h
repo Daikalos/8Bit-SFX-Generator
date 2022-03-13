@@ -27,6 +27,12 @@ namespace IESFX
 		Player(Evolution* evolution, size_t size, double volume);
 		~Player();
 
+		void shutdown() 
+		{ 
+			_shutdown = true; 
+			_thread->Join();
+		}
+
 		void reset();
 
 		void set_volume(float volume);
@@ -65,14 +71,20 @@ namespace IESFX
 		void player_loop();
 
 	private:
-		size_t _position, _size;
-		bool _is_playing, _shutdown;
-		double _volume;
+		size_t 
+			_position{0}, 
+			_size;
+		bool 
+			_is_playing{false}, 
+			_shutdown{false};
+		double 
+			_volume{0.0};
 
-		Evolution* _evolution;
-
-		Sound* _sounds;
-		Sound* _sound;
+		Evolution* 
+			_evolution;
+		Sound
+			*_sounds{nullptr},
+			*_sound{nullptr};
 
 		Thread^ _thread;
 	};
