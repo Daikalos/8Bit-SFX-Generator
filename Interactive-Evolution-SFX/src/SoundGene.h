@@ -55,6 +55,11 @@ namespace IESFX
 		void push(const Poke& poke)		{ _gene.push_back(poke.clone()); }
 		void push(const Sample& sample) { _gene.push_back(sample.clone()); }
 
+		void insert(size_t pos, const Poke& poke)
+		{
+			_gene.insert(_gene.begin() + pos, poke.clone());
+		}
+
 		void set(int index, std::nullptr_t)
 		{
 			_gene[index].reset();

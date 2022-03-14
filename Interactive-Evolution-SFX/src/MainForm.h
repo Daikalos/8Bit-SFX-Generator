@@ -418,7 +418,7 @@ namespace IESFX
 			this->mutationRateLabel->Name = L"mutationRateLabel";
 			this->mutationRateLabel->Size = System::Drawing::Size(67, 25);
 			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 6.0%";
+			this->mutationRateLabel->Text = L"- 9.0%";
 			// 
 			// label4
 			// 
@@ -442,7 +442,7 @@ namespace IESFX
 			this->mutationRateSlider->Size = System::Drawing::Size(325, 45);
 			this->mutationRateSlider->TabIndex = 5;
 			this->mutationRateSlider->TickFrequency = 2;
-			this->mutationRateSlider->Value = 12;
+			this->mutationRateSlider->Value = 18;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
 			// 
 			// statusTimer
