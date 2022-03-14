@@ -147,8 +147,8 @@ void Evolution::evaluate(SoundGene& candidate)
 		return;
 
 	const double time_mul = 2.5;
-	const double simi_mul = 6.0;
-	const double smpl_mul = 3.5;
+	const double simi_mul = 6.5;
+	const double smpl_mul = 2.5;
 
 	double time = 0.0;
 	bool exact = true;
@@ -165,14 +165,14 @@ void Evolution::evaluate(SoundGene& candidate)
 		if (m_range.size() == 0 || model->size() == 0)
 			continue;
 
-		{
-			double rg_diff = std::abs((int)m_range.size() - (int)c_range.size());
-			double rg_ratio = 1.0 / (rg_diff + 1.0);
+		//{
+		//	double rg_diff = std::abs((int)m_range.size() - (int)c_range.size());
+		//	double rg_ratio = 1.0 / (rg_diff + 1.0);
 
-			candidate._fitness += rg_ratio * simi_mul;
-		}
+		//	candidate._fitness += rg_ratio * simi_mul;
+		//}
 
-		bool similiar = true;
+		double score = 0.0;
 
 		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
 		{
@@ -191,10 +191,7 @@ void Evolution::evaluate(SoundGene& candidate)
 							double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
 							double val_ratio = 1.0 / (val_diff + 1.0);
 
-							candidate._fitness += val_ratio * simi_mul;
-
-							if (val_diff > DBL_EPSILON)
-								similiar = false;
+							score += val_ratio;
 
 							break;
 						}
@@ -203,8 +200,9 @@ void Evolution::evaluate(SoundGene& candidate)
 			}
 		}
 
-		if (similiar)
-			candidate._fitness -= simi_mul;
+		double similiarity = score / (double)model->size(); // similiarity in percentage (0-1)
+
+		candidate._fitness += ((similiarity <= 0.85) ? 1 : -1) * similiarity * simi_mul;
 	}
 
 	// adjust fitness based on samples
@@ -243,8 +241,6 @@ void Evolution::evaluate(SoundGene& candidate)
 		candidate._fitness += -(0.2 / time) * time_mul;
 	else if (time > 1.5)
 		candidate._fitness += -(time / 1.5) * time_mul;
-	else
-		candidate._fitness += time_mul;
 }
 
 void Evolution::selection()
@@ -304,7 +300,7 @@ void Evolution::crossover()
 		child1.resize(gene_length); // resize to keep same length and allow for swap range
 		child2.resize(gene_length);
 
-		std::vector<size_t> n_points(util::random(1, N_POINTS) * 2);
+		std::vector<size_t> n_points(util::random<size_t>(1, N_POINTS) * 2);
 
 		for (size_t j = 0; j < n_points.size(); j += 2)
 		{

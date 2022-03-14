@@ -305,7 +305,7 @@ namespace IESFX
 			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
-			this->mutationSizeSlider->Value = 14;
+			this->mutationSizeSlider->Value = 15;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -331,9 +331,9 @@ namespace IESFX
 			this->mutationSizeLabel->Location = System::Drawing::Point(129, 1);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(67, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(65, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 7.0%";
+			this->mutationSizeLabel->Text = L"- 7.5%";
 			// 
 			// volumeSlider
 			// 
@@ -416,9 +416,9 @@ namespace IESFX
 			this->mutationRateLabel->Location = System::Drawing::Point(132, 1);
 			this->mutationRateLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationRateLabel->Name = L"mutationRateLabel";
-			this->mutationRateLabel->Size = System::Drawing::Size(68, 25);
+			this->mutationRateLabel->Size = System::Drawing::Size(67, 25);
 			this->mutationRateLabel->TabIndex = 8;
-			this->mutationRateLabel->Text = L"- 4.0%";
+			this->mutationRateLabel->Text = L"- 6.0%";
 			// 
 			// label4
 			// 
@@ -442,7 +442,7 @@ namespace IESFX
 			this->mutationRateSlider->Size = System::Drawing::Size(325, 45);
 			this->mutationRateSlider->TabIndex = 5;
 			this->mutationRateSlider->TickFrequency = 2;
-			this->mutationRateSlider->Value = 8;
+			this->mutationRateSlider->Value = 12;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
 			// 
 			// statusTimer

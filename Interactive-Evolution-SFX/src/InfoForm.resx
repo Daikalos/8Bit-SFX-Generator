@@ -373,7 +373,7 @@ Save and load allows you to start from previously made configurations.
 
 Play starts playing each of the sound effects incrementally from top left to bottom right. Each sound effect can also be played seperately.
 
-Reset completely restarts the process, starting from scratch. A warning will show before confirmation.
+Reset completely restarts the process, starting from scratch. A warning will show before confirmation. Reset is also useful for getting a different starting point if the current one is poor.
 
 Retry will bring you back to your previous configuration, useful if you weren't satisfied with the results and would like to go back and try again.
 
