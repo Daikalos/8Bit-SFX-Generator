@@ -105,8 +105,7 @@ poke 19 58
 poke 0 43
 poke 20 34
 poke 13 6
-sample 522
-sample 926
+sample 1448
 poke 7 84
 poke 6 45
 sample 635)",

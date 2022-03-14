@@ -12,6 +12,7 @@
 #include "InfoForm.h"
 #include "Evolution.h"
 #include "Heatmap.h"
+#include "Config.h"
 
 namespace IESFX
 {
@@ -305,7 +306,7 @@ namespace IESFX
 			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
-			this->mutationSizeSlider->Value = 15;
+			this->mutationSizeSlider->Value = 24;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -331,9 +332,9 @@ namespace IESFX
 			this->mutationSizeLabel->Location = System::Drawing::Point(129, 1);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(65, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(75, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 7.5%";
+			this->mutationSizeLabel->Text = L"- 12.0%";
 			// 
 			// volumeSlider
 			// 

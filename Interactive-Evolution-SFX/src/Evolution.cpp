@@ -105,7 +105,7 @@ int Evolution::execute(size_t max_generations, double max_quality)
 void Evolution::initialize()
 {
 	_population = std::vector<SoundGene>(POPULATION_SIZE);
-	for (size_t i = 0; i < POPULATION_SIZE - _models.size(); ++i)
+	for (size_t i = 0; i < POPULATION_SIZE; ++i)
 	{
 		_population[i].push({ 24, 14 }); // always volume on
 
@@ -113,7 +113,7 @@ void Evolution::initialize()
 
 		for (size_t j = 0, index = 0, size = util::random(0, 64); j < size; ++j)
 		{
-			if (util::random() > 0.1 && index < offsets.size())
+			if (util::random() > 0.07 && index < offsets.size())
 				_population[i].push({ offsets[index++], util::rvpoke() });
 			else
 			{
@@ -124,9 +124,6 @@ void Evolution::initialize()
 			}
 		}
 	}
-
-	for (size_t i = 0; i < _models.size(); ++i) // elitism
-		_population.push_back(_models[i]);
 }
 
 void Evolution::shuffle()
@@ -146,12 +143,9 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (c_range.size() == 0)
 		return;
 
-	const double time_mul = 2.5;
-	const double simi_mul = 3.5;
-	const double smpl_mul = 2.5;
-
-	double time = 0.0;
-	bool exact = true;
+	const double time_mul = 1.5;
+	const double simi_mul = 4.0;
+	const double smpl_mul = 1.5;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS
 	//
@@ -171,17 +165,20 @@ void Evolution::evaluate(SoundGene& candidate)
 		//	candidate._fitness += rg_ratio * simi_mul;
 		//}
 
-		double score = 0.0;
+		size_t size = 0;
+		for (size_t i = 0; i < m_range.size(); i++)
+			size += std::get<2>(m_range[i]);
 
+		double score = 0.0;
 		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
 		{
-			std::vector<bool> offsets(25, false);
+			std::vector<bool> m_offsets(25, false);
 			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 			{
 				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
-				if (m_poke != nullptr && !offsets[m_poke->offset])
+				if (m_poke != nullptr && !m_offsets[m_poke->offset])
 				{
-					offsets[m_poke->offset] = true;
+					m_offsets[m_poke->offset] = true;
 					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 					{
 						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
@@ -199,14 +196,20 @@ void Evolution::evaluate(SoundGene& candidate)
 			}
 		}
 
-		double similiarity = score / (double)model->size(); // similiarity in percentage (0-1)
+		double similarity = (score / size);
 
-		candidate._fitness += (similiarity <= 0.85 ? 1 : -1) * similiarity * simi_mul;
+		if (similarity <= DBL_EPSILON)
+			continue;
+		else if (similarity > 0.8)
+			candidate._fitness += (0.8 / (similarity + 0.2)) * simi_mul;
+		else 
+			candidate._fitness += (score / size) * simi_mul;
 	}
 
 	// adjust fitness based on samples
 	//
 	size_t poke_count = 0;
+	double time = 0.0;
 	for (size_t i = 0; i < candidate.size(); ++i)
 	{
 		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
@@ -259,7 +262,7 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random() <= chance) // ensure always two parents
+		if (util::random() <= chance - 0.25) // ensure always two parents
 			_population.at(i)._dead = true;
 	}
 
@@ -356,18 +359,12 @@ void Evolution::mutation()
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
 
-				if (util::random() <= REMOVE_MUTATION)
-					gene.set(mp, nullptr);
-
-				if (util::random() <= ADD_MUTATION)
-					gene.insert(mp, { util::ropoke(), util::rvpoke() });
-
 				if (poke != nullptr)
 				{
-					if (util::random() > OFFSET_MUTATION)
-						poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
-					else
+					if (util::random() <= OFFSET_MUTATION)
 						poke->offset = util::ropoke();
+
+					poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
 				}
 				else if (sample != nullptr)
 					sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
