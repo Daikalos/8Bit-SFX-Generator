@@ -305,7 +305,7 @@ namespace IESFX
 			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
-			this->mutationSizeSlider->Value = 12;
+			this->mutationSizeSlider->Value = 14;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -333,7 +333,7 @@ namespace IESFX
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
 			this->mutationSizeLabel->Size = System::Drawing::Size(67, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 6.0%";
+			this->mutationSizeLabel->Text = L"- 7.0%";
 			// 
 			// volumeSlider
 			// 
@@ -646,15 +646,21 @@ namespace IESFX
 					MessageBox::Show("No previous configuration to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 				{
-					for (int i = 0; i < _soundUCs->Length; ++i)
-						_soundUCs[i]->reset();
+					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
 
-					_player->reset();
+					if (genes.size() != 0)
+					{
+						for (int i = 0; i < _soundUCs->Length; ++i)
+							_soundUCs[i]->reset();
 
-					_prev = _step = 0;
-					_color = Color::White;
+						_player->reset();
+						_player->update(genes);
 
-					_player->update(_evolution->output(_soundUCs->Length, 0));
+						_prev = _step = 0;
+						_color = Color::White;
+					}
+					else
+						MessageBox::Show("No new candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
 					update_evolution_status(_step + "/" + POPULATION_SIZE);
 				}
@@ -686,8 +692,6 @@ namespace IESFX
 			}
 			else
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-
 
 			update_status("Ready");
 		}
@@ -861,14 +865,14 @@ namespace IESFX
 
 			if (genes.size() != 0)
 			{
-				_prev = _step = 0;
-				_color = Color::White;
-
 				for (int i = 0; i < _soundUCs->Length; ++i)
 					_soundUCs[i]->reset();
 
 				_player->reset();
 				_player->update(genes);
+
+				_prev = _step = 0;
+				_color = Color::White;
 			}
 			else
 				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);

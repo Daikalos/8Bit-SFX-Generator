@@ -6,7 +6,13 @@ using namespace IESFX;
 Evolution::Evolution(double mutation_rate, double mutation_size)
 	: _mutation_rate(mutation_rate), _mutation_size(mutation_size)
 {
-	initialize();
+	_models.resize(MODEL_SAMPLES);
+
+	std::vector<size_t> random = util::random(util::arr_size(examples));
+
+	Interpreter interpreter;
+	for (int i = 0; i < MODEL_SAMPLES; ++i)
+		interpreter.read_str(&_models[i], examples[random[i]]);
 }
 
 void Evolution::add_model(SoundGene& gene)
@@ -32,16 +38,15 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	_active = true;
 
-	if (!_initializing) 
-		_old_population = _population;
-	else 
-		_initializing = false;
+	_old_population = _population;
 
 	_max_generations = max_generations;
 	_max_quality = max_quality;
 
 	_generations = 0;
 	_quality = 0;
+
+	initialize();
 
 	while (!complete())
 	{
@@ -99,16 +104,8 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 void Evolution::initialize()
 {
-	_models.resize(MODEL_SAMPLES);
-
-	std::vector<size_t> random = util::random(util::arr_size(examples));
-
-	Interpreter interpreter;
-	for (int i = 0; i < MODEL_SAMPLES; ++i)
-		interpreter.read_str(&_models[i], examples[random[i]]);
-
-	_population.resize(POPULATION_SIZE);
-	for (int i = 0; i < POPULATION_SIZE; ++i)
+	_population = std::vector<SoundGene>(POPULATION_SIZE);
+	for (size_t i = 0; i < POPULATION_SIZE - _models.size(); ++i)
 	{
 		_population[i].push({ 24, 14 }); // always volume on
 
@@ -127,6 +124,9 @@ void Evolution::initialize()
 			}
 		}
 	}
+
+	for (size_t i = 0; i < _models.size(); ++i) // elitism
+		_population.push_back(_models[i]);
 }
 
 void Evolution::shuffle()
@@ -147,7 +147,7 @@ void Evolution::evaluate(SoundGene& candidate)
 		return;
 
 	const double time_mul = 2.5;
-	const double simi_mul = 5.0;
+	const double simi_mul = 6.0;
 	const double smpl_mul = 3.5;
 
 	double time = 0.0;
@@ -172,14 +172,17 @@ void Evolution::evaluate(SoundGene& candidate)
 			candidate._fitness += rg_ratio * simi_mul;
 		}
 
-		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si)
+		bool similiar = true;
+
+		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
 		{
+			std::vector<bool> offsets(25, false);
 			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 			{
 				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
-
-				if (m_poke != nullptr)
+				if (m_poke != nullptr && !offsets[m_poke->offset])
 				{
+					offsets[m_poke->offset] = true;
 					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 					{
 						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
@@ -190,12 +193,18 @@ void Evolution::evaluate(SoundGene& candidate)
 
 							candidate._fitness += val_ratio * simi_mul;
 
+							if (val_diff > DBL_EPSILON)
+								similiar = false;
+
 							break;
 						}
 					}
 				}
 			}
 		}
+
+		if (similiar)
+			candidate._fitness -= simi_mul;
 	}
 
 	// adjust fitness based on samples
@@ -386,8 +395,13 @@ void Evolution::reset()
 	_old_population.clear();
 
 	_models.clear();
+	_models.resize(MODEL_SAMPLES);
 
-	initialize();
+	std::vector<size_t> random = util::random(util::arr_size(examples));
+
+	Interpreter interpreter;
+	for (int i = 0; i < MODEL_SAMPLES; ++i)
+		interpreter.read_str(&_models[i], examples[random[i]]);
 }
 
 bool Evolution::retry()

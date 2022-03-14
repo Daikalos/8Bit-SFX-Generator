@@ -81,8 +81,7 @@ namespace IESFX
 			_mutation_rate, 
 			_mutation_size;
 		bool
-			_active{false},
-			_initializing{true};
+			_active{false};
 
 		std::vector<SoundGene> _population;
 		std::vector<SoundGene> _models;
