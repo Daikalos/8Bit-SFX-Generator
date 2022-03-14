@@ -143,9 +143,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (c_range.size() == 0)
 		return;
 
-	const double time_mul = 1.5;
 	const double simi_mul = 4.0;
-	const double smpl_mul = 1.5;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS
 	//
@@ -205,44 +203,6 @@ void Evolution::evaluate(SoundGene& candidate)
 		else 
 			candidate._fitness += (score / size) * simi_mul;
 	}
-
-	// adjust fitness based on samples
-	//
-	size_t poke_count = 0;
-	double time = 0.0;
-	for (size_t i = 0; i < candidate.size(); ++i)
-	{
-		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
-		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
-
-		if (sample != nullptr)
-		{
-			time += (double)util::time(sample->size);
-
-			// no pokes given before sample is bad
-			// 
-			if (poke_count == 0)
-				candidate._fitness += -smpl_mul;
-
-			poke_count = 0;
-		}
-		else if (poke != nullptr)
-			++poke_count;
-	}
-
-	// pokes but no sample given is bad
-	//
-	if (poke_count > 0)
-		candidate._fitness += -smpl_mul;
-
-	// adjust fitness based on length of audio
-	//
-	if (time <= DBL_EPSILON)
-		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
-	else if (time < 0.2)
-		candidate._fitness += -(0.2 / time) * time_mul;
-	else if (time > 1.5)
-		candidate._fitness += -(time / 1.5) * time_mul;
 }
 
 void Evolution::selection()
@@ -262,7 +222,7 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random() <= chance - 0.25) // ensure always two parents
+		if (util::random() <= chance - 0.35) // ensure always two parents
 			_population.at(i)._dead = true;
 	}
 
@@ -353,11 +313,17 @@ void Evolution::mutation()
 			{
 				size_t mp = util::random<size_t>(0, gene_length - 1);
 
-				Poke* poke = dynamic_cast<Poke*>(gene.get(mp));
-				Sample* sample = dynamic_cast<Sample*>(gene.get(mp));
-
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
+
+				if (util::random() <= REMOVE_MUTATION)
+					gene.set(mp, nullptr);
+
+				if (util::random() <= ADD_MUTATION)
+					gene.insert(mp, { util::ropoke(), util::rvpoke() });
+
+				Poke* poke = dynamic_cast<Poke*>(gene.get(mp));
+				Sample* sample = dynamic_cast<Sample*>(gene.get(mp));
 
 				if (poke != nullptr)
 				{
