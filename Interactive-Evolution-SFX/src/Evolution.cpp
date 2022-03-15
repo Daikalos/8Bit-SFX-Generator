@@ -222,7 +222,7 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random() <= chance - 0.35) // ensure always two parents
+		if (util::random() <= chance) // ensure always two parents
 			_population.at(i)._dead = true;
 	}
 

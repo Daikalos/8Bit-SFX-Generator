@@ -13,10 +13,10 @@ namespace IESFX
 
 	static const size_t POPULATION_SIZE = 900;
 	static const size_t GENERATIONS = 90;
-	static const double QUALITY = 2.50;
+	static const double QUALITY = 5.50;
 
 	static const int N_POINTS = 3;
-	static const size_t MODEL_SAMPLES = 3;
+	static const size_t MODEL_SAMPLES = 9;
 
 	static const double REMOVE_MUTATION = 0.03;
 	static const double ADD_MUTATION = 0.03;

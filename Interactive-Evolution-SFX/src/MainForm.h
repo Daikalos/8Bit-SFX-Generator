@@ -647,7 +647,7 @@ namespace IESFX
 					MessageBox::Show("No previous configuration to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 				{
-					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
+					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _old_step);
 
 					if (genes.size() != 0)
 					{
@@ -657,13 +657,14 @@ namespace IESFX
 						_player->reset();
 						_player->update(genes);
 
-						_prev = _step = 0;
+						_prev = 0;
+						_step = _old_step;
 						_color = Color::White;
 					}
 					else
 						MessageBox::Show("No new candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-					update_evolution_status(_step + "/" + POPULATION_SIZE);
+					update_evolution_status(_old_step + "/" + POPULATION_SIZE);
 				}
 
 				update_status("Ready");
@@ -872,6 +873,8 @@ namespace IESFX
 				_player->reset();
 				_player->update(genes);
 
+				_old_step = _step;
+
 				_prev = _step = 0;
 				_color = Color::White;
 			}
@@ -897,7 +900,7 @@ namespace IESFX
 		static const size_t row_count = 3;
 		static const size_t column_count = 4;
 
-		size_t _prev, _step;
+		size_t _prev, _step, _old_step;
 		Color _color;
 
 		array<SoundUC^>^ _soundUCs;
