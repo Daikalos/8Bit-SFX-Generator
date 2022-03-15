@@ -548,7 +548,7 @@ namespace IESFX
 
 			SaveFileDialog saveFileDialog;
 			saveFileDialog.Filter = "TXT File|*.txt";
-			saveFileDialog.Title = "Save current config";
+			saveFileDialog.Title = "Save current population";
 
 			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{
@@ -566,8 +566,8 @@ namespace IESFX
 				return;
 
 			OpenFileDialog openFileDialog;
-			openFileDialog.Filter = "TXT File|*.txt|WAV File|*.wav";
-			openFileDialog.Title = "Load";
+			openFileDialog.Filter = "TXT File|*.txt";
+			openFileDialog.Title = "Load a population";
 
 			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 			{

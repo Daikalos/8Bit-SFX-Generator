@@ -241,14 +241,13 @@ void Evolution::selection()
 void Evolution::crossover()
 {
 	_offspring_size = POPULATION_SIZE - _population.size();
-
 	while (_population.size() < POPULATION_SIZE)
 	{
 		size_t p0 = 0, p1 = 0;
 
 		p0 = util::random<size_t>(0, _population.size() - 1);
 		do p1 = util::random<size_t>(0, _population.size() - 1);
-		while (p0 == p1 || hamming_distance(_population[p0], _population[p1]) < 0.75); // two random parents from the elite
+		while (p0 == p1 || hamming_distance(_population[p0], _population[p1]) > 0.65); // two random parents from the elite
 
 		SoundGene child1(_population[p0]);
 		SoundGene child2(_population[p1]);
@@ -347,14 +346,50 @@ bool Evolution::complete()
 
 double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
 {
-	double result = 0;
+	std::vector<std::tuple<int, int, int>> lhs_range = lhs.range<int>();
+	std::vector<std::tuple<int, int, int>> rhs_range = rhs.range<int>();
 
-	for (size_t i = 0; i < std::min<size_t>(lhs.size(), rhs.size()); ++i)
-		result += (lhs.get(i) != rhs.get(i));
+	size_t size = 0;
+	for (size_t i = 0; i < std::max<size_t>(lhs_range.size(), rhs_range.size()); i++)
+		size += std::get<2>((lhs_range.size() > rhs_range.size()) ? lhs_range[i] : rhs_range[i]);
 
-	result += std::abs((int)lhs.size() - (int)rhs.size());
+	double score = 0.0;
+	for (int si = std::min<int>(lhs_range.size(), rhs_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
+	{
+		std::vector<bool> lhs_offsets(25, false);
+		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
+		{
+			Poke* lhs_poke = dynamic_cast<Poke*>(lhs.get(j));
+			if (lhs_poke != nullptr && !lhs_offsets[lhs_poke->offset])
+			{
+				lhs_offsets[lhs_poke->offset] = true;
+				for (int k = std::get<1>(rhs_range[si]) - 1; k >= std::get<0>(rhs_range[si]); --k)
+				{
+					Poke* rhs_poke = dynamic_cast<Poke*>(rhs.get(k));
+					if (lhs_poke->offset == rhs_poke->offset)
+					{
+						double val_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
+						double val_ratio = 1.0 / (val_diff + 1.0);
 
-	return result / (std::max<size_t>(lhs.size(), rhs.size()));
+						score += val_ratio;
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	return (score / size);
+
+	//double result = 0;
+
+	//for (size_t i = 0; i < std::min<size_t>(lhs.size(), rhs.size()); ++i)
+	//	result += (lhs.get(i) != rhs.get(i));
+
+	//result += std::abs((int)lhs.size() - (int)rhs.size());
+
+	//return result / (std::max<size_t>(lhs.size(), rhs.size()));
 }
 
 void Evolution::reset()

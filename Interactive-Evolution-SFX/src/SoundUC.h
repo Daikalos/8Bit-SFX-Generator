@@ -52,9 +52,9 @@ namespace IESFX
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(SoundUC::typeid));
-			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea4 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Legend^ legend4 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-			System::Windows::Forms::DataVisualization::Charting::Series^ series4 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^ chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Legend^ legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+			System::Windows::Forms::DataVisualization::Charting::Series^ series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->stripTool = (gcnew System::Windows::Forms::ToolStrip());
 			this->playButton = (gcnew System::Windows::Forms::ToolStripButton());
 			this->exportButton = (gcnew System::Windows::Forms::ToolStripButton());
@@ -139,64 +139,64 @@ namespace IESFX
 			this->soundWave->BorderSkin->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(192)),
 				static_cast<System::Int32>(static_cast<System::Byte>(0)), static_cast<System::Int32>(static_cast<System::Byte>(0)));
 			this->soundWave->BorderSkin->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dash;
-			chartArea4->AlignmentStyle = System::Windows::Forms::DataVisualization::Charting::AreaAlignmentStyles::Position;
-			chartArea4->AxisX->InterlacedColor = System::Drawing::Color::Transparent;
-			chartArea4->AxisX->IsLabelAutoFit = false;
-			chartArea4->AxisX->IsMarginVisible = false;
-			chartArea4->AxisX->LabelStyle->Enabled = false;
-			chartArea4->AxisX->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			chartArea1->AlignmentStyle = System::Windows::Forms::DataVisualization::Charting::AreaAlignmentStyles::Position;
+			chartArea1->AxisX->InterlacedColor = System::Drawing::Color::Transparent;
+			chartArea1->AxisX->IsLabelAutoFit = false;
+			chartArea1->AxisX->IsMarginVisible = false;
+			chartArea1->AxisX->LabelStyle->Enabled = false;
+			chartArea1->AxisX->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			chartArea4->AxisX->LineWidth = 0;
-			chartArea4->AxisX->MajorGrid->Enabled = false;
-			chartArea4->AxisX->MajorGrid->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
-			chartArea4->AxisX->MajorGrid->LineWidth = 2;
-			chartArea4->AxisX->MajorTickMark->Enabled = false;
-			chartArea4->AxisX->MinorGrid->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
-			chartArea4->AxisY->InterlacedColor = System::Drawing::Color::Transparent;
-			chartArea4->AxisY->IsLabelAutoFit = false;
-			chartArea4->AxisY->LabelStyle->Enabled = false;
-			chartArea4->AxisY->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			chartArea1->AxisX->LineWidth = 0;
+			chartArea1->AxisX->MajorGrid->Enabled = false;
+			chartArea1->AxisX->MajorGrid->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
+			chartArea1->AxisX->MajorGrid->LineWidth = 2;
+			chartArea1->AxisX->MajorTickMark->Enabled = false;
+			chartArea1->AxisX->MinorGrid->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
+			chartArea1->AxisY->InterlacedColor = System::Drawing::Color::Transparent;
+			chartArea1->AxisY->IsLabelAutoFit = false;
+			chartArea1->AxisY->LabelStyle->Enabled = false;
+			chartArea1->AxisY->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			chartArea4->AxisY->LineWidth = 0;
-			chartArea4->AxisY->MajorTickMark->Enabled = false;
-			chartArea4->AxisY->Maximum = 16000;
-			chartArea4->AxisY->MaximumAutoSize = 100;
-			chartArea4->AxisY->Minimum = -16000;
-			chartArea4->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
+			chartArea1->AxisY->LineWidth = 0;
+			chartArea1->AxisY->MajorTickMark->Enabled = false;
+			chartArea1->AxisY->Maximum = 16000;
+			chartArea1->AxisY->MaximumAutoSize = 100;
+			chartArea1->AxisY->Minimum = -16000;
+			chartArea1->BackColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(224)), static_cast<System::Int32>(static_cast<System::Byte>(224)),
 				static_cast<System::Int32>(static_cast<System::Byte>(224)));
-			chartArea4->BackImageAlignment = System::Windows::Forms::DataVisualization::Charting::ChartImageAlignmentStyle::Center;
-			chartArea4->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)),
+			chartArea1->BackImageAlignment = System::Windows::Forms::DataVisualization::Charting::ChartImageAlignmentStyle::Center;
+			chartArea1->BorderColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)),
 				static_cast<System::Int32>(static_cast<System::Byte>(64)));
-			chartArea4->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Solid;
-			chartArea4->BorderWidth = 2;
-			chartArea4->InnerPlotPosition->Auto = false;
-			chartArea4->InnerPlotPosition->Height = 99;
-			chartArea4->InnerPlotPosition->Width = 99;
-			chartArea4->InnerPlotPosition->X = 1;
-			chartArea4->InnerPlotPosition->Y = 1;
-			chartArea4->Name = L"ChartArea1";
-			chartArea4->Position->Auto = false;
-			chartArea4->Position->Height = 96;
-			chartArea4->Position->Width = 96;
-			chartArea4->Position->X = 2;
-			chartArea4->Position->Y = 2;
-			this->soundWave->ChartAreas->Add(chartArea4);
+			chartArea1->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Solid;
+			chartArea1->BorderWidth = 2;
+			chartArea1->InnerPlotPosition->Auto = false;
+			chartArea1->InnerPlotPosition->Height = 99;
+			chartArea1->InnerPlotPosition->Width = 99;
+			chartArea1->InnerPlotPosition->X = 1;
+			chartArea1->InnerPlotPosition->Y = 1;
+			chartArea1->Name = L"ChartArea1";
+			chartArea1->Position->Auto = false;
+			chartArea1->Position->Height = 96;
+			chartArea1->Position->Width = 96;
+			chartArea1->Position->X = 2;
+			chartArea1->Position->Y = 2;
+			this->soundWave->ChartAreas->Add(chartArea1);
 			this->soundWave->Dock = System::Windows::Forms::DockStyle::Fill;
-			legend4->Enabled = false;
-			legend4->Name = L"Legend1";
-			this->soundWave->Legends->Add(legend4);
+			legend1->Enabled = false;
+			legend1->Name = L"Legend1";
+			this->soundWave->Legends->Add(legend1);
 			this->soundWave->Location = System::Drawing::Point(0, 0);
 			this->soundWave->Margin = System::Windows::Forms::Padding(0);
 			this->soundWave->Name = L"soundWave";
-			series4->BackSecondaryColor = System::Drawing::Color::Transparent;
-			series4->BorderColor = System::Drawing::Color::Black;
-			series4->BorderWidth = 2;
-			series4->ChartArea = L"ChartArea1";
-			series4->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::FastLine;
-			series4->Color = System::Drawing::Color::DodgerBlue;
-			series4->Legend = L"Legend1";
-			series4->Name = L"Sound";
-			this->soundWave->Series->Add(series4);
+			series1->BackSecondaryColor = System::Drawing::Color::Transparent;
+			series1->BorderColor = System::Drawing::Color::Black;
+			series1->BorderWidth = 2;
+			series1->ChartArea = L"ChartArea1";
+			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::FastLine;
+			series1->Color = System::Drawing::Color::DodgerBlue;
+			series1->Legend = L"Legend1";
+			series1->Name = L"Sound";
+			this->soundWave->Series->Add(series1);
 			this->soundWave->Size = System::Drawing::Size(150, 155);
 			this->soundWave->TabIndex = 2;
 			this->soundWave->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &SoundUC::soundWave_MouseDown);
@@ -306,7 +306,7 @@ namespace IESFX
 			if (_selected = !_selected)
 			{
 				_evolution->add_model(_player[_id]->get());
-				stripTool->BackColor = Color::CornflowerBlue;
+				stripTool->BackColor = Color::LightBlue;
 			}
 			else
 			{
