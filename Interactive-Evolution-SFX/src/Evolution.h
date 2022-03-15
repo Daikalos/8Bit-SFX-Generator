@@ -70,6 +70,8 @@ namespace IESFX
 		//
 		bool complete();
 
+		double hamming_distance(const SoundGene& lhs, const SoundGene& rhs);
+
 	private:
 		size_t 
 			_offspring_size{0},

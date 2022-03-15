@@ -11,9 +11,9 @@ namespace IESFX
 
 	static const size_t CLOCKS_PER_SAMPLE = round(CLOCK_FREQ / (double)SAMPLE_RATE);
 
-	static const size_t POPULATION_SIZE = 900;
+	static const size_t POPULATION_SIZE = 1800;
 	static const size_t GENERATIONS = 90;
-	static const double QUALITY = 5.50;
+	static const double QUALITY = 6.00;
 
 	static const int N_POINTS = 3;
 	static const size_t MODEL_SAMPLES = 9;

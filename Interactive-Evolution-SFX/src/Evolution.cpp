@@ -242,13 +242,13 @@ void Evolution::crossover()
 {
 	_offspring_size = POPULATION_SIZE - _population.size();
 
-	for (size_t i = 0; i < _offspring_size; i += 2)
+	while (_population.size() < POPULATION_SIZE)
 	{
 		size_t p0 = 0, p1 = 0;
 
 		p0 = util::random<size_t>(0, _population.size() - 1);
 		do p1 = util::random<size_t>(0, _population.size() - 1);
-		while (p0 == p1); // two random parents from the elite
+		while (p0 == p1 || hamming_distance(_population[p0], _population[p1]) < 0.75); // two random parents from the elite
 
 		SoundGene child1(_population[p0]);
 		SoundGene child2(_population[p1]);
@@ -343,6 +343,18 @@ void Evolution::mutation()
 bool Evolution::complete()
 {
 	return (_generations >= _max_generations || _quality >= _max_quality);
+}
+
+double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
+{
+	double result = 0;
+
+	for (size_t i = 0; i < std::min<size_t>(lhs.size(), rhs.size()); ++i)
+		result += (lhs.get(i) != rhs.get(i));
+
+	result += std::abs((int)lhs.size() - (int)rhs.size());
+
+	return result / (std::max<size_t>(lhs.size(), rhs.size()));
 }
 
 void Evolution::reset()

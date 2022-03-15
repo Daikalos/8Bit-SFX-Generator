@@ -664,7 +664,7 @@ namespace IESFX
 					else
 						MessageBox::Show("No new candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-					update_evolution_status(_old_step + "/" + POPULATION_SIZE);
+					update_evolution_status(_step + "/" + POPULATION_SIZE);
 				}
 
 				update_status("Ready");
@@ -678,7 +678,9 @@ namespace IESFX
 
 			update_status("Loading...");
 
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step - _soundUCs->Length));
+			int next_step = _step - _soundUCs->Length;
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
+				(next_step = (next_step < 0) ? POPULATION_SIZE - _soundUCs->Length : next_step));
 
 			if (genes.size() != 0)
 			{
@@ -688,7 +690,7 @@ namespace IESFX
 				_player->reset();
 				_player->update(genes);
 
-				_step -= _soundUCs->Length;
+				_step = next_step;
 
 				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
@@ -704,7 +706,9 @@ namespace IESFX
 
 			update_status("Loading...");
 
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, (_step + _soundUCs->Length));
+			int next_step = _step + _soundUCs->Length;
+			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
+				(next_step = (next_step >= POPULATION_SIZE) ? 0 : next_step));
 			
 			if (genes.size() != 0)
 			{
@@ -714,7 +718,7 @@ namespace IESFX
 				_player->reset();
 				_player->update(genes);
 
-				_step += _soundUCs->Length;
+				_step = next_step;
 
 				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
