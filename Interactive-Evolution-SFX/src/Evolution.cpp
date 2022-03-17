@@ -142,16 +142,67 @@ void Evolution::evaluate(SoundGene& candidate)
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
 
-	std::vector<double> scores(_models.size(), 0.0);
+	//std::vector<double> scores(_models.size(), 0.0);
+	//for (size_t i = 0; i < _models.size(); ++i)
+	//{
+	//	double similarity = hamming_distance(_models[i], candidate);
+	//	scores[i] = ((similarity > 0.7) ? 0.7 / (similarity + 0.3) : similarity);
+	//}
+
+	//double average = (std::accumulate(scores.begin(), scores.end(), 0.0) / scores.size());
+
+	std::vector<std::tuple<int, int, int>> c_range = candidate.range<int>();
+
+	if (c_range.size() == 0)
+		return;
+
 	for (size_t i = 0; i < _models.size(); ++i)
 	{
-		double similarity = hamming_distance(_models[i], candidate);
-		scores[i] = ((similarity > 0.7) ? 0.7 / (similarity + 0.3) : similarity);
+		SoundGene* model = &_models[i];
+
+		std::vector<std::tuple<int, int, int>> m_range = model->range<int>();
+
+		if (m_range.size() == 0)
+			continue;
+
+		double score = 0.0;
+		for (size_t si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
+		{
+			std::vector<bool> m_offsets(25, false);
+			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
+			{
+				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
+				if (!m_offsets[m_poke->offset])
+				{
+					m_offsets[m_poke->offset] = true;
+					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
+					{
+						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
+						if (m_poke->offset == c_poke->offset)
+						{
+							double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
+							double val_ratio = 1.0 / (val_diff + 1.0);
+
+							score += val_ratio;
+
+							break;
+						}
+					}
+				}
+			}
+
+			Sample* lhs_sample = dynamic_cast<Sample*>(model->get(std::get<1>(m_range[si])));
+			Sample* rhs_sample = dynamic_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
+
+			double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
+			double smpl_ratio = 1.0 / (smpl_diff + 1.0);
+
+			score += smpl_ratio;
+		}
+
+		double similarity = (score / model->size());
+		candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
 	}
-
-	double average = (std::accumulate(scores.begin(), scores.end(), 0.0) / scores.size());
-
-	candidate._fitness = average * simi_mul;
 
 	// adjust fitness based on samples
 	//
