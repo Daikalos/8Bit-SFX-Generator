@@ -76,7 +76,7 @@ namespace IESFX
 		}
 	}
 
-	static void heatmap()
+	static void heatmap_0()
 	{
 		const size_t width = 1024;
 		const size_t height = 1024;
@@ -140,6 +140,50 @@ namespace IESFX
 				y0 = y1;
 			}
 		}
+
+		sf::Image image;
+		image.create(width, height);
+
+		for (size_t x = 0; x < width; ++x)
+		{
+			for (size_t y = 0; y < height; ++y)
+			{
+				if (heatmap[x + y * width] > max)
+					max = heatmap[x + y * width];
+			}
+		}
+
+		max = std::pow(max, 0.6);
+
+		for (size_t x = 0; x < width; ++x)
+		{
+			for (size_t y = 0; y < height; ++y)
+			{
+				image.setPixel(x, y, gradient(heatmap[x + y * width] / max));
+			}
+		}
+
+		image.saveToFile("../heatmap.png");
+
+		delete[] heatmap;
+	}
+
+	static void heatmap_1()
+	{
+		const size_t width = 1024;
+		const size_t height = 1024;
+
+		const sf::Int16 bounds_height = 17000;
+		const size_t bounds_width = SAMPLE_RATE * 1.5;
+
+		const size_t size = 10000;
+
+		double max = 0;
+
+		int* heatmap = new int[(width + 1) * (height + 1)];
+		memset(heatmap, 0, sizeof(heatmap[0]) * (width + 1) * (height + 1));
+
+
 
 		sf::Image image;
 		image.create(width, height);

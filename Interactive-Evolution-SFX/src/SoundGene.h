@@ -55,9 +55,16 @@ namespace IESFX
 		void push(const Poke& poke)		{ _gene.push_back(poke.clone()); }
 		void push(const Sample& sample) { _gene.push_back(sample.clone()); }
 
-		void insert(size_t pos, const Poke& poke)
+		auto insert(size_t pos, const Poke& poke)
 		{
-			_gene.insert(_gene.begin() + pos, poke.clone());
+			return _gene.insert(_gene.begin() + pos, poke.clone());
+		}
+		auto insert(
+			const std::vector<std::shared_ptr<Command>>::const_iterator& position,
+			const std::vector<std::shared_ptr<Command>>::iterator& first, 
+			const std::vector<std::shared_ptr<Command>>::iterator& last)
+		{
+			return _gene.insert(position, first, last);
 		}
 
 		void set(int index, std::nullptr_t)

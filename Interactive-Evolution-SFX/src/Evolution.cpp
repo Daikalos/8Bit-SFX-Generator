@@ -111,9 +111,9 @@ void Evolution::initialize()
 
 		std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-		for (size_t j = 0, index = 0, size = util::random(0, 64); j < size; ++j)
+		for (size_t j = 0, index = 0, size = util::random(16, 128); j < size; ++j)
 		{
-			if (util::random() > 0.07 && index < offsets.size())
+			if (util::random() > 0.15 && index < offsets.size())
 				_population[i].push({ offsets[index++], util::rvpoke() });
 			else
 			{
@@ -135,74 +135,57 @@ void Evolution::evaluate(SoundGene& candidate)
 {
 	candidate._fitness = 0;
 
-	if (candidate.size() == 0)
-		return;
+	const double simi_mul = 2.50;
+	const double smpl_mul = 0.20;
+	const double time_mul = 0.10;
 
-	std::vector<std::tuple<int, int, int>> c_range = candidate.range<int>();
+	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
+	// 
 
-	if (c_range.size() == 0)
-		return;
-
-	const double simi_mul = 4.0;
-
-	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS
-	//
+	std::vector<double> scores(_models.size(), 0.0);
 	for (size_t i = 0; i < _models.size(); ++i)
 	{
-		SoundGene* model = &_models[i];
-
-		std::vector<std::tuple<int, int, int>> m_range = model->range<int>();
-
-		if (m_range.size() == 0 || model->size() == 0)
-			continue;
-
-		//{
-		//	double rg_diff = std::abs((int)m_range.size() - (int)c_range.size());
-		//	double rg_ratio = 1.0 / (rg_diff + 1.0);
-
-		//	candidate._fitness += rg_ratio * simi_mul;
-		//}
-
-		size_t size = 0;
-		for (size_t i = 0; i < m_range.size(); i++)
-			size += std::get<2>(m_range[i]);
-
-		double score = 0.0;
-		for (int si = std::min<int>(c_range.size(), m_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
-		{
-			std::vector<bool> m_offsets(25, false);
-			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
-			{
-				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
-				if (m_poke != nullptr && !m_offsets[m_poke->offset])
-				{
-					m_offsets[m_poke->offset] = true;
-					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
-					{
-						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
-						if (m_poke->offset == c_poke->offset)
-						{
-							double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
-							double val_ratio = 1.0 / (val_diff + 1.0);
-
-							score += val_ratio;
-
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		double similarity = (score / size);
-
-		if (similarity <= DBL_EPSILON)
-			continue;
-		else if (similarity > 0.8)
-			candidate._fitness += (0.8 / (similarity + 0.2)) * simi_mul;
-		else 
-			candidate._fitness += (score / size) * simi_mul;
+		double similarity = hamming_distance(_models[i], candidate);
+		scores[i] = ((similarity > 0.7) ? 0.7 / (similarity + 0.3) : similarity);
 	}
+
+	double average = (std::accumulate(scores.begin(), scores.end(), 0.0) / scores.size());
+
+	candidate._fitness = average * simi_mul;
+
+	// adjust fitness based on samples
+	//
+	int poke_count = 0;
+	double time = 0.0;
+	for (size_t i = 0; i < candidate.size(); ++i)
+	{
+		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
+		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
+
+		if (sample != nullptr)
+		{
+			time += (double)util::time(sample->size);
+
+			if (poke_count == 0)
+				candidate._fitness += -smpl_mul; // no pokes given before samfple is bad
+
+			poke_count = 0;
+		}
+		else if (poke != nullptr)
+			++poke_count;
+	}
+
+	if (poke_count > 0)
+		candidate._fitness += -poke_count * smpl_mul; // pokes but no sample given is bad
+
+	// adjust fitness based on length of audio
+	//
+	if (time <= DBL_EPSILON)
+		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
+	else if (time < 0.2)
+		candidate._fitness += -(0.2 / time) * time_mul;
+	else if (time > 1.5)
+		candidate._fitness += -(time / 1.5) * time_mul;
 }
 
 void Evolution::selection()
@@ -218,7 +201,7 @@ void Evolution::selection()
 			return g1._fitness > g2._fitness;
 		});
 
-	for (int i = POPULATION_SIZE - 1; i >= 0; --i)
+	for (size_t i = 0; i < POPULATION_SIZE; ++i)
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
@@ -240,24 +223,31 @@ void Evolution::selection()
 
 void Evolution::crossover()
 {
-	_offspring_size = POPULATION_SIZE - _population.size();
-	while (_population.size() < POPULATION_SIZE)
+	size_t elite = _population.size();
+	_offspring_size = POPULATION_SIZE - elite;
+
+	while (_population.size() != POPULATION_SIZE)
 	{
-		size_t p0 = 0, p1 = 0;
+		size_t p0 = 0, p1 = 0, exit = 0;
 
-		p0 = util::random<size_t>(0, _population.size() - 1);
-		do p1 = util::random<size_t>(0, _population.size() - 1);
-		while (p0 == p1 || hamming_distance(_population[p0], _population[p1]) > 0.65); // two random parents from the elite
+		do
+		{
+			p0 = util::random<size_t>(0, elite - 1);
+			p1 = util::random<size_t>(0, elite - 1);
+		}
+		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.40 && ++exit < 128)); // two random parents from the elite
 
-		SoundGene child1(_population[p0]);
-		SoundGene child2(_population[p1]);
+		SoundGene child0(_population[p0]);
+		SoundGene child1(_population[p1]);
 
 		size_t gene_length = std::max<size_t>(_population[p0].size(), _population[p1].size());
 
+		// K-POINT ALT 1
+		//
 		if (gene_length != 0)
 		{
-			child1.resize(gene_length); // resize to keep same length and allow for swap range
-			child2.resize(gene_length);
+			child0.resize(gene_length); // resize to keep same length and allow for swap range
+			child1.resize(gene_length);
 
 			std::vector<size_t> n_points(util::random<size_t>(1, N_POINTS) * 2);
 
@@ -276,17 +266,39 @@ void Evolution::crossover()
 				size_t c1 = n_points[j + 1];
 
 				std::swap_ranges(std::execution::par_unseq,
-					child1.begin() + c0,
-					child1.begin() + c1,
-					child2.begin() + c0);
+					child0.begin() + c0,
+					child0.begin() + c1,
+					child1.begin() + c0);
 			}
 
+			child0.shrink();
 			child1.shrink();
-			child2.shrink();
 		}
 
-		evaluate(_population.emplace_back(std::move(child1))); // add new children to the population
-		evaluate(_population.emplace_back(std::move(child2)));
+		evaluate(_population.emplace_back(std::move(child0))); // add new children to the population
+		evaluate(_population.emplace_back(std::move(child1)));
+
+		// SINGLE POINT ALT 2 
+		//
+		//size_t point_0 = util::random<size_t>(1, child0.size() - 1);
+		//size_t point_1 = util::random<size_t>(1, child1.size() - 1);
+
+		//std::vector<std::shared_ptr<Command>> t0(child0.begin() + point_0, child0.end());
+		//std::vector<std::shared_ptr<Command>> t1(child1.begin() + point_1, child1.end());
+
+		//child0.resize(point_0);
+		//child1.resize(point_1);
+
+		//child0.insert(child0.end(), t1.begin(), t1.end());
+		//child1.insert(child1.end(), t0.begin(), t0.end());
+
+		// UNIFORM ALT 3
+		// 
+		//for (size_t i = 0; i < gene_length; ++i)
+		//{
+		//	if (util::random() > 0.5)
+		//		std::iter_swap(child1.begin() + i, child2.begin() + i);
+		//}
 	}
 }
 
@@ -332,7 +344,7 @@ void Evolution::mutation()
 					poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
 				}
 				else if (sample != nullptr)
-					sample->size += (sample->size > 10) ? util::random_arg<int>(-10, 10) : 10;
+					sample->size += (sample->size > 50) ? util::random_arg<int>(-50, 50) : 50;
 			}
 
 			gene.shrink();
@@ -346,21 +358,23 @@ bool Evolution::complete()
 
 double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
 {
+	double result = 0.0;
+
 	std::vector<std::tuple<int, int, int>> lhs_range = lhs.range<int>();
 	std::vector<std::tuple<int, int, int>> rhs_range = rhs.range<int>();
 
-	size_t size = 0;
-	for (size_t i = 0; i < std::max<size_t>(lhs_range.size(), rhs_range.size()); i++)
-		size += std::get<2>((lhs_range.size() > rhs_range.size()) ? lhs_range[i] : rhs_range[i]);
+	if (lhs_range.size() == 0 || rhs_range.size() == 0)
+		return result;
 
-	double score = 0.0;
-	for (int si = std::min<int>(lhs_range.size(), rhs_range.size()) - 1; si >= 0; --si) // do in reverse since only the last specified value matters
+	// TODO: FIX 24 OFFSET MATCHING EVERYTHING, POSSIBLE FIX: NEGATIVE SCORE WHEN WRONG
+
+	for (size_t si = 0; si < std::min<int>(lhs_range.size(), rhs_range.size()); ++si) // do in reverse since only the last specified value matters
 	{
 		std::vector<bool> lhs_offsets(25, false);
 		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
 		{
 			Poke* lhs_poke = dynamic_cast<Poke*>(lhs.get(j));
-			if (lhs_poke != nullptr && !lhs_offsets[lhs_poke->offset])
+			if (!lhs_offsets[lhs_poke->offset])
 			{
 				lhs_offsets[lhs_poke->offset] = true;
 				for (int k = std::get<1>(rhs_range[si]) - 1; k >= std::get<0>(rhs_range[si]); --k)
@@ -368,28 +382,29 @@ double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
 					Poke* rhs_poke = dynamic_cast<Poke*>(rhs.get(k));
 					if (lhs_poke->offset == rhs_poke->offset)
 					{
-						double val_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
-						double val_ratio = 1.0 / (val_diff + 1.0);
+						double pk_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
+						double pk_ratio = 1.0 / (pk_diff + 1.0);
 
-						score += val_ratio;
+						result += pk_ratio;
 
 						break;
 					}
 				}
 			}
 		}
+
+		Sample* lhs_sample = dynamic_cast<Sample*>(lhs.get(std::get<1>(lhs_range[si])));
+		Sample* rhs_sample = dynamic_cast<Sample*>(rhs.get(std::get<1>(rhs_range[si])));
+
+		double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
+		double smpl_ratio = 1.0 / (smpl_diff + 1.0);
+
+		result += smpl_ratio;
 	}
 
-	return (score / size);
+	size_t size = std::max<size_t>(lhs.size(), rhs.size());
 
-	//double result = 0;
-
-	//for (size_t i = 0; i < std::min<size_t>(lhs.size(), rhs.size()); ++i)
-	//	result += (lhs.get(i) != rhs.get(i));
-
-	//result += std::abs((int)lhs.size() - (int)rhs.size());
-
-	//return result / (std::max<size_t>(lhs.size(), rhs.size()));
+	return (result / size);
 }
 
 void Evolution::reset()
