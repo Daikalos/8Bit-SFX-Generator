@@ -111,7 +111,7 @@ void Evolution::initialize()
 
 		std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-		for (size_t j = 0, index = 0, size = util::random(16, 128); j < size; ++j)
+		for (size_t j = 0, index = 0, size = util::random(4, 128); j < size; ++j)
 		{
 			if (util::random() > 0.15 && index < offsets.size())
 				_population[i].push({ offsets[index++], util::rvpoke() });
@@ -136,8 +136,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	candidate._fitness = 0;
 
 	const double simi_mul = 2.50;
-	const double smpl_mul = 0.20;
-	const double time_mul = 0.10;
+	const double smpl_mul = 0.05;
+	const double time_mul = 0.05;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
@@ -281,12 +281,9 @@ void Evolution::crossover()
 	{
 		size_t p0 = 0, p1 = 0, exit = 0;
 
-		do
-		{
-			p0 = util::random<size_t>(0, elite - 1);
-			p1 = util::random<size_t>(0, elite - 1);
-		}
-		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.40 && ++exit < 128)); // two random parents from the elite
+		p0 = util::random<size_t>(0, elite - 1);
+		do p1 = util::random<size_t>(0, elite - 1);
+		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.33 && ++exit < 128)); // two random parents from the elite
 
 		SoundGene child0(_population[p0]);
 		SoundGene child1(_population[p1]);

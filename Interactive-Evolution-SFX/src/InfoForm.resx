@@ -387,7 +387,7 @@
 
 To assist you in the process, there are several buttons on the interface which include: save, load, play, pause, reset, retry, next, prev, mutation rate, mutation size, status, and volume.
 
-Save and load allows you to start from previously generated populations.
+Save and load allows you to start from previously generated populations. Useful when e.g. if you find the generated population to be repeatably poor when reset without much change. You can load previous populations from the 'examples' folder.
 
 Play starts playing each of the sound effects incrementally from top left to bottom right. Each sound effect can also be played seperately.
 
