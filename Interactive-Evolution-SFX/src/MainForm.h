@@ -30,6 +30,7 @@ namespace IESFX
 		MainForm(void)
 		{
 			InitializeComponent();
+			Heatmap::heatmap_1();
 		}
 
 	protected:

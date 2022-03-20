@@ -142,7 +142,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>resid.lib;sfml-system-s.lib;sfml-audio-s.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib</AdditionalDependencies>
+      <AdditionalDependencies>resid.lib;sfml-system-s.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-window-s.lib;freetype.lib;glu32.lib;opengl32.lib;winmm.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;ogg.lib;openal32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
@@ -165,6 +165,10 @@
     <ClCompile Include="Evolution.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="Heatmap.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="Interpreter.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
