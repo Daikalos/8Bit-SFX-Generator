@@ -30,7 +30,7 @@ namespace IESFX
 		MainForm(void)
 		{
 			InitializeComponent();
-			Heatmap::heatmap_1();
+			//Heatmap::heatmap_1();
 		}
 
 	protected:
@@ -636,7 +636,7 @@ namespace IESFX
 				return;
 
 			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Retry will bring you back to your previous configuration.",
+				"Retry will bring you back to your previous population.",
 				"Retry?",
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
 
@@ -645,7 +645,7 @@ namespace IESFX
 				update_status("Loading...");
 
 				if (!_evolution->retry())
-					MessageBox::Show("No previous configuration to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					MessageBox::Show("No previous population to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				else
 				{
 					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _old_step);
@@ -861,7 +861,7 @@ namespace IESFX
 				switch (result)
 				{
 				case -1:
-					MessageBox::Show("Please select potential candidates first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					MessageBox::Show("Please select potential candidates for evolution first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 					break;
 				}
 				update_status("Ready");
@@ -884,7 +884,7 @@ namespace IESFX
 				_color = Color::White;
 			}
 			else
-				MessageBox::Show("No candidates could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
 			update_status("Ready");
 		}
