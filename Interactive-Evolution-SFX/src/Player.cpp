@@ -100,7 +100,10 @@ void Player::player_loop()
 				Monitor::Enter(_object);
 				try
 				{
+					if (_shutdown) break;
 					Monitor::Wait(_object, TimeSpan::FromSeconds(0.25));
+					if (_shutdown) break;
+
 					play();
 				}
 				finally { Monitor::Exit(_object); }
