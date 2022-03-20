@@ -30,6 +30,11 @@ namespace IESFX
 		void shutdown() 
 		{ 
 			_shutdown = true; 
+
+			Monitor::Enter(_object);
+			try		{ Monitor::Pulse(_object); }
+			finally { Monitor::Exit(_object); }
+
 			_thread->Join();
 		}
 
@@ -43,7 +48,7 @@ namespace IESFX
 		void play();
 		void pause();
 
-		void iterate();
+		bool iterate();
 
 		//bool load(String^ file);
 		//bool save(String^ name);
@@ -87,6 +92,7 @@ namespace IESFX
 			*_sound{nullptr};
 
 		Thread^ _thread;
+		Object^ _object;
 	};
 }
 

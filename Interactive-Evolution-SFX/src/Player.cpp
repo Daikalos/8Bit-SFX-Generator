@@ -9,6 +9,8 @@ Player::Player(Evolution* evolution, size_t size, double volume)
 	_thread->IsBackground = true;
 	_thread->Start();
 
+	_object = gcnew Object();
+
 	_sounds = new Sound[size];
 }
 
@@ -70,30 +72,10 @@ void Player::pause()
 		_sound->pause();
 }
 
-void Player::iterate()
+bool Player::iterate()
 {
-	(++_position >= _size) ? reset() : play();
+	return ++_position < _size;
 }
-
-//bool Player::load(String^ file)
-//{
-//	String^ ext = Path::GetExtension(file)->ToLower();
-//
-//	_is_playing = false;
-//
-//	if (ext->Equals(".txt"))
-//		return load_txt(file);
-//	if (ext->Equals(".wav"))
-//		return load_wav(file);
-//
-//	return false;
-//}
-//
-//bool Player::save(String^ name)
-//{
-//
-//	return false;
-//}
 
 void Player::update(std::vector<SoundGene>& genes)
 {
@@ -112,7 +94,20 @@ void Player::player_loop()
 			continue;
 		
 		if (_sound->status() == sf::SoundSource::Status::Stopped)
-			iterate();
+		{
+			if (iterate())
+			{
+				Monitor::Enter(_object);
+				try
+				{
+					Monitor::Wait(_object, TimeSpan::FromSeconds(0.25));
+					play();
+				}
+				finally { Monitor::Exit(_object); }
+			}
+			else
+				reset();
+		}
 	}
 }
 

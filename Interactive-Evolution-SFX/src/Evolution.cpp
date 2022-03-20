@@ -111,9 +111,9 @@ void Evolution::initialize()
 
 		std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-		for (size_t j = 0, index = 0, size = util::random(4, 128); j < size; ++j)
+		for (size_t j = 0, index = 0, size = util::random(2, 128); j < size; ++j)
 		{
-			if (util::random() > 0.15 && index < offsets.size())
+			if (util::random() > 0.06 && index < offsets.size())
 				_population[i].push({ offsets[index++], util::rvpoke() });
 			else
 			{
@@ -135,21 +135,12 @@ void Evolution::evaluate(SoundGene& candidate)
 {
 	candidate._fitness = 0;
 
-	const double simi_mul = 2.50;
+	const double simi_mul = 2.75;
 	const double smpl_mul = 0.05;
 	const double time_mul = 0.05;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
-
-	//std::vector<double> scores(_models.size(), 0.0);
-	//for (size_t i = 0; i < _models.size(); ++i)
-	//{
-	//	double similarity = hamming_distance(_models[i], candidate);
-	//	scores[i] = ((similarity > 0.7) ? 0.7 / (similarity + 0.3) : similarity);
-	//}
-
-	//double average = (std::accumulate(scores.begin(), scores.end(), 0.0) / scores.size());
 
 	std::vector<std::tuple<int, int, int>> c_range = candidate.range<int>();
 
@@ -162,11 +153,8 @@ void Evolution::evaluate(SoundGene& candidate)
 
 		std::vector<std::tuple<int, int, int>> m_range = model->range<int>();
 
-		if (m_range.size() == 0)
-			continue;
-
 		double score = 0.0;
-		for (size_t si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
+		for (int si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
 		{
 			std::vector<bool> m_offsets(25, false);
 			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
@@ -235,8 +223,8 @@ void Evolution::evaluate(SoundGene& candidate)
 		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.2)
 		candidate._fitness += -(0.2 / time) * time_mul;
-	else if (time > 1.5)
-		candidate._fitness += -(time / 1.5) * time_mul;
+	else if (time > 1.3)
+		candidate._fitness += -(time / 1.3) * time_mul;
 }
 
 void Evolution::selection()
@@ -245,8 +233,7 @@ void Evolution::selection()
 	//
 	std::sort(
 		std::execution::par_unseq,
-		_population.begin(),
-		_population.end(),
+		_population.begin(), _population.end(),
 		[&](const SoundGene& g1, const SoundGene& g2)
 		{
 			return g1._fitness > g2._fitness;
@@ -256,7 +243,7 @@ void Evolution::selection()
 	{
 		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
 
-		if (util::random() <= chance) // ensure always two parents
+		if (util::random() + 0.2 <= chance) // ensure always two parents
 			_population.at(i)._dead = true;
 	}
 
@@ -283,7 +270,7 @@ void Evolution::crossover()
 
 		p0 = util::random<size_t>(0, elite - 1);
 		do p1 = util::random<size_t>(0, elite - 1);
-		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.33 && ++exit < 128)); // two random parents from the elite
+		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.2 && ++exit < 128)); // two random parents from the elite
 
 		SoundGene child0(_population[p0]);
 		SoundGene child1(_population[p1]);
@@ -360,17 +347,12 @@ void Evolution::mutation()
 			if (util::random() > _mutation_rate)
 				return;
 
-			size_t gene_length = gene.size();
+			int size = std::ceil(gene.size() / (1.0 / _mutation_size));
+			int length = util::random(0, size - 1);
 
-			if (gene_length == 0)
-				return;
-
-			int size = std::ceil((double)gene_length / (1.0 / _mutation_size));
-			int length = util::random(1, size);
-
-			for (size_t j = 0; j < length; ++j)
+			for (int j = 0; j < length; ++j)
 			{
-				size_t mp = util::random<size_t>(0, gene_length - 1);
+				size_t mp = util::random<size_t>(0, gene.size() - 1);
 
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
@@ -389,7 +371,8 @@ void Evolution::mutation()
 					if (util::random() <= OFFSET_MUTATION)
 						poke->offset = util::ropoke();
 
-					poke->value += (poke->value > 0) ? util::random_arg<int>(-1, 1) : 1;
+					int change = util::random_arg<int>(-2, -1, 1, 2);
+					poke->value += (poke->value > std::abs(change)) ? change : std::abs(change);
 				}
 				else if (sample != nullptr)
 					sample->size += (sample->size > 50) ? util::random_arg<int>(-50, 50) : 50;

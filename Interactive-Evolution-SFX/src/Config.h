@@ -12,16 +12,16 @@ namespace IESFX
 	static const size_t CLOCKS_PER_SAMPLE = round(CLOCK_FREQ / (double)SAMPLE_RATE);
 
 	static const size_t POPULATION_SIZE = 1200;
-	static const size_t GENERATIONS = 60;
+	static const size_t GENERATIONS = 100;
 	static const double QUALITY = 2.00;
 
 	static const int N_POINTS = 3;
-	static const size_t MODEL_SAMPLES = 3;
+	static const size_t MODEL_SAMPLES = 2;
 
-	static const double REMOVE_MUTATION = 0.05;
-	static const double ADD_MUTATION = 0.05;
-	static const double COMMAND_MUTATION = 0.05;
-	static const double OFFSET_MUTATION = 0.05;
+	static const double REMOVE_MUTATION = 0.1;
+	static const double ADD_MUTATION = 0.1;
+	static const double COMMAND_MUTATION = 0.2;
+	static const double OFFSET_MUTATION = 0.2;
 
 	static const RESID::reg8 POKE_OFFSET = 23;
 	static const RESID::reg8 POKE_VALUE = 120;

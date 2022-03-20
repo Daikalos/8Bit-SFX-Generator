@@ -81,7 +81,7 @@ namespace util
 	}
 
 	template<typename T, typename... Args, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-	static T random_arg(Args... args)
+	static T random_arg(const Args&... args)
 	{
 		std::vector<T> x { { args... } };
 		return x[util::random<size_t>(0, x.size() - 1)];
