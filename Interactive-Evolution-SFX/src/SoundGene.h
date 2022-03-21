@@ -59,13 +59,6 @@ namespace IESFX
 		{
 			return _gene.insert(_gene.begin() + pos, poke.clone());
 		}
-		auto insert(
-			const std::vector<std::shared_ptr<Command>>::const_iterator& position,
-			const std::vector<std::shared_ptr<Command>>::iterator& first, 
-			const std::vector<std::shared_ptr<Command>>::iterator& last)
-		{
-			return _gene.insert(position, first, last);
-		}
 
 		void set(int index, std::nullptr_t)
 		{
@@ -118,7 +111,7 @@ namespace IESFX
 		}
 
 	private:
-		std::vector<std::shared_ptr<Command>> _gene;
+		std::vector<std::unique_ptr<Command>> _gene;
 		double _fitness{0.0};
 		bool _dead{false};
 

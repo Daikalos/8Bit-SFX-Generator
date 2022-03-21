@@ -307,7 +307,7 @@ namespace IESFX
 			this->mutationSizeSlider->Size = System::Drawing::Size(327, 45);
 			this->mutationSizeSlider->TabIndex = 4;
 			this->mutationSizeSlider->TickFrequency = 2;
-			this->mutationSizeSlider->Value = 24;
+			this->mutationSizeSlider->Value = 14;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
 			// 
 			// mutationSizeTextLabel
@@ -333,9 +333,9 @@ namespace IESFX
 			this->mutationSizeLabel->Location = System::Drawing::Point(129, 1);
 			this->mutationSizeLabel->Margin = System::Windows::Forms::Padding(0);
 			this->mutationSizeLabel->Name = L"mutationSizeLabel";
-			this->mutationSizeLabel->Size = System::Drawing::Size(75, 25);
+			this->mutationSizeLabel->Size = System::Drawing::Size(67, 25);
 			this->mutationSizeLabel->TabIndex = 9;
-			this->mutationSizeLabel->Text = L"- 12.0%";
+			this->mutationSizeLabel->Text = L"- 7.0%";
 			// 
 			// volumeSlider
 			// 
@@ -574,11 +574,28 @@ namespace IESFX
 			{
 				update_status("Loading...");
 
-				if (!_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
-					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				else
-					_player->update(_evolution->output(_soundUCs->Length, 0));
+				if (_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+				{
+					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
 
+					if (genes.size() != 0)
+					{
+						for (int i = 0; i < _soundUCs->Length; ++i)
+							_soundUCs[i]->reset();
+
+						_player->reset();
+						_player->update(genes);
+
+						_prev = _old_step = _step = 0;
+						_color = Color::White;
+					}
+					else
+						MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				}
+				else
+					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+
+				update_evolution_status(_step + "/" + POPULATION_SIZE);
 				update_status("Ready");
 			}
 		}
@@ -587,6 +604,9 @@ namespace IESFX
 		{
 			if (!ready())
 				return;
+
+			if (_player->is_playing())
+				_player->iterate();
 
 			_player->set_is_playing(true);
 		}
@@ -644,9 +664,7 @@ namespace IESFX
 			{
 				update_status("Loading...");
 
-				if (!_evolution->retry())
-					MessageBox::Show("No previous population to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				else
+				if (_evolution->retry())
 				{
 					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _old_step);
 
@@ -664,10 +682,11 @@ namespace IESFX
 					}
 					else
 						MessageBox::Show("No new candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-					update_evolution_status(_step + "/" + POPULATION_SIZE);
 				}
+				else
+					MessageBox::Show("No previous population to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
+				update_evolution_status(_step + "/" + POPULATION_SIZE);
 				update_status("Ready");
 			}
 		}
@@ -692,12 +711,11 @@ namespace IESFX
 				_player->update(genes);
 
 				_step = next_step;
-
-				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
 			else
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
+			update_evolution_status(_step + "/" + POPULATION_SIZE);
 			update_status("Ready");
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -720,12 +738,11 @@ namespace IESFX
 				_player->update(genes);
 
 				_step = next_step;
-
-				update_evolution_status(_step + "/" + POPULATION_SIZE);
 			}
 			else
 				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
+			update_evolution_status(_step + "/" + POPULATION_SIZE);
 			update_status("Ready");
 		}
 
@@ -762,9 +779,6 @@ namespace IESFX
 
 		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e)
 		{
-			if (!_status && !_evolution->active())
-				return;
-
 			if (_evolution->active())
 			{
 				update_evolution_status(
@@ -772,12 +786,6 @@ namespace IESFX
 						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->generation() * 100), 1)) + 
 					"% | Quality: " + String::Format(System::Globalization::CultureInfo::InvariantCulture,
 						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->quality() * 100), 1)) + "%");
-				_status = true;
-			}
-			else
-			{
-				update_evolution_status("0/" + POPULATION_SIZE);
-				_status = false;
 			}
 		}
 
@@ -803,7 +811,7 @@ namespace IESFX
 		}
 		void player_update(Sound* sound, int i)
 		{
-			size_t offset = 50;
+			size_t offset = 35;
 
 			size_t size = sound->buffer_count();
 			array<short>^ samples = gcnew array<short>(size / offset);
@@ -886,6 +894,8 @@ namespace IESFX
 			else
 				MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
+			update_evolution_status(_step + "/" + POPULATION_SIZE);
+
 			update_status("Ready");
 		}
 
@@ -913,7 +923,5 @@ namespace IESFX
 
 		Player^ _player;
 		Evolution* _evolution;
-
-		bool _status;
 };
 }

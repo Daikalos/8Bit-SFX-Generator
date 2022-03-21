@@ -11,13 +11,13 @@ std::string Poke::print() const
 		std::to_string(offset) + " " +
 		std::to_string(value));
 }
-std::shared_ptr<Command> Poke::clone() const
+std::unique_ptr<Command> Poke::clone() const
 {
-	return std::make_shared<Poke>(*this);
+	return std::make_unique<Poke>(*this);
 }
-std::shared_ptr<Command> Poke::flip() const
+std::unique_ptr<Command> Poke::flip() const
 {
-	return std::make_shared<Sample>(Sample(util::rsample()));
+	return std::make_unique<Sample>(Sample(util::rsample()));
 }
 bool Poke::equal_to(const Command* rhs) const
 {
@@ -36,13 +36,13 @@ std::string Sample::print() const
 {
 	return std::string("sample " + std::to_string(size));
 }
-std::shared_ptr<Command> Sample::clone() const
+std::unique_ptr<Command> Sample::clone() const
 {
-	return std::make_shared<Sample>(*this);
+	return std::make_unique<Sample>(*this);
 }
-std::shared_ptr<Command> Sample::flip() const
+std::unique_ptr<Command> Sample::flip() const
 {
-	return std::make_shared<Poke>(Poke(util::ropoke(), util::rvpoke()));
+	return std::make_unique<Poke>(Poke(util::ropoke(), util::rvpoke()));
 }
 bool Sample::equal_to(const Command* rhs) const
 {

@@ -129,7 +129,7 @@ namespace IESFX
 				static_cast<System::Byte>(0)));
 			this->durationLabel->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->durationLabel->Name = L"durationLabel";
-			this->durationLabel->Size = System::Drawing::Size(35, 15);
+			this->durationLabel->Size = System::Drawing::Size(35, 22);
 			this->durationLabel->Text = L"/ 1.0s";
 			// 
 			// soundWave
@@ -158,6 +158,8 @@ namespace IESFX
 			chartArea1->AxisY->LabelStyle->Font = (gcnew System::Drawing::Font(L"Segoe UI", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			chartArea1->AxisY->LineWidth = 0;
+			chartArea1->AxisY->MajorGrid->Enabled = false;
+			chartArea1->AxisY->MajorGrid->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
 			chartArea1->AxisY->MajorTickMark->Enabled = false;
 			chartArea1->AxisY->Maximum = 16000;
 			chartArea1->AxisY->MaximumAutoSize = 100;

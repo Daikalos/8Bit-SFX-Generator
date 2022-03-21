@@ -19,6 +19,17 @@ Player::~Player()
 	delete[] _sounds;
 }
 
+void Player::shutdown()
+{
+	_shutdown = true;
+
+	Monitor::Enter(_object);
+	try { Monitor::Pulse(_object); }
+	finally { Monitor::Exit(_object); }
+
+	_thread->Join();
+}
+
 void Player::reset()
 {
 	_callback_done();
@@ -72,11 +83,6 @@ void Player::pause()
 		_sound->pause();
 }
 
-bool Player::iterate()
-{
-	return ++_position < _size;
-}
-
 void Player::update(std::vector<SoundGene>& genes)
 {
 	for (int i = 0; i < genes.size(); ++i)
@@ -93,23 +99,33 @@ void Player::player_loop()
 		if (!_is_playing || _sound == nullptr)
 			continue;
 		
-		if (_sound->status() == sf::SoundSource::Status::Stopped)
+		if (_sound->status() == sf::SoundSource::Status::Stopped || _iterate)
 		{
-			if (iterate())
-			{
-				Monitor::Enter(_object);
-				try
-				{
-					if (_shutdown) break;
-					Monitor::Wait(_object, TimeSpan::FromSeconds(0.25));
-					if (_shutdown) break;
+			if (_iterate)
+				_sound->stop();
 
-					play();
+			if (++_position < _size)
+			{
+				if (!_iterate)
+				{
+					Monitor::Enter(_object);
+					try
+					{
+						if (_shutdown) break;
+						Monitor::Wait(_object, TimeSpan::FromSeconds(0.35));
+						if (_shutdown) break;
+
+						play();
+					}
+					finally { Monitor::Exit(_object); }
 				}
-				finally { Monitor::Exit(_object); }
+				else
+					play();
 			}
 			else
 				reset();
+
+			_iterate = false;
 		}
 	}
 }

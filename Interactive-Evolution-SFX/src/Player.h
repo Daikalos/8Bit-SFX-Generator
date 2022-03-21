@@ -27,16 +27,10 @@ namespace IESFX
 		Player(Evolution* evolution, size_t size, double volume);
 		~Player();
 
-		void shutdown() 
-		{ 
-			_shutdown = true; 
+		void shutdown();
+		void iterate() { _iterate = true; }
 
-			Monitor::Enter(_object);
-			try		{ Monitor::Pulse(_object); }
-			finally { Monitor::Exit(_object); }
-
-			_thread->Join();
-		}
+		bool is_playing() { return _is_playing; }
 
 		void reset();
 
@@ -47,11 +41,6 @@ namespace IESFX
 
 		void play();
 		void pause();
-
-		bool iterate();
-
-		//bool load(String^ file);
-		//bool save(String^ name);
 
 		void update(std::vector<SoundGene>& genes);
 
@@ -81,7 +70,8 @@ namespace IESFX
 			_size;
 		bool 
 			_is_playing{false}, 
-			_shutdown{false};
+			_shutdown{false},
+			_iterate{false};
 		double 
 			_volume{0.0};
 

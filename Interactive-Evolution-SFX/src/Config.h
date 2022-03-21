@@ -16,7 +16,7 @@ namespace IESFX
 	static const double QUALITY = 2.00;
 
 	static const int N_POINTS = 3;
-	static const size_t MODEL_SAMPLES = 2;
+	static const size_t MODEL_SAMPLES = 3;
 
 	static const double REMOVE_MUTATION = 0.1;
 	static const double ADD_MUTATION = 0.1;

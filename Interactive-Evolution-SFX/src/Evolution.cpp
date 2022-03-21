@@ -136,8 +136,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	candidate._fitness = 0;
 
 	const double simi_mul = 2.75;
-	const double smpl_mul = 0.05;
-	const double time_mul = 0.05;
+	const double smpl_mul = 0.075;
+	const double time_mul = 0.075;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
@@ -371,7 +371,7 @@ void Evolution::mutation()
 					if (util::random() <= OFFSET_MUTATION)
 						poke->offset = util::ropoke();
 
-					int change = util::random_arg<int>(-2, -1, 1, 2);
+					int change = util::random_arg<int>(-3, -2, -1, 1, 2, 3);
 					poke->value += (poke->value > std::abs(change)) ? change : std::abs(change);
 				}
 				else if (sample != nullptr)

@@ -25,8 +25,6 @@ bool MainForm::initialize()
 	_player->_callback_done += gcnew Player::callback_done(this, &MainForm::player_done);
 	_player->_callback_update += gcnew Player::callback_update(this, &MainForm::player_update);
 
-	_status = false;
-
 	Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
 
 	return true;
