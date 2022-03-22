@@ -30,6 +30,15 @@ void Player::shutdown()
 	_thread->Join();
 }
 
+void Player::iterate()
+{
+	Monitor::Enter(_object);
+	try { Monitor::Pulse(_object); }
+	finally { Monitor::Exit(_object); }
+
+	_iterate = true;
+}
+
 void Player::reset()
 {
 	_callback_done();

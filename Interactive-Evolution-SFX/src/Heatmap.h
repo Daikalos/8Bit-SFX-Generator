@@ -1,6 +1,6 @@
 #pragma once
 
-#if !_DEBUG
+#if true
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>

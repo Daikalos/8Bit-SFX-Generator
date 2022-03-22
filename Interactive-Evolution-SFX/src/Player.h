@@ -28,7 +28,7 @@ namespace IESFX
 		~Player();
 
 		void shutdown();
-		void iterate() { _iterate = true; }
+		void iterate();
 
 		bool is_playing() { return _is_playing; }
 

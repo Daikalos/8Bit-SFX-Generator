@@ -503,6 +503,7 @@ namespace IESFX
 				static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->ImeMode = System::Windows::Forms::ImeMode::On;
+			this->KeyPreview = true;
 			this->MainMenuStrip = this->menuStrip;
 			this->Margin = System::Windows::Forms::Padding(8, 9, 8, 9);
 			this->MaximizeBox = false;
@@ -512,6 +513,7 @@ namespace IESFX
 			this->Text = L"8-bit SFX Generator";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &MainForm::MainForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyDown);
 			this->menuStrip->ResumeLayout(false);
 			this->menuStrip->PerformLayout();
 			this->pnlItems->ResumeLayout(false);
@@ -792,6 +794,25 @@ namespace IESFX
 		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
 		{
 			_player->shutdown();
+		}
+
+		System::Void MainForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e)
+		{
+			switch (e->KeyCode)
+			{
+			case Keys::Left:
+			{
+				showPrevButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			case Keys::Right:
+			{
+				showNextButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			}
 		}
 
 	private:

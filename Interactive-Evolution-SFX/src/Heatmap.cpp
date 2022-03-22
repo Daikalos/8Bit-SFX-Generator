@@ -114,8 +114,6 @@ void Heatmap::heatmap_1()
 	int* heatmap = new int[(width + 1) * (height + 1)];
 	memset(heatmap, 0, sizeof(heatmap[0]) * (width + 1) * (height + 1));
 
-	Evolution* _evolution = new Evolution(0.13, 0.09);
-
 	std::vector<int> range(size);
 
 	std::for_each(
@@ -123,7 +121,17 @@ void Heatmap::heatmap_1()
 		range.begin(), range.end(),
 		[&](const int&)
 		{
+			Evolution* _evolution = new Evolution(
+				util::random(0.0, 1.0), 
+				util::random(0.0, 1.0));
 
+			_evolution->execute(
+				util::random(25LLU, GENERATIONS), 
+				util::random(0.5, QUALITY));
+
+
+
+			delete _evolution;
 		});
 
 	sf::Image image;
@@ -151,7 +159,6 @@ void Heatmap::heatmap_1()
 	image.saveToFile("../misc/heatmap.jpg");
 
 	delete[] heatmap;
-	delete _evolution;
 }
 
 sf::Color IESFX::Heatmap::gradient(double ratio)
