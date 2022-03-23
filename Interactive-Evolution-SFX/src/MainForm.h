@@ -309,6 +309,7 @@ namespace IESFX
 			this->mutationSizeSlider->TickFrequency = 2;
 			this->mutationSizeSlider->Value = 14;
 			this->mutationSizeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_ValueChanged);
+			this->mutationSizeSlider->Enter += gcnew System::EventHandler(this, &MainForm::mutationSizeSlider_Enter);
 			// 
 			// mutationSizeTextLabel
 			// 
@@ -349,6 +350,7 @@ namespace IESFX
 			this->volumeSlider->TickStyle = System::Windows::Forms::TickStyle::Both;
 			this->volumeSlider->Value = 8;
 			this->volumeSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::volumeSlider_ValueChanged);
+			this->volumeSlider->Enter += gcnew System::EventHandler(this, &MainForm::volumeSlider_Enter);
 			// 
 			// modifiersPanel
 			// 
@@ -446,6 +448,7 @@ namespace IESFX
 			this->mutationRateSlider->TickFrequency = 2;
 			this->mutationRateSlider->Value = 18;
 			this->mutationRateSlider->ValueChanged += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_ValueChanged);
+			this->mutationRateSlider->Enter += gcnew System::EventHandler(this, &MainForm::mutationRateSlider_Enter);
 			// 
 			// statusTimer
 			// 
@@ -783,9 +786,6 @@ namespace IESFX
 				Decimal::Round(System::Decimal(mutation_size() * 100), 1)) + "%";
 
 			_evolution->set_mutation_size(mutation_size());
-
-			this->ActiveControl = nullptr;
-			this->Focus();
 		}
 		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e)
 		{
@@ -794,9 +794,6 @@ namespace IESFX
 				Decimal::Round(System::Decimal(mutation_rate() * 100), 1)) + "%";
 
 			_evolution->set_mutation_rate(mutation_rate());
-
-			this->ActiveControl = nullptr;
-			this->Focus();
 		}
 
 		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
@@ -888,6 +885,22 @@ namespace IESFX
 		System::Void MainForm_Activated(System::Object^ sender, System::EventArgs^ e)
 		{
 			this->ActiveControl = nullptr;
+		}
+
+		System::Void mutationRateSlider_Enter(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->ActiveControl = nullptr;
+			this->Focus();
+		}
+		System::Void mutationSizeSlider_Enter(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->ActiveControl = nullptr;
+			this->Focus();
+		}
+		System::Void volumeSlider_Enter(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 	private:
