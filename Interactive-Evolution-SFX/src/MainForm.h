@@ -511,6 +511,7 @@ namespace IESFX
 			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"8-bit SFX Generator";
+			this->Activated += gcnew System::EventHandler(this, &MainForm::MainForm_Activated);
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &MainForm::MainForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyDown);
@@ -561,6 +562,9 @@ namespace IESFX
 					MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
 				update_status("Ready");
+
+				this->ActiveControl = nullptr;
+				this->Focus();
 			}
 		}
 		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -599,6 +603,9 @@ namespace IESFX
 
 				update_evolution_status(_step + "/" + POPULATION_SIZE);
 				update_status("Ready");
+
+				this->ActiveControl = nullptr;
+				this->Focus();
 			}
 		}
 
@@ -611,6 +618,9 @@ namespace IESFX
 				_player->iterate();
 
 			_player->set_is_playing(true);
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
@@ -618,6 +628,9 @@ namespace IESFX
 				return;
 
 			_player->set_is_playing(false);
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -632,6 +645,9 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
@@ -650,6 +666,9 @@ namespace IESFX
 				_evolution->reset();
 
 				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
+
+				this->ActiveControl = nullptr;
+				this->Focus();
 			}
 		}
 		System::Void retryButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -690,6 +709,9 @@ namespace IESFX
 
 				update_evolution_status(_step + "/" + POPULATION_SIZE);
 				update_status("Ready");
+
+				this->ActiveControl = nullptr;
+				this->Focus();
 			}
 		}
 
@@ -719,6 +741,9 @@ namespace IESFX
 
 			update_evolution_status(_step + "/" + POPULATION_SIZE);
 			update_status("Ready");
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
@@ -746,6 +771,9 @@ namespace IESFX
 
 			update_evolution_status(_step + "/" + POPULATION_SIZE);
 			update_status("Ready");
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
@@ -755,6 +783,9 @@ namespace IESFX
 				Decimal::Round(System::Decimal(mutation_size() * 100), 1)) + "%";
 
 			_evolution->set_mutation_size(mutation_size());
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e)
 		{
@@ -763,11 +794,17 @@ namespace IESFX
 				Decimal::Round(System::Decimal(mutation_rate() * 100), 1)) + "%";
 
 			_evolution->set_mutation_rate(mutation_rate());
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
 		{
 			_player->set_volume(volume());
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e)
@@ -777,6 +814,9 @@ namespace IESFX
 
 			if (!_info->Visible)
 				_info->Show();
+
+			this->ActiveControl = nullptr;
+			this->Focus();
 		}
 
 		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e)
@@ -812,7 +852,42 @@ namespace IESFX
 				e->Handled = true;
 			}
 			break;
+			case Keys::Up:
+			{
+				playButton_Click(sender, e);
+				e->Handled = true;
 			}
+			break;
+			case Keys::Down:
+			{
+				pauseButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			case Keys::Enter:
+			{
+				evolveButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			case Keys::Back:
+			{
+				retryButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			case Keys::Delete:
+			{
+				resetButton_Click(sender, e);
+				e->Handled = true;
+			}
+			break;
+			}
+		}
+
+		System::Void MainForm_Activated(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->ActiveControl = nullptr;
 		}
 
 	private:
@@ -890,7 +965,7 @@ namespace IESFX
 				switch (result)
 				{
 				case -1:
-					MessageBox::Show("Please select potential candidates for evolution first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					MessageBox::Show("Please select candidates for evolution first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 					break;
 				}
 				update_status("Ready");

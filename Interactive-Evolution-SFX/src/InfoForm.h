@@ -79,7 +79,7 @@ namespace IESFX
 			this->panel1->Controls->Add(this->label2);
 			this->panel1->Location = System::Drawing::Point(12, 12);
 			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(549, 825);
+			this->panel1->Size = System::Drawing::Size(549, 866);
 			this->panel1->TabIndex = 0;
 			// 
 			// pictureBox6
@@ -157,7 +157,7 @@ namespace IESFX
 			this->label1->Location = System::Drawing::Point(10, 36);
 			this->label1->MaximumSize = System::Drawing::Size(492, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(492, 750);
+			this->label1->Size = System::Drawing::Size(492, 801);
 			this->label1->TabIndex = 2;
 			this->label1->Text = resources->GetString(L"label1.Text");
 			// 
@@ -179,7 +179,7 @@ namespace IESFX
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Gray;
 			this->CausesValidation = false;
-			this->ClientSize = System::Drawing::Size(573, 842);
+			this->ClientSize = System::Drawing::Size(573, 890);
 			this->Controls->Add(this->panel1);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));

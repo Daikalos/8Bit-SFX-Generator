@@ -121,7 +121,7 @@ void Player::player_loop()
 					try
 					{
 						if (_shutdown) break;
-						Monitor::Wait(_object, TimeSpan::FromSeconds(0.35));
+						Monitor::Wait(_object, TimeSpan::FromSeconds(0.5));
 						if (_shutdown) break;
 
 						play();
