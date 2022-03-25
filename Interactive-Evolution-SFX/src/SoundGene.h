@@ -86,6 +86,11 @@ namespace IESFX
 				_gene[index] = get(index)->flip();
 		}
 
+		friend bool operator<(const SoundGene& lhs, const SoundGene& rhs)
+		{
+			return lhs._fitness > rhs._fitness;
+		}
+
 		friend bool operator==(const SoundGene& lhs, const SoundGene& rhs)
 		{
 			if (lhs.size() != rhs.size())

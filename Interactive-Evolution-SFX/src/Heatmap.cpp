@@ -15,33 +15,28 @@ void Heatmap::heatmap_0()
 
 	double max = 0;
 
-	int* heatmap = new int[(width + 1) * (height + 1)];
-	memset(heatmap, 0, sizeof(heatmap[0]) * (width + 1) * (height + 1));
+	int* heatmap = new int[width * height];
+	memset(heatmap, 0, sizeof(heatmap[0]) * width * height);
 
-	std::vector<int> range(size);
+	std::vector<SoundGene> population(size);
 
 	std::for_each(
 		std::execution::par_unseq,
-		range.begin(), range.end(), 
-		[&](const int&)
+		population.begin(), population.end(),
+		[&](SoundGene& gene)
 		{
-			SoundGene gene;
-
 			gene.push({ 24, 14 }); // always volume on
 
 			std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-			for (size_t j = 0, index = 0, size = util::random(0, 128); j < size; ++j)
+			for (int s = util::random(1, 7); s > 0; --s)
 			{
-				if (util::random() > 0.1 && index < offsets.size())
-					gene.push({ offsets[index++], util::rvpoke() });
-				else
+				for (int p = util::random(1, 23); p > 0; --p)
 				{
-					gene.push({ util::rsample() });
-
-					offsets = util::random<RESID::reg8>(24);
-					index = 0;
+					gene.push({ offsets[p], util::rvpoke() });
 				}
+				gene.push({ util::rsample() });
+				offsets = util::random<RESID::reg8>(24);
 			}
 
 			std::vector<sf::Int16> buffer = SoundData()(gene);
@@ -75,14 +70,14 @@ void Heatmap::heatmap_0()
 	sf::Image image;
 	image.create(width, height);
 
-	for (size_t x = 0; x < width; ++x)
-	{
-		for (size_t y = 0; y < height; ++y)
+	std::for_each(
+		std::execution::par_unseq,
+		heatmap, heatmap + (int)(width * height),
+		[&max](const int& val)
 		{
-			if (heatmap[x + y * width] > max)
-				max = heatmap[x + y * width];
-		}
-	}
+			if (val > max)
+				max = val;
+		});
 
 	max = std::pow(max, 0.6);
 
@@ -94,57 +89,90 @@ void Heatmap::heatmap_0()
 		}
 	}
 
-	image.saveToFile("../misc/heatmap.jpg");
+	image.saveToFile("../misc/heatmap_0.jpg");
 
 	delete[] heatmap;
 }
 
 void Heatmap::heatmap_1()
 {
-	const size_t width = 1024;
-	const size_t height = 1024;
-
-	const sf::Int16 bounds_height = 17000;
-	const size_t bounds_width = SAMPLE_RATE * 1.5;
+	const size_t width = 161;
+	const size_t height = 161;
 
 	const size_t size = 64;
 
-	double max = 0;
+	double max = DBL_MIN;
 
-	int* heatmap = new int[(width + 1) * (height + 1)];
-	memset(heatmap, 0, sizeof(heatmap[0]) * (width + 1) * (height + 1));
+	int* heatmap = new int[width * height];
+	memset(heatmap, 0, sizeof(heatmap[0]) * width * height);
 
 	std::vector<int> range(size);
 
-	std::for_each(
-		std::execution::par_unseq,
+	std::for_each(std::execution::par_unseq,
 		range.begin(), range.end(),
 		[&](const int&)
 		{
-			Evolution* _evolution = new Evolution(
+			Evolution* evolution = new Evolution(
 				util::random(0.0, 1.0), 
 				util::random(0.0, 1.0));
 
-			_evolution->execute(
+			evolution->execute(
 				util::random(25LLU, GENERATIONS), 
 				util::random(0.5, QUALITY));
 
+			std::vector<SoundGene> population(evolution->output(512, 0));
 
+			delete evolution;
 
-			delete _evolution;
+			std::for_each(
+				std::execution::par_unseq,
+				population.begin(), population.end(),
+				[&](const SoundGene& gene)
+				{
+					std::vector<std::tuple<int, int, int>> range = gene.range<int>();
+
+					double average = 0.0;
+					double size = 0.0;
+
+					for (int si = 0; si < range.size(); ++si)
+					{
+						std::vector<bool> offsets(25, false);
+						for (int j = std::get<1>(range[si]) - 1; j >= std::get<0>(range[si]); --j)
+						{
+							Poke* poke = static_cast<Poke*>(gene.get(j));
+							if (!offsets[poke->offset])
+							{
+								offsets[poke->offset] = true;
+
+								average += poke->value;
+								++size;
+							}
+						}
+					}
+
+					if (size <= DBL_EPSILON)
+						return;
+
+					average /= size;
+
+					int x = (1.0 - std::clamp<double>(average / POKE_VALUE, 0.0, 1.0)) * (width - 1);
+					int y = std::clamp<double>(size / 161, 0.0, 1.0) * (height - 1);
+
+					++heatmap[x + y * width];
+				});
 		});
 
 	sf::Image image;
 	image.create(width, height);
 
-	for (size_t x = 0; x < width; ++x)
-	{
-		for (size_t y = 0; y < height; ++y)
+	std::for_each(
+		std::execution::par_unseq,
+		heatmap, heatmap + (width * height),
+		[&max](const int& val)
 		{
-			if (heatmap[x + y * width] > max)
-				max = heatmap[x + y * width];
-		}
-	}
+			if (val > max)
+				max = val;
+		});
 
 	max = std::pow(max, 0.6);
 
@@ -156,7 +184,7 @@ void Heatmap::heatmap_1()
 		}
 	}
 
-	image.saveToFile("../misc/heatmap.jpg");
+	image.saveToFile("../misc/heatmap_1.jpg");
 
 	delete[] heatmap;
 }

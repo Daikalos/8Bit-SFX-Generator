@@ -70,7 +70,9 @@ namespace IESFX
 		//
 		bool complete();
 
-		double hamming_distance(const SoundGene& lhs, const SoundGene& rhs);
+		// measures degree of similiarity in 0-1
+		//
+		double similiarity(const SoundGene& lhs, const SoundGene& rhs);
 
 	private:
 		size_t 

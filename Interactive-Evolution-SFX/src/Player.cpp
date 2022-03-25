@@ -124,6 +124,9 @@ void Player::player_loop()
 						Monitor::Wait(_object, TimeSpan::FromSeconds(0.5));
 						if (_shutdown) break;
 
+						if (!_is_playing)
+							continue;
+
 						play();
 					}
 					finally { Monitor::Exit(_object); }

@@ -2,7 +2,7 @@
 
 #include <string>
 
-static const std::string examples[11] =
+static const std::string examples[12] =
 {
 	R"(poke 24 14
 poke 1 130
@@ -414,5 +414,68 @@ sample 213
 poke 18 93
 poke 3 89
 poke 13 90
-sample 569)"
+sample 569)",
+
+	R"(poke 24 14
+poke 11 89
+poke 21 22
+poke 3 85
+poke 1 2
+poke 12 89
+poke 4 20
+poke 21 31
+poke 19 140
+poke 14 28
+poke 0 118
+poke 13 13
+poke 20 109
+poke 17 92
+poke 16 30
+poke 7 45
+poke 18 21
+poke 9 68
+poke 15 43
+poke 5 76
+poke 10 3
+poke 1 2
+sample 400
+poke 17 74
+poke 2 12
+poke 1 54
+poke 14 17
+poke 2 41
+poke 3 28
+poke 5 74
+poke 13 95
+poke 11 14
+poke 1 64
+poke 21 30
+poke 15 8
+poke 22 47
+poke 4 20
+poke 22 66
+poke 2 11
+poke 10 112
+poke 10 36
+poke 15 22
+sample 159
+poke 15 24
+poke 5 50
+poke 21 58
+poke 20 46
+poke 11 28
+poke 2 89
+poke 1 101
+poke 11 11
+poke 16 42
+poke 21 95
+poke 2 27
+poke 13 19
+poke 7 12
+poke 12 1
+sample 424
+poke 9 10
+poke 12 72
+poke 13 19
+sample 424)"
 };

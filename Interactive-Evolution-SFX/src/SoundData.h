@@ -40,9 +40,7 @@ namespace IESFX
 				comm();
 
 #if !_DEBUG
-			size_t length = std::min<size_t>(_samples.size(), 1024LLU);
-			for (size_t i = 0; i < length; ++i)
-				_samples[i] = 0;
+			memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU));
 #endif
 
 			return _samples;

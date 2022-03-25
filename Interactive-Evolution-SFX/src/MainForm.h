@@ -604,7 +604,7 @@ namespace IESFX
 				else
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-				update_evolution_status(_step + "/" + POPULATION_SIZE);
+				update_evolution_status(_step + "/" + USABLE_POPULATION);
 				update_status("Ready");
 
 				this->ActiveControl = nullptr;
@@ -710,7 +710,7 @@ namespace IESFX
 				else
 					MessageBox::Show("No previous population to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-				update_evolution_status(_step + "/" + POPULATION_SIZE);
+				update_evolution_status(_step + "/" + USABLE_POPULATION);
 				update_status("Ready");
 
 				this->ActiveControl = nullptr;
@@ -727,7 +727,7 @@ namespace IESFX
 
 			int next_step = _step - _soundUCs->Length;
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
-				(next_step = (next_step < 0) ? POPULATION_SIZE - _soundUCs->Length : next_step));
+				(next_step = (next_step < 0) ? USABLE_POPULATION - _soundUCs->Length : next_step));
 
 			if (genes.size() != 0)
 			{
@@ -742,7 +742,7 @@ namespace IESFX
 			else
 				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-			update_evolution_status(_step + "/" + POPULATION_SIZE);
+			update_evolution_status(_step + "/" + USABLE_POPULATION);
 			update_status("Ready");
 
 			this->ActiveControl = nullptr;
@@ -757,7 +757,7 @@ namespace IESFX
 
 			int next_step = _step + _soundUCs->Length;
 			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
-				(next_step = (next_step >= POPULATION_SIZE) ? 0 : next_step));
+				(next_step = (next_step >= USABLE_POPULATION) ? 0 : next_step));
 			
 			if (genes.size() != 0)
 			{
@@ -772,7 +772,7 @@ namespace IESFX
 			else
 				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-			update_evolution_status(_step + "/" + POPULATION_SIZE);
+			update_evolution_status(_step + "/" + USABLE_POPULATION);
 			update_status("Ready");
 
 			this->ActiveControl = nullptr;
@@ -1003,7 +1003,7 @@ namespace IESFX
 			else
 				MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 
-			update_evolution_status(_step + "/" + POPULATION_SIZE);
+			update_evolution_status(_step + "/" + USABLE_POPULATION);
 
 			update_status("Ready");
 		}

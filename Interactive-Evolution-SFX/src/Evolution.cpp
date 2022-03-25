@@ -4,10 +4,8 @@
 using namespace IESFX;
 
 Evolution::Evolution(double mutation_rate, double mutation_size)
-	: _mutation_rate(mutation_rate), _mutation_size(mutation_size)
+	: _mutation_rate(mutation_rate), _mutation_size(mutation_size), _models(std::vector<SoundGene>(MODEL_SAMPLES))
 {
-	_models.resize(MODEL_SAMPLES);
-
 	std::vector<size_t> random = util::random(util::arr_size(examples));
 
 	Interpreter interpreter;
@@ -83,14 +81,8 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	// sort before finished
 	//
-	std::sort(
-		std::execution::par_unseq,
-		_population.begin(),
-		_population.end(),
-		[&](const SoundGene& g1, const SoundGene& g2)
-		{
-			return g1._fitness > g2._fitness;
-		});
+	std::sort(std::execution::par_unseq,
+		_population.begin(), _population.end());
 
 	_models.clear();
 
@@ -105,25 +97,26 @@ int Evolution::execute(size_t max_generations, double max_quality)
 void Evolution::initialize()
 {
 	_population = std::vector<SoundGene>(POPULATION_SIZE);
-	for (size_t i = 0; i < POPULATION_SIZE; ++i)
-	{
-		_population[i].push({ 24, 14 }); // always volume on
 
-		std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
-
-		for (size_t j = 0, index = 0, size = util::random(2, 128); j < size; ++j)
+	std::for_each(
+		std::execution::par_unseq,
+		_population.begin(), _population.end(),
+		[](SoundGene& gene)
 		{
-			if (util::random() > 0.06 && index < offsets.size())
-				_population[i].push({ offsets[index++], util::rvpoke() });
-			else
-			{
-				_population[i].push({ util::rsample() });
+			gene.push({ 24, 14 }); // always volume on
 
+			std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
+
+			for (int s = util::random(1, 7); s > 0; --s)
+			{
+				for (int p = util::ropoke(); p > 0; --p)
+				{
+					gene.push({ offsets[p], util::rvpoke() });
+				}
+				gene.push({ util::rsample() });
 				offsets = util::random<RESID::reg8>(24);
-				index = 0;
 			}
-		}
-	}
+		});
 }
 
 void Evolution::shuffle()
@@ -147,50 +140,51 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (c_range.size() == 0)
 		return;
 
-	for (size_t i = 0; i < _models.size(); ++i)
-	{
-		SoundGene* model = &_models[i];
-
-		std::vector<std::tuple<int, int, int>> m_range = model->range<int>();
-
-		double score = 0.0;
-		for (int si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
+	std::for_each(
+		std::execution::par_unseq,
+		_models.begin(), _models.end(),
+		[&](const SoundGene& model)
 		{
-			std::vector<bool> m_offsets(25, false);
-			for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
+			std::vector<std::tuple<int, int, int>> m_range = model.range<int>();
+
+			double score = 0.0;
+			for (int si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
 			{
-				Poke* m_poke = dynamic_cast<Poke*>(model->get(j));
-				if (!m_offsets[m_poke->offset])
+				std::vector<bool> m_offsets(25, false);
+				for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 				{
-					m_offsets[m_poke->offset] = true;
-					for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
+					Poke* m_poke = static_cast<Poke*>(model.get(j));
+					if (!m_offsets[m_poke->offset])
 					{
-						Poke* c_poke = dynamic_cast<Poke*>(candidate.get(k));
-						if (m_poke->offset == c_poke->offset)
+						m_offsets[m_poke->offset] = true;
+						for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 						{
-							double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
-							double val_ratio = 1.0 / (val_diff + 1.0);
+							Poke* c_poke = static_cast<Poke*>(candidate.get(k));
+							if (m_poke->offset == c_poke->offset)
+							{
+								double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
+								double val_ratio = 1.0 / (val_diff + 1.0);
 
-							score += val_ratio;
+								score += val_ratio;
 
-							break;
+								break;
+							}
 						}
 					}
 				}
+
+				Sample* lhs_sample = dynamic_cast<Sample*>(model.get(std::get<1>(m_range[si])));
+				Sample* rhs_sample = dynamic_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
+
+				double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
+				double smpl_ratio = 1.0 / (smpl_diff + 1.0);
+
+				score += smpl_ratio;
 			}
 
-			Sample* lhs_sample = dynamic_cast<Sample*>(model->get(std::get<1>(m_range[si])));
-			Sample* rhs_sample = dynamic_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
-
-			double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
-			double smpl_ratio = 1.0 / (smpl_diff + 1.0);
-
-			score += smpl_ratio;
-		}
-
-		double similarity = (score / model->size());
-		candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
-	}
+			double similarity = (score / model.size());
+			candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
+		});
 
 	// adjust fitness based on samples
 	//
@@ -220,7 +214,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	// adjust fitness based on length of audio
 	//
 	if (time <= DBL_EPSILON)
-		candidate._fitness = 0.0; // length of zero means no audio, extremely bad candidate
+		candidate._fitness = -DBL_MAX; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.2)
 		candidate._fitness += -(0.2 / time) * time_mul;
 	else if (time > 1.3)
@@ -231,13 +225,8 @@ void Evolution::selection()
 {
 	// sort in descending order by fitness value to allow a rank based selection
 	//
-	std::sort(
-		std::execution::par_unseq,
-		_population.begin(), _population.end(),
-		[&](const SoundGene& g1, const SoundGene& g2)
-		{
-			return g1._fitness > g2._fitness;
-		});
+	std::sort(std::execution::par_unseq, 
+		_population.begin(), _population.end());
 
 	for (size_t i = 0; i < POPULATION_SIZE; ++i)
 	{
@@ -266,13 +255,13 @@ void Evolution::crossover()
 
 	while (_population.size() != POPULATION_SIZE)
 	{
-		size_t p0 = 0, p1 = 0, exit = 0;
+		size_t p0 = 0, p1 = 0, exit = 0; // exit for fail-safe
 
 		p0 = util::random<size_t>(0, elite - 1);
 		do p1 = util::random<size_t>(0, elite - 1);
-		while (p0 == p1 || (hamming_distance(_population[p0], _population[p1]) > 0.2 && ++exit < 128)); // two random parents from the elite
+		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.33 && ++exit < 128)); // two random parents from the elite
 
-		SoundGene child0(_population[p0]);
+		SoundGene child0(_population[p0]); // deep copy
 		SoundGene child1(_population[p1]);
 
 		size_t gene_length = std::max<size_t>(_population[p0].size(), _population[p1].size());
@@ -371,7 +360,7 @@ void Evolution::mutation()
 					if (util::random() <= OFFSET_MUTATION)
 						poke->offset = util::ropoke();
 
-					int change = util::random_arg<int>(-3, -2, -1, 1, 2, 3);
+					int change = util::random_arg<int>(-4, -3, -2, -1, 1, 2, 3, 4);
 					poke->value += (poke->value > std::abs(change)) ? change : std::abs(change);
 				}
 				else if (sample != nullptr)
@@ -387,15 +376,17 @@ bool Evolution::complete()
 	return (_generations >= _max_generations || _quality >= _max_quality);
 }
 
-double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
+double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 {
 	double result = 0.0;
 
 	std::vector<std::tuple<int, int, int>> lhs_range = lhs.range<int>();
 	std::vector<std::tuple<int, int, int>> rhs_range = rhs.range<int>();
 
+	if (lhs_range.size() == 0 && rhs_range.size() == 0)
+		return 1.0;
 	if (lhs_range.size() == 0 || rhs_range.size() == 0)
-		return result;
+		return 0.0;
 
 	// TODO: FIX 24 OFFSET MATCHING EVERYTHING, POSSIBLE FIX: NEGATIVE SCORE WHEN WRONG
 
@@ -404,13 +395,13 @@ double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
 		std::vector<bool> lhs_offsets(25, false);
 		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
 		{
-			Poke* lhs_poke = dynamic_cast<Poke*>(lhs.get(j));
+			Poke* lhs_poke = static_cast<Poke*>(lhs.get(j));
 			if (!lhs_offsets[lhs_poke->offset])
 			{
 				lhs_offsets[lhs_poke->offset] = true;
 				for (int k = std::get<1>(rhs_range[si]) - 1; k >= std::get<0>(rhs_range[si]); --k)
 				{
-					Poke* rhs_poke = dynamic_cast<Poke*>(rhs.get(k));
+					Poke* rhs_poke = static_cast<Poke*>(rhs.get(k));
 					if (lhs_poke->offset == rhs_poke->offset)
 					{
 						double pk_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
@@ -424,8 +415,8 @@ double Evolution::hamming_distance(const SoundGene& lhs, const SoundGene& rhs)
 			}
 		}
 
-		Sample* lhs_sample = dynamic_cast<Sample*>(lhs.get(std::get<1>(lhs_range[si])));
-		Sample* rhs_sample = dynamic_cast<Sample*>(rhs.get(std::get<1>(rhs_range[si])));
+		Sample* lhs_sample = static_cast<Sample*>(lhs.get(std::get<1>(lhs_range[si])));
+		Sample* rhs_sample = static_cast<Sample*>(rhs.get(std::get<1>(rhs_range[si])));
 
 		double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
 		double smpl_ratio = 1.0 / (smpl_diff + 1.0);
@@ -443,8 +434,7 @@ void Evolution::reset()
 	_population.clear();
 	_old_population.clear();
 
-	_models.clear();
-	_models.resize(MODEL_SAMPLES);
+	_models = std::vector<SoundGene>(MODEL_SAMPLES); // clear
 
 	std::vector<size_t> random = util::random(util::arr_size(examples));
 
