@@ -14,8 +14,6 @@
 
 namespace util
 {
-	static std::mt19937_64 dre(std::chrono::steady_clock::now().time_since_epoch().count());
-
 	template<class T>
 	static double scale(T value, T min, T max)
 	{
@@ -57,30 +55,28 @@ namespace util
 	}
 
 #ifdef NATIVE_CODE
+	static thread_local std::mt19937_64 dre(std::chrono::steady_clock::now().time_since_epoch().count());
+
 	template<typename T, typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 	static T random(T min, T max)
 	{
-		static thread_local std::mt19937 generator;
 		std::uniform_real_distribution<T> uid(min, max);
-		return (T)uid(generator);
+		return (T)uid(dre);
 	}
 	template<typename T, typename std::enable_if_t<!std::is_floating_point_v<T>>* = nullptr>
 	static T random(T min, T max)
 	{
-		static thread_local std::mt19937 generator;
 		std::uniform_int_distribution<T> uid(min, max);
-		return (T)uid(generator);
+		return (T)uid(dre);
 	}
 
 	template<typename T, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	static std::vector<T> random(T size)
 	{
-		static thread_local std::mt19937 generator;
-
 		std::vector<T> result;
 		for (T i = 0; i < size; ++i)
 			result.push_back(i);
-		std::shuffle(result.begin(), result.end(), generator);
+		std::shuffle(result.begin(), result.end(), dre);
 
 		return result;
 	}
