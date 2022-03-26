@@ -56,26 +56,31 @@ namespace util
 		return val;
 	}
 
+#ifdef NATIVE_CODE
 	template<typename T, typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 	static T random(T min, T max)
 	{
-		std::uniform_real_distribution<> uid(min, max);
-		return (T)uid(dre);
+		static thread_local std::mt19937 generator;
+		std::uniform_real_distribution<T> uid(min, max);
+		return (T)uid(generator);
 	}
 	template<typename T, typename std::enable_if_t<!std::is_floating_point_v<T>>* = nullptr>
 	static T random(T min, T max)
 	{
-		std::uniform_int_distribution<> uid(min, max);
-		return (T)uid(dre);
+		static thread_local std::mt19937 generator;
+		std::uniform_int_distribution<T> uid(min, max);
+		return (T)uid(generator);
 	}
 
 	template<typename T, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	static std::vector<T> random(T size)
 	{
+		static thread_local std::mt19937 generator;
+
 		std::vector<T> result;
 		for (T i = 0; i < size; ++i)
 			result.push_back(i);
-		std::shuffle(result.begin(), result.end(), util::dre);
+		std::shuffle(result.begin(), result.end(), generator);
 
 		return result;
 	}
@@ -91,7 +96,8 @@ namespace util
 	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(0, IESFX::POKE_VALUE); }
 	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
 
-	static double random() { return random(0.0, 1.0); }
+	static double random() { return util::random(0.0, 1.0); }
+#endif
 
 #if _DEBUG
 	template<class T>

@@ -228,13 +228,17 @@ void Evolution::selection()
 	std::sort(std::execution::par_unseq, 
 		_population.begin(), _population.end());
 
-	for (size_t i = 0; i < POPULATION_SIZE; ++i)
-	{
-		double chance = (i + 1) / (double)POPULATION_SIZE; // rank
+	std::for_each(std::execution::par_unseq,
+		_population.begin(), _population.end(),
+		[&](SoundGene& gene)
+		{
+			size_t i = &gene - _population.data();
 
-		if (util::random() + 0.2 <= chance) // ensure always two parents
-			_population.at(i)._dead = true;
-	}
+			double chance = (i + 1) / (double)POPULATION_SIZE;
+
+			if (util::random() + 0.2 <= chance) // + 0.2 to give better chance for lower fitness to survive
+				gene._dead = true;
+		});
 
 	_population.erase(std::remove_if(
 		std::execution::par_unseq,

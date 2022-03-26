@@ -1,3 +1,4 @@
+#define NATIVE_CODE
 #include "Command.h"
 
 using namespace IESFX;

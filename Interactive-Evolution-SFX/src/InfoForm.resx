@@ -399,11 +399,9 @@ Next clears the selection and presents new candidates in the current population.
 
 Mutation size and rate modifies the randomness of the process. Smaller values make generated sounds less varied and vice versa.
 
-Status at the bottom shows the current status of the system.
-
 As the volume can become pretty loud, I would recommend not turning it up too much.
 
-You're also able to use the keyboard if you wish, this includes the arrow keys, enter, backspace and delete.
+You're also able to use the keyboard which includes the arrow keys, enter, backspace and delete.
 
 When you are satisfied with a sound effect, you can export it as a .wav file on the computer.
 </value>

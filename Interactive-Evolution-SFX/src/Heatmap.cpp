@@ -99,7 +99,7 @@ void Heatmap::heatmap_1()
 	const size_t width = 161;
 	const size_t height = 161;
 
-	const size_t size = 64;
+	const size_t size = 1024;
 
 	double max = DBL_MIN;
 
@@ -108,7 +108,7 @@ void Heatmap::heatmap_1()
 
 	std::vector<int> range(size);
 
-	std::for_each(std::execution::par_unseq,
+	std::for_each(std::execution::seq,
 		range.begin(), range.end(),
 		[&](const int&)
 		{
@@ -174,7 +174,7 @@ void Heatmap::heatmap_1()
 				max = val;
 		});
 
-	max = std::pow(max, 0.6);
+	max = std::pow(max, 0.65);
 
 	for (size_t x = 0; x < width; ++x)
 	{
