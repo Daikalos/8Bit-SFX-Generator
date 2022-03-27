@@ -512,7 +512,7 @@ namespace IESFX
 			this->Name = L"MainForm";
 			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
-			this->Text = L"8-bit SFX Generator";
+			this->Text = L"8-Bit SFX Generator";
 			this->Activated += gcnew System::EventHandler(this, &MainForm::MainForm_Activated);
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &MainForm::MainForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
