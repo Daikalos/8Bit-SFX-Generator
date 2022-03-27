@@ -20,6 +20,7 @@ namespace util
 		return (value - min) / static_cast<double>(max - min);
 	}
 
+#ifdef NATIVE_CODE
 	template<class T>
 	static double map(T x, T in_min, T in_max, T out_min, T out_max)
 	{
@@ -54,7 +55,6 @@ namespace util
 		return val;
 	}
 
-#ifdef NATIVE_CODE
 	static thread_local std::mt19937_64 dre(std::chrono::steady_clock::now().time_since_epoch().count());
 
 	template<typename T, typename std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
@@ -89,7 +89,7 @@ namespace util
 	}
 
 	static RESID::reg8 ropoke() { return util::random<RESID::reg8>(0, IESFX::POKE_OFFSET); }
-	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(0, IESFX::POKE_VALUE); }
+	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(1, IESFX::POKE_VALUE); }
 	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
 
 	static double random() { return util::random(0.0, 1.0); }

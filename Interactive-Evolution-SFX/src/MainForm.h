@@ -668,8 +668,11 @@ namespace IESFX
 
 			if (result == System::Windows::Forms::DialogResult::Yes)
 			{
-				_player->reset();
+				for (int i = 0; i < _soundUCs->Length; ++i)
+					_soundUCs[i]->reset();
+
 				_evolution->reset();
+				_player->reset();
 
 				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
 
