@@ -39,9 +39,7 @@ namespace IESFX
 			for (auto& comm : _commands)
 				comm();
 
-#if !_DEBUG
 			memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU));
-#endif
 
 			return _samples;
 		}

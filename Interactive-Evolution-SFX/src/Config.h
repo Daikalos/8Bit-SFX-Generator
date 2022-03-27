@@ -30,4 +30,6 @@ namespace IESFX
 	static const size_t MAX_SAMPLE_SIZE = 1400;
 
 	static const size_t AVERAGE_SAMPLE = 128;
+
+	#define BUILD true
 }

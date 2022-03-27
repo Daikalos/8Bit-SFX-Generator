@@ -1,6 +1,8 @@
 #define NATIVE_CODE
 #include "Heatmap.h"
 
+#if !BUILD
+
 using namespace IESFX;
 
 void Heatmap::heatmap_0()
@@ -99,7 +101,7 @@ void Heatmap::heatmap_1()
 	const size_t width = 161;
 	const size_t height = 161;
 
-	const size_t size = 128;
+	const size_t size = 1200;
 
 	double max = DBL_MIN;
 
@@ -108,7 +110,7 @@ void Heatmap::heatmap_1()
 
 	std::vector<int> range(size);
 
-	std::for_each(std::execution::par_unseq,
+	std::for_each(std::execution::seq,
 		range.begin(), range.end(),
 		[&](const int&)
 		{
@@ -174,7 +176,7 @@ void Heatmap::heatmap_1()
 				max = val;
 		});
 
-	max = std::pow(max, 0.75);
+	max = std::pow(max, 0.8);
 
 	for (size_t x = 0; x < width; ++x)
 	{
@@ -251,3 +253,5 @@ void Heatmap::plot_line(int* heatmap, int width, int x0, int y0, int x1, int y1,
 		}
 	}
 }
+
+#endif

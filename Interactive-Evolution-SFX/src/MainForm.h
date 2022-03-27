@@ -30,7 +30,6 @@ namespace IESFX
 		MainForm(void)
 		{
 			InitializeComponent();
-			//Heatmap::heatmap_1();
 		}
 
 	protected:
@@ -547,6 +546,10 @@ namespace IESFX
 		{
 			if (!initialize())
 				throw gcnew WarningException("failed to initialize system");
+
+#if !BUILD
+			Heatmap::heatmap_1();
+#endif
 		}
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
 		{
