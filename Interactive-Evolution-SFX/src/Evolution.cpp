@@ -217,8 +217,8 @@ void Evolution::evaluate(SoundGene& candidate)
 		candidate._fitness = -DBL_MAX; // length of zero means no audio, extremely bad candidate
 	else if (time < 0.2)
 		candidate._fitness += -(0.2 / time) * time_mul;
-	else if (time > 1.3)
-		candidate._fitness += -(time / 1.3) * time_mul;
+	else if (time > 1.4)
+		candidate._fitness += -(time / 1.4) * time_mul;
 }
 
 void Evolution::selection()
