@@ -503,7 +503,7 @@ bool Evolution::load(const std::string& filename)
 {
 	std::vector<SoundGene> genes = Interpreter().read_file<SoundGene>(filename);
 
-	if (genes.size() != _population.size())
+	if (genes.size() < USABLE_POPULATION)
 		return false;
 
 	_population = genes;
