@@ -11,7 +11,7 @@ bool MainForm::initialize()
 	_soundUCs = gcnew array<SoundUC^>(size);
 	_player = gcnew Player(_evolution, size, volume());
 
-	for (size_t i = 0; i < size; ++i)
+	for (int i = 0; i < size; ++i)
 	{
 		SoundUC^ soundUC = gcnew SoundUC(_player, _evolution, i);
 

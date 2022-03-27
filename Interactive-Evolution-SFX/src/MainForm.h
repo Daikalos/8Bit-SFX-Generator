@@ -906,7 +906,7 @@ namespace IESFX
 	private:
 		void player_next()
 		{
-			int next = _player->position();
+			int next = static_cast<int>(_player->position());
 
 			_soundUCs[_prev]->set_color(_color);
 			_color = _soundUCs[next]->soundWave->BackColor;
@@ -1024,7 +1024,7 @@ namespace IESFX
 		static const size_t row_count = 3;
 		static const size_t column_count = 4;
 
-		size_t _prev, _step, _old_step;
+		int _prev, _step, _old_step;
 		Color _color;
 
 		array<SoundUC^>^ _soundUCs;

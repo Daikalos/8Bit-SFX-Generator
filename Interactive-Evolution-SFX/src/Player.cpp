@@ -2,7 +2,7 @@
 
 using namespace IESFX;
 
-Player::Player(Evolution* evolution, size_t size, double volume)
+Player::Player(Evolution* evolution, size_t size, float volume)
 	: _size(size), _volume(volume), _evolution(evolution)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));

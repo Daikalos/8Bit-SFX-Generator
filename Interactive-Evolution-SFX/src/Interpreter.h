@@ -85,16 +85,16 @@ namespace IESFX
 		bool is_integer(const std::string& token);
 		bool is_variable(const std::string& token);
 
-		size_t get_variable(const std::string& name);
+		int get_variable(const std::string& name);
 
 	private:
-		size_t _position;
+		size_t _position{0};
 		std::vector<std::string> _tokens;
 
 		std::string _var; // Current evaluated variable that is to be assigned a value
-		std::map<std::string, size_t> _variables;
+		std::map<std::string, int> _variables;
 
-		Interpretable* _ptr;
+		Interpretable* _ptr{nullptr};
 
 	private:
 		Interpreter(const Interpreter& rhs) = delete;

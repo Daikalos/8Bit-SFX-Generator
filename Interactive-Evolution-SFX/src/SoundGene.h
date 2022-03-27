@@ -29,7 +29,7 @@ namespace IESFX
 		std::vector<std::tuple<T, T, T>> range() const
 		{
 			std::vector<std::tuple<T, T, T>> result;
-			for (size_t i = 0, index = 0; i < size(); ++i)
+			for (T i = 0, index = 0; i < size(); ++i)
 			{
 				if (dynamic_cast<Sample*>(get(i)) != nullptr)
 				{
@@ -49,8 +49,8 @@ namespace IESFX
 		auto begin() { return _gene.begin(); }
 		auto end()	 { return _gene.end(); }
 
-		Command* get(int index) const noexcept { return _gene[index].get(); }
-		Command* get(int index) noexcept	   { return _gene[index].get(); }
+		Command* get(size_t index) const noexcept { return _gene[index].get(); }
+		Command* get(size_t index) noexcept	   { return _gene[index].get(); }
 
 		void push(const Poke& poke)		{ _gene.push_back(poke.clone()); }
 		void push(const Sample& sample) { _gene.push_back(sample.clone()); }
@@ -60,27 +60,27 @@ namespace IESFX
 			return _gene.insert(_gene.begin() + pos, poke.clone());
 		}
 
-		void set(int index, std::nullptr_t)
+		void set(size_t index, std::nullptr_t)
 		{
 			_gene[index].reset();
 		}
-		void set(int index, unsigned int offset, unsigned int value)
+		void set(size_t index, unsigned int offset, unsigned int value)
 		{
 			Poke* poke = static_cast<Poke*>(_gene[index].get());
 
 			poke->offset = offset;
 			poke->value = value;
 		}
-		void set(int index, size_t size)
+		void set(size_t index, size_t size)
 		{
 			static_cast<Sample*>(_gene[index].get())->size = size;
 		}
-		void set(int index, Command* command)
+		void set(size_t index, Command* command)
 		{
 			(*_gene[index].get()) = *command;
 		}
 
-		void flip(int index)
+		void flip(size_t index)
 		{
 			if (get(index) != nullptr)
 				_gene[index] = get(index)->flip();

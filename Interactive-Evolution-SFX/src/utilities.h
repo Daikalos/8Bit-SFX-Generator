@@ -34,7 +34,7 @@ namespace util
 
 	static int get_cycles(size_t size)
 	{
-		return round((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
+		return std::lround((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
 	static size_t get_size(size_t size)
 	{

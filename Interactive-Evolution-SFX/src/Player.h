@@ -24,7 +24,7 @@ namespace IESFX
 	public ref class Player
 	{
 	public:
-		Player(Evolution* evolution, size_t size, double volume);
+		Player(Evolution* evolution, size_t size, float volume);
 		~Player();
 
 		void shutdown();
@@ -47,7 +47,7 @@ namespace IESFX
 		size_t position() { return _position; }
 		bool active() { return _is_playing; }
 
-		Sound* operator[](int i)
+		Sound* operator[](size_t i)
 		{
 			return &_sounds[i];
 		}
@@ -72,7 +72,7 @@ namespace IESFX
 			_is_playing{false}, 
 			_shutdown{false},
 			_iterate{false};
-		double 
+		float 
 			_volume{0.0};
 
 		Evolution* 

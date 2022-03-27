@@ -70,7 +70,7 @@ namespace IESFX
 		void sample(size_t size)
 		{
 			RESID::cycle_count delta_t = util::get_cycles(util::get_size(size));
-			_index += _sid->clock(delta_t, _samples.data() + _index, util::get_size(size));
+			_index += static_cast<size_t>(_sid->clock(delta_t, _samples.data() + _index, util::get_size(size)));
 		}
 
 	private:

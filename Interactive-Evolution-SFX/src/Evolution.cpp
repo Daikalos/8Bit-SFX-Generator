@@ -173,8 +173,8 @@ void Evolution::evaluate(SoundGene& candidate)
 					}
 				}
 
-				Sample* lhs_sample = dynamic_cast<Sample*>(model.get(std::get<1>(m_range[si])));
-				Sample* rhs_sample = dynamic_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
+				Sample* lhs_sample = static_cast<Sample*>(model.get(std::get<1>(m_range[si])));
+				Sample* rhs_sample = static_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
 
 				double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
 				double smpl_ratio = 1.0 / (smpl_diff + 1.0);
@@ -182,7 +182,7 @@ void Evolution::evaluate(SoundGene& candidate)
 				score += smpl_ratio;
 			}
 
-			double similarity = (score / model.size());
+			double similarity = (score / model.size()); // not really the correct way, but yields better output???
 			candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
 		});
 
@@ -340,7 +340,7 @@ void Evolution::mutation()
 			if (util::random() > _mutation_rate)
 				return;
 
-			int size = std::ceil(gene.size() / (1.0 / _mutation_size));
+			int size = static_cast<int>(std::ceil(gene.size() / (1.0 / _mutation_size)));
 			int length = util::random(0, size - 1);
 
 			for (int j = 0; j < length; ++j)
@@ -365,7 +365,9 @@ void Evolution::mutation()
 						poke->offset = util::ropoke();
 
 					int change = util::random_arg<int>(-4, -3, -2, -1, 1, 2, 3, 4);
-					poke->value += (poke->value > std::abs(change)) ? change : std::abs(change);
+					uint32_t abs = static_cast<uint32_t>(std::abs(change));
+
+					poke->value += (poke->value > abs) ? change : abs;
 				}
 				else if (sample != nullptr)
 					sample->size += (sample->size > 50) ? util::random_arg<int>(-50, 50) : 50;
@@ -394,7 +396,7 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 
 	// TODO: FIX 24 OFFSET MATCHING EVERYTHING, POSSIBLE FIX: NEGATIVE SCORE WHEN WRONG
 
-	for (size_t si = 0; si < std::min<int>(lhs_range.size(), rhs_range.size()); ++si) // do in reverse since only the last specified value matters
+	for (size_t si = 0; si < std::min<size_t>(lhs_range.size(), rhs_range.size()); ++si) // do in reverse since only the last specified value matters
 	{
 		std::vector<bool> lhs_offsets(25, false);
 		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
