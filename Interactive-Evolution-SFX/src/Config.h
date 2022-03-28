@@ -34,5 +34,5 @@ namespace IESFX
 
 	static const size_t AVERAGE_SAMPLE = 128;
 
-	#define BUILD false
+	#define BUILD true
 }
