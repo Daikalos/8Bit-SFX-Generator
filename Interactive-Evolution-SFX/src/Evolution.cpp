@@ -180,6 +180,8 @@ void Evolution::evaluate(SoundGene& candidate)
 				double smpl_ratio = 1.0 / (smpl_diff + 1.0);
 
 				score += smpl_ratio;
+
+				score += (1.0 / (1.0 + (double)std::abs(std::get<2>(m_range[si]) - std::get<2>(c_range[si])))) * 0.01;
 			}
 
 			double similarity = (score / model.size()); // not really the correct way, but yields better output???
@@ -200,12 +202,17 @@ void Evolution::evaluate(SoundGene& candidate)
 			time += (double)util::time(sample->size);
 
 			if (poke_count == 0)
-				candidate._fitness += -smpl_mul; // no pokes given before samfple is bad
+				candidate._fitness += -smpl_mul; // no pokes given before sample is bad
 
 			poke_count = 0;
 		}
 		else if (poke != nullptr)
+		{
 			++poke_count;
+
+			if (poke->value == 0) // poke with value 0 is inefficient
+				candidate._fitness += -smpl_mul;
+		}
 	}
 
 	if (poke_count > 0)
@@ -263,7 +270,7 @@ void Evolution::crossover()
 
 		p0 = util::random<size_t>(0, elite - 1);
 		do p1 = util::random<size_t>(0, elite - 1);
-		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.33 && ++exit < 128)); // two random parents from the elite
+		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.2 && ++exit < 128)); // two random parents from the elite
 
 		SoundGene child0(_population[p0]); // deep copy
 		SoundGene child1(_population[p1]);
@@ -364,7 +371,7 @@ void Evolution::mutation()
 					if (util::random() <= OFFSET_MUTATION)
 						poke->offset = util::ropoke();
 
-					int change = util::random_arg<int>(-4, -3, -2, -1, 1, 2, 3, 4);
+					int change = util::random_arg<int>(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5);
 					uint32_t abs = static_cast<uint32_t>(std::abs(change));
 
 					poke->value += (poke->value > abs) ? change : abs;
@@ -509,12 +516,16 @@ int Evolution::load(const std::string& filename)
 	if (genes.size() <= 12)
 	{
 		_models = std::move(genes);
-		return 0;
+
+		if (_models.size() != 0)
+			return 0;
 	}
 	else if (genes.size() >= USABLE_POPULATION)
 	{
 		_population = std::move(genes);
-		return 1;
+
+		if (_population.size() != 0)
+			return 1;
 	}
 
 	return -1;
