@@ -1,0 +1,58 @@
+// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS
+poke 24 14
+poke 14 38
+poke 19 46
+poke 13 47
+poke 22 75
+poke 3 67
+poke 17 74
+poke 16 87
+poke 14 8
+poke 4 29
+poke 6 67
+poke 20 51
+poke 2 11
+poke 10 15
+poke 19 82
+poke 12 83
+poke 15 2
+sample 61
+poke 19 2
+poke 4 1
+poke 4 21
+poke 14 51
+poke 8 3
+poke 17 39
+sample 46
+poke 7 18
+poke 21 8
+poke 9 58
+poke 16 78
+poke 6 79
+sample 351
+poke 20 36
+poke 2 26
+poke 4 28
+poke 7 64
+poke 8 93
+poke 19 29
+poke 12 7
+poke 14 94
+poke 11 91
+poke 17 55
+poke 16 26
+poke 1 18
+poke 9 21
+sample 629
+poke 22 52
+poke 15 21
+poke 0 61
+poke 17 58
+poke 23 100
+poke 6 58
+sample 678
+poke 9 2
+poke 15 8
+poke 17 49
+sample 802
+RUN

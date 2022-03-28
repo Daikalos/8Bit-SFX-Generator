@@ -1,0 +1,10 @@
+// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS
+poke 24 14
+poke 1 130
+poke 5 9
+poke 15 30
+poke 4 21
+sample 1000
+poke 4 20
+sample 1000
+RUN

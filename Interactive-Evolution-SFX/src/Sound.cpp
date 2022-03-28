@@ -72,8 +72,12 @@ bool Sound::save_txt(const std::string& filename) const
 	std::ofstream out;
 	out.open(filename, std::ofstream::trunc);
 
+	out << "// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS\n";
+
 	for (size_t i = 0; i < _gene.size(); ++i)
 		out << _gene.get(i)->print() + '\n';
+
+	out << "RUN";
 
 	out.close();
 

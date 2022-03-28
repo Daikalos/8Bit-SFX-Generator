@@ -586,7 +586,14 @@ namespace IESFX
 			{
 				update_status("Loading...");
 
-				if (_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+				switch (_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
+				{
+				case 0:
+				{
+					Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
+				}
+				break;
+				case 1:
 				{
 					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
 
@@ -604,8 +611,13 @@ namespace IESFX
 					else
 						MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				}
-				else
+				break;
+				default:
+				{
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				}
+				break;
+				}
 
 				update_evolution_status(_step + "/" + USABLE_POPULATION);
 				update_status("Ready");

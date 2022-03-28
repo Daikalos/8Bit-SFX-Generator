@@ -38,7 +38,7 @@ namespace IESFX
 		std::vector<SoundGene> output(size_t size, size_t step);
 
 		bool save(const std::string& filename) const;
-		bool load(const std::string& filename);
+		int load(const std::string& filename);
 
 	private:
 

@@ -499,14 +499,23 @@ bool Evolution::save(const std::string& filename) const
 
 	return true;
 }
-bool Evolution::load(const std::string& filename)
+int Evolution::load(const std::string& filename)
 {
 	std::vector<SoundGene> genes = Interpreter().read_file<SoundGene>(filename);
 
-	if (genes.size() < USABLE_POPULATION)
-		return false;
+	if (genes.size() == 0)
+		return -1;
 
-	_population = genes;
+	if (genes.size() <= 12)
+	{
+		_models = std::move(genes);
+		return 0;
+	}
+	else if (genes.size() >= USABLE_POPULATION)
+	{
+		_population = std::move(genes);
+		return 1;
+	}
 
-	return true;
+	return -1;
 }
