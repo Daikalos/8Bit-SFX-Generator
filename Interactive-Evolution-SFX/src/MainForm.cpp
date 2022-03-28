@@ -4,7 +4,7 @@ using namespace IESFX;
 
 bool MainForm::initialize()
 {
-	size_t size = row_count * column_count;
+	size_t size = ROWS * COLUMNS;
 
 	_evolution = new Evolution(mutation_rate(), mutation_size());
 
@@ -16,7 +16,7 @@ bool MainForm::initialize()
 		SoundUC^ soundUC = gcnew SoundUC(_player, _evolution, i);
 
 		pnlItems->Controls->Add(soundUC);
-		soundUC->Location = Point(soundUC->Width * (i % column_count), soundUC->Height * (i / column_count));
+		soundUC->Location = Point(soundUC->Width * (i % COLUMNS), soundUC->Height * (i / COLUMNS));
 
 		_soundUCs[i] = soundUC;
 	}

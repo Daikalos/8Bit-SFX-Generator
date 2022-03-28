@@ -181,8 +181,11 @@ void Evolution::evaluate(SoundGene& candidate)
 
 				score += smpl_ratio;
 
-				score += (1.0 / (1.0 + (double)std::abs(std::get<2>(m_range[si]) - std::get<2>(c_range[si])))) * 0.01;
+				score += (1.0 / (1.0 + (double)std::abs(std::get<2>(m_range[si]) - std::get<2>(c_range[si])))) * 0.0025;
 			}
+
+			if (candidate.size() > model.size())
+				score += (1.0 / (1.0 + (double)(candidate.size() - (int)model.size()))) * 0.0025;
 
 			double similarity = (score / model.size()); // not really the correct way, but yields better output???
 			candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
@@ -207,12 +210,7 @@ void Evolution::evaluate(SoundGene& candidate)
 			poke_count = 0;
 		}
 		else if (poke != nullptr)
-		{
 			++poke_count;
-
-			if (poke->value == 0) // poke with value 0 is inefficient
-				candidate._fitness += -smpl_mul;
-		}
 	}
 
 	if (poke_count > 0)

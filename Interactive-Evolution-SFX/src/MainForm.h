@@ -1047,9 +1047,6 @@ namespace IESFX
 		bool initialize();
 
 	private:
-		static const size_t row_count = 3;
-		static const size_t column_count = 4;
-
 		int _prev, _step, _old_step;
 		Color _color;
 

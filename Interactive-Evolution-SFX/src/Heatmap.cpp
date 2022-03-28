@@ -101,7 +101,7 @@ void Heatmap::heatmap_1()
 	const size_t width = 161;
 	const size_t height = 161;
 
-	const size_t size = 1200;
+	const size_t size = 512;
 
 	double max = DBL_MIN;
 
@@ -176,13 +176,18 @@ void Heatmap::heatmap_1()
 				max = val;
 		});
 
-	max = std::pow(max, 0.8);
+	max = std::pow(max, 0.75);
 
 	for (size_t x = 0; x < width; ++x)
 	{
 		for (size_t y = 0; y < height; ++y)
 		{
-			image.setPixel(x, y, gradient(heatmap[x + y * width] / max));
+			int val = heatmap[x + y * width];
+
+			if (val == 0)
+				image.setPixel(x, y, sf::Color::Black);
+			else
+				image.setPixel(x, y, gradient(val / max));
 		}
 	}
 

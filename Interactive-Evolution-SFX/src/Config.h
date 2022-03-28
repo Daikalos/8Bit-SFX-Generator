@@ -11,7 +11,10 @@ namespace IESFX
 
 	static const size_t CLOCKS_PER_SAMPLE = static_cast<size_t>(round(CLOCK_FREQ / (double)SAMPLE_RATE));
 
-	static const size_t POPULATION_SIZE = 1800;
+	static const size_t ROWS = 3;
+	static const size_t COLUMNS = 4;
+
+	static const size_t POPULATION_SIZE = 1400;
 	static const size_t USABLE_POPULATION = 480;
 	static const size_t GENERATIONS = 100;
 	static const double QUALITY = 2.2;
@@ -31,5 +34,5 @@ namespace IESFX
 
 	static const size_t AVERAGE_SAMPLE = 128;
 
-	#define BUILD true
+	#define BUILD false
 }
