@@ -618,10 +618,8 @@ namespace IESFX
 				}
 				break;
 				default:
-				{
 					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				}
-				break;
+					break;
 				}
 
 				update_evolution_status(_step + "/" + USABLE_POPULATION);

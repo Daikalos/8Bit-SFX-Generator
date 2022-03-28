@@ -97,6 +97,7 @@ int Evolution::execute(size_t max_generations, double max_quality)
 void Evolution::initialize()
 {
 	_population = std::vector<SoundGene>(POPULATION_SIZE);
+	_population.resize(POPULATION_SIZE - _models.size());
 
 	std::for_each(
 		std::execution::par_unseq,
@@ -117,6 +118,9 @@ void Evolution::initialize()
 				offsets = util::random<RESID::reg8>(24);
 			}
 		});
+
+	for (size_t i = 0; i < _models.size(); ++i)
+		_population.push_back(_models[i]);
 }
 
 void Evolution::shuffle()
@@ -129,8 +133,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	candidate._fitness = 0;
 
 	const double simi_mul = 2.75;
-	const double smpl_mul = 0.075;
-	const double time_mul = 0.075;
+	const double smpl_mul = 0.15;
+	const double time_mul = 0.15;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
@@ -180,15 +184,10 @@ void Evolution::evaluate(SoundGene& candidate)
 				double smpl_ratio = 1.0 / (smpl_diff + 1.0);
 
 				score += smpl_ratio;
-
-				score += (1.0 / (1.0 + (double)std::abs(std::get<2>(m_range[si]) - std::get<2>(c_range[si])))) * 0.0025;
 			}
 
-			if (candidate.size() > model.size())
-				score += (1.0 / (1.0 + (double)(candidate.size() - (int)model.size()))) * 0.0025;
-
 			double similarity = (score / model.size()); // not really the correct way, but yields better output???
-			candidate._fitness += (similarity > 0.7 ? 0.7 / (similarity + 0.3) : similarity) * simi_mul;
+			candidate._fitness += (similarity > 0.6 ? 0.6 / (similarity + 0.4) : similarity) * simi_mul;
 		});
 
 	// adjust fitness based on samples
@@ -241,7 +240,7 @@ void Evolution::selection()
 
 			double chance = (i + 1) / (double)POPULATION_SIZE;
 
-			if (util::random() + 0.2 <= chance) // + 0.2 to give better chance for lower fitness to survive
+			if (util::random() + 0.3 <= chance) // +0.2 to give better chance for lower fitness to survive
 				gene._dead = true;
 		});
 
@@ -268,7 +267,7 @@ void Evolution::crossover()
 
 		p0 = util::random<size_t>(0, elite - 1);
 		do p1 = util::random<size_t>(0, elite - 1);
-		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.2 && ++exit < 128)); // two random parents from the elite
+		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.1 && ++exit < 128)); // two random parents from the elite
 
 		SoundGene child0(_population[p0]); // deep copy
 		SoundGene child1(_population[p1]);

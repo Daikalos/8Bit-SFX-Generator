@@ -15,9 +15,9 @@ namespace IESFX
 	static const size_t COLUMNS = 4;
 
 	static const size_t POPULATION_SIZE = 1400;
-	static const size_t USABLE_POPULATION = 480;
+	static const size_t USABLE_POPULATION = 600;
 	static const size_t GENERATIONS = 100;
-	static const double QUALITY = 2.2;
+	static const double QUALITY = 3.1;
 
 	static const int N_POINTS = 3;
 	static const size_t MODEL_SAMPLES = 3;
@@ -32,7 +32,7 @@ namespace IESFX
 	static const size_t MIN_SAMPLE_SIZE = 128;
 	static const size_t MAX_SAMPLE_SIZE = 1400;
 
-	static const size_t AVERAGE_SAMPLE = 128;
+	static const size_t AVERAGE_SAMPLE = 512;
 
 	#define BUILD true
 }

@@ -21,10 +21,12 @@ Player::~Player()
 
 void Player::shutdown()
 {
-	_shutdown = true;
-
 	Monitor::Enter(_object);
-	try { Monitor::Pulse(_object); }
+	try 
+	{ 
+		_shutdown = true; 
+		Monitor::Pulse(_object); 
+	}
 	finally { Monitor::Exit(_object); }
 
 	_thread->Join();
@@ -33,7 +35,7 @@ void Player::shutdown()
 void Player::iterate()
 {
 	Monitor::Enter(_object);
-	try { Monitor::Pulse(_object); }
+	try		{ Monitor::Pulse(_object); }
 	finally { Monitor::Exit(_object); }
 
 	_iterate = true;
