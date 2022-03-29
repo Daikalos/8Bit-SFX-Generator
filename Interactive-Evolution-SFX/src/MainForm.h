@@ -934,7 +934,7 @@ namespace IESFX
 
 			_soundUCs[_prev]->set_color(_color);
 			_color = _soundUCs[next]->soundWave->BackColor;
-			_soundUCs[next]->set_color(Color::Gray);
+			_soundUCs[next]->set_color(Color::FromArgb(255, 185, 185, 185));
 
 			_prev = next;
 		}

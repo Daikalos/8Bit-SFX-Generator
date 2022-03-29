@@ -21,12 +21,10 @@ Player::~Player()
 
 void Player::shutdown()
 {
+	_shutdown = true;
+	
 	Monitor::Enter(_object);
-	try 
-	{ 
-		_shutdown = true; 
-		Monitor::Pulse(_object); 
-	}
+	try		{ Monitor::Pulse(_object); }
 	finally { Monitor::Exit(_object); }
 
 	_thread->Join();
@@ -105,7 +103,7 @@ void Player::update(std::vector<SoundGene>& genes)
 
 void Player::player_loop()
 {
-	while (!_shutdown)
+	while (_thread->IsAlive)
 	{
 		if (!_is_playing || _sound == nullptr)
 			continue;
@@ -125,13 +123,13 @@ void Player::player_loop()
 						if (_shutdown) break;
 						Monitor::Wait(_object, TimeSpan::FromSeconds(0.5));
 						if (_shutdown) break;
-
-						if (!_is_playing)
-							continue;
-
-						play();
 					}
 					finally { Monitor::Exit(_object); }
+
+					if (!_is_playing)
+						continue;
+
+					play();
 				}
 				else
 					play();
@@ -143,22 +141,3 @@ void Player::player_loop()
 		}
 	}
 }
-
-//bool Player::load_wav(String^ file)
-//{
-//	std::string filename = msclr::interop::marshal_as<std::string>(file);
-//
-//	std::ifstream stream(filename, std::ios::binary);
-//
-//	if (stream.is_open())
-//	{
-//		std::istream_iterator<char> start(stream), end;
-//		std::vector<sf::Int16> buffer(start, end);
-//
-//
-//
-//		stream.close();
-//	}
-//
-//	return true;
-//}
