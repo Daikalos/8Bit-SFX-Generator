@@ -48,8 +48,6 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	while (!complete())
 	{
-		shuffle();
-
 		std::for_each(
 			std::execution::par_unseq,
 			_population.begin(),
@@ -121,11 +119,6 @@ void Evolution::initialize()
 
 	for (size_t i = 0; i < _models.size(); ++i)
 		_population.push_back(_models[i]);
-}
-
-void Evolution::shuffle()
-{
-	std::shuffle(_population.begin(), _population.end(), util::dre);
 }
 
 void Evolution::evaluate(SoundGene& candidate)

@@ -854,6 +854,9 @@ namespace IESFX
 
 		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
 		{
+			for (int i = 0; i < _soundUCs->Length; ++i)
+				delete _soundUCs[i];
+
 			_player->shutdown();
 		}
 

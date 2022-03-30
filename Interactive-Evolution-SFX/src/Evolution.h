@@ -46,10 +46,6 @@ namespace IESFX
 		//
 		void initialize();
 
-		// shuffle population
-		//
-		void shuffle();
-
 		// evaluate each candidates fitness
 		//
 		void evaluate(SoundGene& candidate);

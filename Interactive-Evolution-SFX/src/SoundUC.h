@@ -238,24 +238,45 @@ namespace IESFX
 		}
 		void set_color(Color color)
 		{
-			if (InvokeRequired)
-				Invoke(gcnew set_color_del(this, &SoundUC::sc), color);
-			else
-				sc(color);
+			try
+			{
+				if (InvokeRequired)
+					Invoke(gcnew set_color_del(this, &SoundUC::sc), color);
+				else
+					sc(color);
+			}
+			catch (ObjectDisposedException^ exception)
+			{
+				// smells like shit
+			}
 		}
 		void add_data(array<short>^ samples)
 		{
-			if (InvokeRequired)
-				Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
-			else
-				ad(samples);
+			try
+			{ 
+				if (InvokeRequired)
+					Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
+				else
+					ad(samples);
+			}
+			catch (ObjectDisposedException^ exception)
+			{
+				// smells like shit
+			}
 		}
 		void set_time(float time, float duration)
 		{
-			if (InvokeRequired)
-				Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
-			else
-				st(time, duration);
+			try
+			{ 
+				if (InvokeRequired)
+					Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
+				else
+					st(time, duration);
+			}
+			catch (ObjectDisposedException^ exception)
+			{
+				// smells like shit
+			}
 		}
 
 	private: 

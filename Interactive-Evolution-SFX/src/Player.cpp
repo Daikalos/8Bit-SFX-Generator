@@ -6,6 +6,7 @@ Player::Player(Evolution* evolution, size_t size, float volume)
 	: _size(size), _volume(volume), _evolution(evolution)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
+	_thread->Name = "player_thread";
 	_thread->IsBackground = true;
 	_thread->Start();
 
@@ -21,10 +22,12 @@ Player::~Player()
 
 void Player::shutdown()
 {
-	_shutdown = true;
-	
 	Monitor::Enter(_object);
-	try		{ Monitor::Pulse(_object); }
+	try		
+	{ 
+		_shutdown = true;
+		Monitor::Pulse(_object); 
+	}
 	finally { Monitor::Exit(_object); }
 
 	_thread->Join();
@@ -103,7 +106,7 @@ void Player::update(std::vector<SoundGene>& genes)
 
 void Player::player_loop()
 {
-	while (_thread->IsAlive)
+	while (!_shutdown)
 	{
 		if (!_is_playing || _sound == nullptr)
 			continue;
@@ -128,11 +131,9 @@ void Player::player_loop()
 
 					if (!_is_playing)
 						continue;
-
-					play();
 				}
-				else
-					play();
+				
+				play();
 			}
 			else
 				reset();
