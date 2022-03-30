@@ -342,7 +342,7 @@ void Evolution::mutation()
 
 			for (int j = 0; j < length; ++j)
 			{
-				size_t mp = util::random<size_t>(0, gene.size() - 1);
+				size_t mp = (gene.size() > 1) ? util::random<size_t>(1, gene.size() - 1) : 0;
 
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
