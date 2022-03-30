@@ -126,7 +126,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	candidate._fitness = 0;
 
 	const double simi_mul = 2.75;
-	const double smpl_mul = 0.15;
+	const double smpl_mul = 0.25;
 	const double time_mul = 0.15;
 
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
@@ -367,7 +367,12 @@ void Evolution::mutation()
 					poke->value += (poke->value > abs) ? change : abs;
 				}
 				else if (sample != nullptr)
-					sample->size += (sample->size > 50) ? util::random_arg<int>(-50, 50) : 50;
+				{
+					int change = util::random_arg<int>(-50, -25, 25, 50);
+					uint32_t abs = static_cast<uint32_t>(std::abs(change));
+
+					sample->size += (sample->size > abs) ? change : abs;
+				}
 			}
 
 			gene.shrink();
