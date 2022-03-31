@@ -160,7 +160,7 @@ void Evolution::evaluate(SoundGene& candidate)
 							if (m_poke->offset == c_poke->offset)
 							{
 								double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
-								double val_ratio = 1.0 / (val_diff + 1.0);
+								double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
 								score += val_ratio;
 
@@ -174,7 +174,7 @@ void Evolution::evaluate(SoundGene& candidate)
 				Sample* rhs_sample = static_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
 
 				double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
-				double smpl_ratio = 1.0 / (smpl_diff + 1.0);
+				double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 				score += smpl_ratio;
 			}
@@ -369,7 +369,7 @@ void Evolution::mutation()
 				else if (sample != nullptr)
 				{
 					int change = util::random_arg<int>(-50, -25, 25, 50);
-					uint32_t abs = static_cast<uint32_t>(std::abs(change));
+					size_t abs = static_cast<size_t>(std::abs(change));
 
 					sample->size += (sample->size > abs) ? change : abs;
 				}
