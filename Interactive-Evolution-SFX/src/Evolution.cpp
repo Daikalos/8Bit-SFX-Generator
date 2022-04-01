@@ -412,10 +412,10 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 					Poke* rhs_poke = static_cast<Poke*>(rhs.get(k));
 					if (lhs_poke->offset == rhs_poke->offset)
 					{
-						double pk_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
-						double pk_ratio = 1.0 / (pk_diff + 1.0);
+						double val_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
+						double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
-						result += pk_ratio;
+						result += val_ratio;
 
 						break;
 					}
@@ -427,7 +427,7 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 		Sample* rhs_sample = static_cast<Sample*>(rhs.get(std::get<1>(rhs_range[si])));
 
 		double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
-		double smpl_ratio = 1.0 / (smpl_diff + 1.0);
+		double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 		result += smpl_ratio;
 	}
