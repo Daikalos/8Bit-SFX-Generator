@@ -178,7 +178,6 @@
     </ClCompile>
     <ClCompile Include="MainForm.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="InfoForm.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sound.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -192,7 +191,6 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="SoundUC.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Command.h" />
