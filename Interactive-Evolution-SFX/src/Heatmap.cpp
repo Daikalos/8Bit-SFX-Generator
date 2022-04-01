@@ -101,7 +101,7 @@ void Heatmap::heatmap_1()
 	const size_t width = 161;
 	const size_t height = 161;
 
-	const size_t size = 512;
+	const size_t size = 1024;
 
 	double max = DBL_MIN;
 
@@ -115,53 +115,68 @@ void Heatmap::heatmap_1()
 		[&](const int&)
 		{
 			Evolution* evolution = new Evolution(
-				util::random(0.0, 1.0), 
-				util::random(0.0, 1.0));
+				util::random(0.01, 0.5), 
+				util::random(0.01, 0.5));
 
-			evolution->execute(
-				util::random(25LLU, GENERATIONS), 
-				util::random(0.5, QUALITY));
+			for (int i = util::random(1, 24); i > 0; --i)
+			{
+				evolution->execute(
+					util::random(45LLU, GENERATIONS),
+					util::random(1.5, QUALITY));
 
-			std::vector<SoundGene> population(evolution->output(512, 0));
+				std::vector<SoundGene> population(evolution->output(256, 0));
 
-			delete evolution;
-
-			std::for_each(
-				std::execution::par_unseq,
-				population.begin(), population.end(),
-				[&](const SoundGene& gene)
-				{
-					std::vector<std::tuple<int, int, int>> range = gene.range<int>();
-
-					double average = 0.0;
-					double size = 0.0;
-
-					for (int si = 0; si < range.size(); ++si)
+				std::for_each(
+					std::execution::par_unseq,
+					population.begin(), population.end(),
+					[&](const SoundGene& gene)
 					{
-						std::vector<bool> offsets(25, false);
-						for (int j = std::get<1>(range[si]) - 1; j >= std::get<0>(range[si]); --j)
-						{
-							Poke* poke = static_cast<Poke*>(gene.get(j));
-							if (!offsets[poke->offset])
-							{
-								offsets[poke->offset] = true;
+						std::vector<std::tuple<int, int, int>> range = gene.range<int>();
 
-								average += poke->value;
-								++size;
+						double average = 0.0;
+						double size = 0.0;
+
+						for (int si = 0; si < range.size(); ++si)
+						{
+							std::vector<bool> offsets(25, false);
+							for (int j = std::get<1>(range[si]) - 1; j >= std::get<0>(range[si]); --j)
+							{
+								Poke* poke = static_cast<Poke*>(gene.get(j));
+								if (!offsets[poke->offset])
+								{
+									offsets[poke->offset] = true;
+
+									average += poke->value;
+									++size;
+								}
 							}
 						}
+
+						if (size <= DBL_EPSILON)
+							return;
+
+						average /= size;
+
+						int x = std::clamp<double>(average / POKE_VALUE, 0.0, 1.0) * (width - 1);
+						int y = (1.0 - std::clamp<double>(size / 161, 0.0, 1.0)) * (height - 1);
+
+						++heatmap[x + y * width];
+					});
+
+				std::vector<size_t> indices;
+				for (int j = util::random(1, 3); j > 0; --j)
+				{
+					size_t index = util::random<size_t>(0, population.size() - 1);
+
+					if (std::find(indices.begin(), indices.end(), index) == indices.end())
+					{
+						evolution->add_model(population[index]);
+						indices.push_back(index);
 					}
+				}
+			}
 
-					if (size <= DBL_EPSILON)
-						return;
-
-					average /= size;
-
-					int x = (1.0 - std::clamp<double>(average / POKE_VALUE, 0.0, 1.0)) * (width - 1);
-					int y = std::clamp<double>(size / 161, 0.0, 1.0) * (height - 1);
-
-					++heatmap[x + y * width];
-				});
+			delete evolution;
 		});
 
 	sf::Image image;
