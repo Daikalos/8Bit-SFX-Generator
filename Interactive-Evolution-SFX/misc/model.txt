@@ -1,53 +1,5 @@
-// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS
-poke 24 14
-poke 7 15
-poke 11 17
-poke 11 132
-poke 15 36
-poke 6 94
-poke 12 25
-poke 3 78
-poke 4 54
-poke 8 29
-poke 9 68
-poke 17 79
-poke 2 14
-poke 18 21
-poke 13 41
-poke 19 72
-poke 15 2
-sample 61
-poke 19 2
-poke 4 1
-poke 4 21
-poke 14 51
-poke 8 3
-poke 17 39
-sample 46
-poke 7 18
-poke 18 63
-poke 9 58
-poke 16 78
-poke 6 79
-sample 351
-poke 20 36
-poke 2 26
-poke 4 28
-poke 7 64
-poke 8 93
-poke 19 29
-poke 12 7
-poke 14 94
-poke 11 91
-poke 17 55
-poke 16 26
-poke 1 18
-poke 9 21
-poke 5 50
-poke 13 19
-poke 7 12
-poke 0 61
-sample 202
-poke 17 49
-sample 240
-RUN
+Hejsan allihopa!
+
+Jag behöver några frivilliga testare till mitt examensprojekt vilket är en '8-Bit SFX Generator' som ska enkelt och intuitivt skapa simpla ljudeffekter för en. Testningen sker i formen av en kort intervju där jag kollar på medans ni använder verktyget och efter en viss mängd tid så ställer jag ett par frågor om vad ni tyckte (allt skrivs ner anonymt). Väldigt enkelt och det bör inte ta längre än 10-20min (max 30min). Skriv ett direktmeddelande till mig på Discord om du intresserad så kan vi bestämma plats och tid. Går även utmärkt att göra det på distans via Discord, Zoom, etc.
+
+Annars skulle jag vara tacksam om ni kunde skicka vidare detta meddelande till vänner eller bekanta som ni tror kan vara intresserade.
