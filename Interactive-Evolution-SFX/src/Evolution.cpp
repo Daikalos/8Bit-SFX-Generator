@@ -124,7 +124,7 @@ void Evolution::initialize()
 
 			std::vector<RESID::reg8> offsets(util::random<RESID::reg8>(24));
 
-			for (int s = util::random(1, 7); s > 0; --s)
+			for (int s = util::random(1, 6); s > 0; --s)
 			{
 				for (int p = util::ropoke(); p > 0; --p)
 				{
@@ -251,7 +251,7 @@ void Evolution::selection()
 
 			double chance = (i + 1) / (double)POPULATION_SIZE;
 
-			if (util::random() + 0.3 <= chance) // +0.2 to give better chance for lower fitness to survive
+			if (util::random() + 0.4 <= chance) // +0.4 to give better chance for lower fitness to survive
 				gene._dead = true;
 		});
 

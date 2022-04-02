@@ -118,8 +118,7 @@ void Player::update(std::vector<SoundGene>& genes)
 	for (int i = 0; i < genes.size(); ++i)
 		_sounds[i].create_buffer(genes[i]);
 
-	for (int i = 0; i < _size; ++i)
-		_callback_update(&_sounds[i], i);
+	_callback_update(_sounds);
 }
 
 void Player::player_loop()

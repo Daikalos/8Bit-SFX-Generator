@@ -20,7 +20,7 @@
 
 #include <string>
 
-static const std::string examples[15] =
+static const std::string examples[18] =
 {
 	R"(poke 24 14
 poke 1 130
@@ -651,5 +651,106 @@ poke 7 12
 poke 0 61
 sample 202
 poke 17 49
-sample 240)"
+sample 240)",
+
+	R"(poke 24 14
+poke 7 28
+poke 21 9
+poke 2 20
+poke 1 26
+poke 5 10
+poke 11 7
+poke 0 21
+poke 8 5
+poke 14 10
+poke 18 23
+poke 3 5
+poke 6 11
+poke 16 20
+poke 9 23
+poke 19 25
+poke 12 20
+poke 10 22
+poke 15 27
+poke 22 22
+poke 23 8
+poke 17 11
+poke 4 11
+sample 1300)",
+
+	R"(poke 24 14
+poke 11 107
+poke 18 27
+poke 22 137
+poke 12 97
+poke 7 138
+poke 4 85
+poke 5 59
+poke 0 93
+poke 2 109
+poke 9 34
+poke 6 75
+poke 16 98
+poke 13 120
+sample 1231
+poke 6 125
+poke 5 56
+poke 19 48
+poke 4 89
+poke 15 86
+poke 9 82
+poke 13 15
+poke 16 41
+poke 22 49
+poke 18 115
+poke 10 64
+poke 14 140
+sample 474)",
+
+	R"(poke 24 14
+poke 9 77
+poke 22 110
+poke 5 74
+poke 0 57
+poke 7 32
+poke 23 102
+poke 6 30
+poke 21 83
+poke 20 134
+poke 11 90
+poke 13 38
+poke 3 82
+poke 10 10
+poke 4 85
+poke 2 137
+poke 19 81
+poke 18 84
+poke 16 100
+poke 15 31
+poke 14 122
+poke 17 29
+poke 12 33
+sample 1109
+poke 2 50
+poke 20 68
+poke 9 105
+poke 7 91
+poke 16 14
+poke 15 44
+poke 1 85
+poke 21 19
+poke 0 33
+poke 3 80
+poke 17 112
+poke 4 84
+poke 6 129
+poke 11 57
+poke 13 60
+poke 8 66
+poke 12 105
+poke 22 117
+poke 14 61
+poke 19 116
+poke 18 26
+sample 988)"
 };

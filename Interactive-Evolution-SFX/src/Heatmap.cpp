@@ -119,7 +119,7 @@ void Heatmap::heatmap_1()
 	const size_t width = 161;
 	const size_t height = 161;
 
-	const size_t size = 1024;
+	const size_t size = 248;
 
 	double max = DBL_MIN;
 
@@ -136,7 +136,7 @@ void Heatmap::heatmap_1()
 				util::random(0.01, 0.5), 
 				util::random(0.01, 0.5));
 
-			for (int i = util::random(1, 24); i > 0; --i)
+			for (int i = util::random(1, 8); i > 0; --i)
 			{
 				evolution->execute(
 					util::random(45LLU, GENERATIONS),
@@ -175,14 +175,14 @@ void Heatmap::heatmap_1()
 
 						average /= size;
 
-						int x = std::clamp<double>(average / POKE_VALUE, 0.0, 1.0) * (width - 1);
+						int x = std::clamp<double>(average / POKE_MAX_VALUE, 0.0, 1.0) * (width - 1);
 						int y = (1.0 - std::clamp<double>(size / 161, 0.0, 1.0)) * (height - 1);
 
 						++heatmap[x + y * width];
 					});
 
 				std::vector<size_t> indices;
-				for (int j = util::random(1, 3); j > 0; --j)
+				for (int j = util::random(1, 4); j > 0; --j)
 				{
 					size_t index = util::random<size_t>(0, population.size() - 1);
 

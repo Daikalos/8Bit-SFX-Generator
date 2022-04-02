@@ -73,7 +73,7 @@ namespace IESFX
 	public:
 		delegate void callback_play(); // called everytime a sound is played
 		delegate void callback_done(); // called when reached end
-		delegate void callback_update(Sound*, int);
+		delegate void callback_update(Sound*);
 
 		callback_play^ _callback_play;
 		callback_done^ _callback_done;

@@ -257,7 +257,7 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
                 }
             }
             else
-                stmt += std::tolower(c);
+                stmt += c;
         }
 
         if (!stmt.empty())

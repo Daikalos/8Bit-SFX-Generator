@@ -963,19 +963,22 @@ namespace IESFX
 		{
 			_soundUCs[_prev]->set_color(_color);
 		}
-		void player_update(Sound* sound, int i)
+		void player_update(Sound* sounds)
 		{
 			size_t offset = 35;
 
-			size_t size = sound->buffer_count();
-			const sf::Int16* buffer = sound->buffer_samples();
+			for (int i = 0; i < _soundUCs->Length; ++i)
+			{
+				size_t size = sounds[i].buffer_count();
+				const sf::Int16* buffer = sounds[i].buffer_samples();
 
-			array<short>^ samples = gcnew array<short>(size / offset);
+				array<short>^ samples = gcnew array<short>(size / offset);
 
-			for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
-				samples[i] = buffer[j];
+				for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
+					samples[i] = buffer[j];
 
-			_soundUCs[i]->add_data(samples);
+				_soundUCs[i]->add_data(samples);
+			}
 		}
 
 		bool ready()

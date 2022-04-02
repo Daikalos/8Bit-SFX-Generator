@@ -1,5 +1,52 @@
-Hejsan allihopa!
-
-Jag behöver några frivilliga testare till mitt examensprojekt vilket är en '8-Bit SFX Generator' som ska enkelt och intuitivt skapa simpla ljudeffekter för en. Testningen sker i formen av en kort intervju där jag kollar på medans ni använder verktyget och efter en viss mängd tid så ställer jag ett par frågor om vad ni tyckte (allt skrivs ner anonymt). Väldigt enkelt och det bör inte ta längre än 10-20min (max 30min). Skriv ett direktmeddelande till mig på Discord om du intresserad så kan vi bestämma plats och tid. Går även utmärkt att göra det på distans via Discord, Zoom, etc.
-
-Annars skulle jag vara tacksam om ni kunde skicka vidare detta meddelande till vänner eller bekanta som ni tror kan vara intresserade.
+// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS
+poke 24 14
+poke 9 77
+poke 22 110
+poke 5 74
+poke 0 57
+poke 7 32
+poke 23 102
+poke 6 30
+poke 21 83
+poke 20 134
+poke 11 90
+poke 13 38
+poke 3 82
+poke 10 10
+poke 4 85
+poke 2 137
+poke 19 81
+poke 18 84
+poke 16 100
+poke 15 31
+poke 14 122
+poke 17 29
+poke 12 33
+sample 1109
+poke 2 50
+poke 20 68
+poke 9 105
+poke 7 91
+poke 16 14
+poke 15 44
+poke 1 85
+poke 21 19
+poke 0 33
+poke 3 80
+poke 17 112
+poke 4 84
+poke 6 129
+poke 11 57
+poke 13 60
+poke 8 66
+poke 12 105
+poke 22 117
+poke 14 61
+poke 19 116
+poke 18 26
+sample 988
+poke 14 7
+poke 1 110
+poke 8 68
+sample 752
+RUN
