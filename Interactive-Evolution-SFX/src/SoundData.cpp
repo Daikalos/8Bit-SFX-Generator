@@ -1,6 +1,6 @@
 //  ---------------------------------------------------------------------------
 //  This file is part of the 8-Bit SFX Generator
-//	Copyright (C) 2022 Tobias Garpenhall
+//	Copyright (C) 2022 Tobias Garpenhall <tobiasgarpenhall@gmail.com>
 //
 //	This program is free software: you can redistribute it and/or modify
 //	it under the terms of the GNU General Public License as published by
