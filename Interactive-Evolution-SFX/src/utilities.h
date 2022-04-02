@@ -92,8 +92,11 @@ namespace util
 	static std::vector<T> random(T size)
 	{
 		std::vector<T> result;
+		result.reserve(size);
+
 		for (T i = 0; i < size; ++i)
 			result.push_back(i);
+
 		std::shuffle(result.begin(), result.end(), dre);
 
 		return result;
@@ -106,8 +109,8 @@ namespace util
 		return x[util::random<size_t>(0, x.size() - 1)];
 	}
 
-	static RESID::reg8 ropoke() { return util::random<RESID::reg8>(0, IESFX::POKE_OFFSET); }
-	static RESID::reg8 rvpoke() { return util::random<RESID::reg8>(1, IESFX::POKE_VALUE); }
+	static RESID::reg8 ropoke() { return util::random(0U, IESFX::POKE_OFFSET); }
+	static RESID::reg8 rvpoke() { return util::random(IESFX::POKE_MIN_VALUE, IESFX::POKE_MAX_VALUE); }
 	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
 
 	static double random() { return util::random(0.0, 1.0); }

@@ -46,8 +46,9 @@ namespace IESFX
 	static const double OFFSET_MUTATION = 0.1;
 
 	static const RESID::reg8 POKE_OFFSET = 23;
-	static const RESID::reg8 POKE_VALUE = 140;
-	static const size_t MIN_SAMPLE_SIZE = 128;
+	static const RESID::reg8 POKE_MIN_VALUE = 1;
+	static const RESID::reg8 POKE_MAX_VALUE = 140;
+	static const size_t MIN_SAMPLE_SIZE = 256;
 	static const size_t MAX_SAMPLE_SIZE = 1400;
 
 	static const size_t AVERAGE_SAMPLE = 512;

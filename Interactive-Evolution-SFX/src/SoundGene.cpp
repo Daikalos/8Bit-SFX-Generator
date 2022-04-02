@@ -47,6 +47,7 @@ void SoundGene::shrink()
 std::string SoundGene::output() const
 {
 	std::string output;
+	output.reserve(_gene.size() * 13);
 
 	for (const auto& s : _gene)
 		output += s->print() + '\n';

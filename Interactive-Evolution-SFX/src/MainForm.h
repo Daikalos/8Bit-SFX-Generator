@@ -968,10 +968,12 @@ namespace IESFX
 			size_t offset = 35;
 
 			size_t size = sound->buffer_count();
+			const sf::Int16* buffer = sound->buffer_samples();
+
 			array<short>^ samples = gcnew array<short>(size / offset);
 
 			for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
-				samples[i] = sound->buffer_samples()[j];
+				samples[i] = buffer[j];
 
 			_soundUCs[i]->add_data(samples);
 		}

@@ -43,6 +43,8 @@ namespace IESFX
 			_evolution = evolution;
 			_id = id;
 
+			_sound = _player[_id];
+
 			_selected = false;
 		}
 
@@ -248,7 +250,7 @@ namespace IESFX
 		{
 			if (_selected)
 			{
-				_evolution->remove_model(_player[_id]->get());
+				_evolution->remove_model(_sound->get());
 				stripTool->BackColor = Color::White;
 
 				_selected = false;
@@ -270,31 +272,17 @@ namespace IESFX
 		}
 		void add_data(array<short>^ samples)
 		{
-			try
-			{ 
-				if (InvokeRequired)
-					Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
-				else
-					ad(samples);
-			}
-			catch (ObjectDisposedException^ exception)
-			{
-				// smells like shit
-			}
+			if (InvokeRequired)
+				Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
+			else
+				ad(samples);
 		}
 		void set_time(float time, float duration)
 		{
-			try
-			{ 
-				if (InvokeRequired)
-					Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
-				else
-					st(time, duration);
-			}
-			catch (ObjectDisposedException^ exception)
-			{
-				// smells like shit
-			}
+			if (InvokeRequired)
+				Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
+			else
+				st(time, duration);
 		}
 
 	private: 
@@ -346,22 +334,23 @@ namespace IESFX
 
 			if (_selected = !_selected)
 			{
-				_evolution->add_model(_player[_id]->get());
+				_evolution->add_model(_sound->get());
 				stripTool->BackColor = Color::LightBlue;
 			}
 			else
 			{
-				_evolution->remove_model(_player[_id]->get());
+				_evolution->remove_model(_sound->get());
 				stripTool->BackColor = Color::White;
 			}
 		}
 		System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e)
 		{
-			st(_player[_id]->time(), _player[_id]->duration());
+			st(_sound->time(), _sound->duration());
 		}
 
 	private:
 		size_t _id;
+		Sound* _sound;
 
 		Player^ _player;
 		Evolution* _evolution;
