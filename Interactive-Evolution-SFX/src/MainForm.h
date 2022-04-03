@@ -1075,7 +1075,6 @@ namespace IESFX
 		bool initialize();
 
 	private:
-		bool _shutdown{false};
 		int _prev, _step, _old_step;
 		Color _color;
 
