@@ -32,10 +32,10 @@ namespace IESFX
 	static const size_t ROWS = 3;
 	static const size_t COLUMNS = 4;
 
-	static const size_t POPULATION_SIZE = 1400;
-	static const size_t USABLE_POPULATION = 600;
-	static const size_t GENERATIONS = 100;
-	static const double QUALITY = 3.1;
+	static const size_t POPULATION_SIZE = 1800;
+	static const size_t USABLE_POPULATION = 960;
+	static const size_t GENERATIONS = 80;
+	static const double QUALITY = 3.0;
 
 	static const int N_POINTS = 3;
 	static const size_t MODEL_SAMPLES = 3;
