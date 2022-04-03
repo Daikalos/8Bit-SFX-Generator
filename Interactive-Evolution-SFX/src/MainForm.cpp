@@ -39,9 +39,13 @@ bool MainForm::initialize()
 		_soundUCs[i] = soundUC;
 	}
 
-	_player->_callback_play += gcnew Player::callback_play(this, &MainForm::player_next);
-	_player->_callback_done += gcnew Player::callback_done(this, &MainForm::player_done);
-	_player->_callback_update += gcnew Player::callback_update(this, &MainForm::player_update);
+	play = gcnew Player::callback_play(this, &MainForm::player_next);
+	done = gcnew Player::callback_done(this, &MainForm::player_done);
+	update = gcnew Player::callback_update(this, &MainForm::player_update);
+
+	_player->_callback_play += play;
+	_player->_callback_done += done;
+	_player->_callback_update += update;
 
 	Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
 

@@ -872,6 +872,10 @@ namespace IESFX
 
 		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
 		{
+			_player->_callback_play -= play;
+			_player->_callback_done -= done;
+			_player->_callback_update -= update;
+
 			for (int i = 0; i < _soundUCs->Length; ++i)
 				delete _soundUCs[i];
 
@@ -1071,6 +1075,7 @@ namespace IESFX
 		bool initialize();
 
 	private:
+		bool _shutdown{false};
 		int _prev, _step, _old_step;
 		Color _color;
 
@@ -1079,5 +1084,9 @@ namespace IESFX
 
 		Player^ _player;
 		Evolution* _evolution;
+
+		Player::callback_play^ play;
+		Player::callback_done^ done;
+		Player::callback_update^ update;
 };
 }
