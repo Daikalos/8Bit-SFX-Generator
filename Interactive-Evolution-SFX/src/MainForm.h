@@ -522,13 +522,13 @@ namespace IESFX
 			this->ForeColor = System::Drawing::Color::FromArgb(static_cast<System::Int32>(static_cast<System::Byte>(64)), static_cast<System::Int32>(static_cast<System::Byte>(64)),
 				static_cast<System::Int32>(static_cast<System::Byte>(64)));
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->ImeMode = System::Windows::Forms::ImeMode::On;
 			this->KeyPreview = true;
 			this->MainMenuStrip = this->menuStrip;
 			this->Margin = System::Windows::Forms::Padding(8, 9, 8, 9);
 			this->MaximizeBox = false;
 			this->Name = L"MainForm";
-			this->ShowIcon = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"8-Bit SFX Generator";
 			this->Activated += gcnew System::EventHandler(this, &MainForm::MainForm_Activated);

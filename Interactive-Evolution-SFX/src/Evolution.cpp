@@ -352,11 +352,11 @@ void Evolution::mutation()
 		_population.end(),
 		[&](SoundGene& gene) 
 		{
-			if (util::random() > _mutation_rate)
+			if (util::random() > _mutation_rate || gene.size() == 0)
 				return;
 
 			int size = static_cast<int>(std::ceil(gene.size() / (1.0 / _mutation_size)));
-			int length = util::random(0, size - 1);
+			int length = util::random(1, size);
 
 			for (int j = 0; j < length; ++j)
 			{
