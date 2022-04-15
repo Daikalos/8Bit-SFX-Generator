@@ -64,7 +64,7 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	initialize();
 
-	while (!complete())
+	while (_generations < _max_generations)
 	{
 		std::for_each(
 			std::execution::par_unseq,
@@ -75,23 +75,32 @@ int Evolution::execute(size_t max_generations, double max_quality)
 				evaluate(candidate);
 			});
 
+		// sort in descending order by fitness value to allow for a rank-based selection
+		//
+		std::sort(std::execution::par_unseq,
+			_population.begin(), _population.end());
+
+		double sum = 0.0;
+		std::for_each(
+			std::execution::par_unseq,
+			_population.begin(),
+			_population.begin() + AVERAGE_SAMPLE,
+			[&sum](const SoundGene& gene)
+			{
+				sum += gene._fitness;
+			});
+
+		_quality = sum / (double)AVERAGE_SAMPLE;
+
+		if (_quality >= _max_quality)
+			break;
+
 		selection();
 
 		crossover();
 
 		mutation();
 
-		double sum = 0.0;
-		std::for_each(
-			std::execution::par_unseq, 
-			_population.begin(), 
-			_population.begin() + AVERAGE_SAMPLE,
-			[&sum](const SoundGene& gene)
-			{ 
-				sum += gene._fitness;
-			});
-
-		_quality = sum / (double)AVERAGE_SAMPLE;
 		++_generations;
 	}
 
@@ -238,11 +247,6 @@ void Evolution::evaluate(SoundGene& candidate)
 
 void Evolution::selection()
 {
-	// sort in descending order by fitness value to allow a rank based selection
-	//
-	std::sort(std::execution::par_unseq, 
-		_population.begin(), _population.end());
-
 	std::for_each(std::execution::par_unseq,
 		_population.begin(), _population.end(),
 		[&](SoundGene& gene)
@@ -318,8 +322,8 @@ void Evolution::crossover()
 			child1.shrink();
 		}
 
-		evaluate(_population.emplace_back(std::move(child0))); // add new children to the population
-		evaluate(_population.emplace_back(std::move(child1)));
+		_population.push_back(std::move(child0)); // add new children to the population
+		_population.push_back(std::move(child1));
 
 		// SINGLE POINT ALT 2 
 		//
@@ -395,11 +399,6 @@ void Evolution::mutation()
 
 			gene.shrink();
 		});
-}
-
-bool Evolution::complete()
-{
-	return (_generations >= _max_generations || _quality >= _max_quality);
 }
 
 double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)

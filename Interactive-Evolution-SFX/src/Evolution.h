@@ -80,10 +80,6 @@ namespace IESFX
 		//
 		void mutation();
 
-		// stop if maximum generations are reached or there is a a individual with sufficient quality
-		//
-		bool complete();
-
 		// measures degree of similiarity in 0-1
 		//
 		double similiarity(const SoundGene& lhs, const SoundGene& rhs);
