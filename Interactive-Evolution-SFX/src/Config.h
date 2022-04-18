@@ -27,7 +27,7 @@ namespace IESFX
 	static const size_t CLOCK_FREQ = 985248;
 	static const size_t SAMPLE_RATE = 44100;
 
-	static const size_t CLOCKS_PER_SAMPLE = static_cast<size_t>(round(CLOCK_FREQ / (double)SAMPLE_RATE));
+	static const size_t SAMPLES_PER_CLOCK = static_cast<size_t>(round(CLOCK_FREQ / (double)SAMPLE_RATE));
 
 	static const size_t ROWS = 3;
 	static const size_t COLUMNS = 4;

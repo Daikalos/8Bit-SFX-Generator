@@ -57,7 +57,7 @@ namespace util
 	}
 	static size_t get_size(size_t size)
 	{
-		return size * IESFX::CLOCKS_PER_SAMPLE;
+		return size * IESFX::SAMPLES_PER_CLOCK;
 	}
 
 	static float time(size_t size)
