@@ -566,7 +566,7 @@ namespace IESFX
 				throw gcnew WarningException("failed to initialize system");
 
 #if !BUILD
-			Heatmap::heatmap_1();
+			Heatmap::heatmap_3();
 #endif
 		}
 		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)

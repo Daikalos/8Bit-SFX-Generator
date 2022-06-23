@@ -41,6 +41,8 @@ namespace IESFX
 	public:
 		static void heatmap_0();
 		static void heatmap_1();
+		static void heatmap_2();
+		static void heatmap_3();
 
 	private:
 		static sf::Color gradient(double ratio);

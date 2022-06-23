@@ -229,6 +229,233 @@ void Heatmap::heatmap_1()
 	delete[] heatmap;
 }
 
+void Heatmap::heatmap_2()
+{
+	const size_t width = 256;
+	const size_t height = 256;
+
+	const size_t samples = 256;
+
+	double max = DBL_MIN;
+
+	int* heatmap = new int[width * height];
+	memset(heatmap, 0, sizeof(heatmap[0]) * width * height);
+
+	std::vector<int> range(samples);
+
+	std::for_each(std::execution::seq,
+		range.begin(), range.end(),
+		[&](const int&)
+		{
+			Evolution* evolution = new Evolution(
+				util::random(0.01, 0.5),
+				util::random(0.01, 0.5));
+
+			for (int i = util::random(1, 3); i > 0; --i)
+			{
+				evolution->execute(
+					util::random(45LLU, GENERATIONS),
+					util::random(1.5, QUALITY));
+
+				std::vector<SoundGene> population(evolution->output(256, 0));
+
+				std::for_each(
+					std::execution::par_unseq,
+					population.begin(), population.end(),
+					[&](const SoundGene& gene)
+					{
+						std::vector<std::tuple<int, int, int>> range = gene.range<int>();
+
+						double valueSize = 0.0;
+						double sampleSize = 0.0;
+
+						for (int si = 0; si < range.size(); ++si)
+						{
+							std::vector<bool> offsets(25, false);
+							for (int j = std::get<1>(range[si]) - 1; j >= std::get<0>(range[si]); --j)
+							{
+								Poke* poke = static_cast<Poke*>(gene.get(j));
+								if (!offsets[poke->offset])
+								{
+									offsets[poke->offset] = true;
+									valueSize += poke->value;
+								}
+							}
+
+							sampleSize += static_cast<Sample*>(gene.get(std::get<1>(range[si])))->size;
+						}
+
+						int x = std::clamp<double>(valueSize / (POKE_MAX_VALUE * POKE_OFFSET * 2), 0.0, 1.0) * (width - 1);
+						int y = (1.0 - std::clamp<double>(sampleSize / 8000, 0.0, 1.0)) * (height - 1);
+
+						++heatmap[x + y * width];
+					});
+
+				std::vector<size_t> indices;
+				for (int j = util::random(1, 4); j > 0; --j)
+				{
+					size_t index = util::random<size_t>(0, population.size() - 1);
+
+					if (std::find(indices.begin(), indices.end(), index) == indices.end())
+					{
+						evolution->add_model(population[index]);
+						indices.push_back(index);
+					}
+				}
+			}
+
+			delete evolution;
+		});
+
+	sf::Image image;
+	image.create(width, height);
+
+	std::for_each(
+		std::execution::par_unseq,
+		heatmap, heatmap + (width * height),
+		[&max](const int& val)
+		{
+			if (val > max)
+				max = val;
+		});
+
+	max = std::pow(max, 0.75);
+
+	for (size_t x = 0; x < width; ++x)
+	{
+		for (size_t y = 0; y < height; ++y)
+		{
+			int val = heatmap[x + y * width];
+
+			if (val == 0)
+				image.setPixel(x, y, sf::Color::Black);
+			else
+				image.setPixel(x, y, gradient(val / max));
+		}
+	}
+
+	image.saveToFile("../misc/heatmap_2.jpg");
+
+	delete[] heatmap;
+}
+
+void Heatmap::heatmap_3()
+{
+	const size_t width = 256;
+	const size_t height = 256;
+
+	const size_t samples = 624;
+
+	double max = DBL_MIN;
+
+	int* heatmap = new int[width * height];
+	memset(heatmap, 0, sizeof(heatmap[0]) * width * height);
+
+	std::vector<int> range(samples);
+
+	std::for_each(std::execution::seq,
+		range.begin(), range.end(),
+		[&](const int&)
+		{
+			Evolution* evolution = new Evolution(
+				util::random(0.05, 0.6),
+				util::random(0.05, 0.6));
+
+			for (int i = util::random(1, 1) - 1; i >= 0; --i)
+			{
+				evolution->execute(200LLU, 6.0);
+
+				std::vector<SoundGene> population(evolution->output(96, 0));
+
+				std::mutex lock;
+
+				if (i == 0)
+				{
+					std::for_each(
+						std::execution::par_unseq,
+						population.begin(), population.end(),
+						[&](const SoundGene& gene)
+						{
+							std::vector<sf::Int16> buffer(SoundData()(gene));
+
+							double sum{ 0.0 };
+							double rms{ 0.0 };
+							double dbs{ 0.0 };
+
+							double sample_size = (double)buffer.size();
+
+							int x = (sample_size / (double)(SAMPLE_RATE * 3.5)) * (width - 1);
+							int y = 1.0 * (height - 1);
+
+							if (x < 0 || x >= width)
+								return;
+
+							std::mutex lock2;
+
+							std::for_each(
+								std::execution::par_unseq,
+								buffer.begin(), buffer.end(),
+								[&](const sf::Int16& sample)
+								{
+									lock2.lock();
+									sum += std::pow((double)sample / 32768.0, 2);
+									lock2.unlock();
+								});
+
+							if (buffer.size() != 0)
+							{
+								rms = std::sqrt(sum / sample_size);
+								dbs = (rms != 0.0) ? -20.0 * std::log10(rms) : 90;
+
+								y = (dbs / 90.0) * (height - 1);
+
+								if (y < 0 || y >= height)
+									return;
+							}
+
+							lock.lock();
+							++heatmap[x + y * width];
+							lock.unlock();
+						});
+				}
+
+				std::vector<size_t> indices;
+				for (int j = util::random(1, 4); j > 0; --j)
+				{
+					size_t index = util::random<size_t>(0, population.size() - 1);
+
+					if (std::find(indices.begin(), indices.end(), index) == indices.end())
+					{
+						evolution->add_model(population[index]);
+						indices.push_back(index);
+					}
+				}
+			}
+
+			delete evolution;
+		});
+
+	sf::Image image;
+	image.create(width, height);
+
+	for (size_t x = 0; x < width; ++x)
+	{
+		for (size_t y = 0; y < height; ++y)
+		{
+			int val = heatmap[x + y * width];
+
+			if (val == 0)
+				image.setPixel(x, y, sf::Color::Black);
+			else
+				image.setPixel(x, y, gradient(val / 15.0));
+		}
+	}
+
+	image.saveToFile("../misc/heatmap_3.jpg");
+
+	delete[] heatmap;
+}
+
 sf::Color IESFX::Heatmap::gradient(double ratio)
 {
 	ratio = util::clamp(1.0 - ratio, 0.01, 0.99);
