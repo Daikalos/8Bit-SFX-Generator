@@ -525,7 +525,7 @@ int Evolution::load(const std::string& filename)
 	if (genes.size() == 0)
 		return -1;
 
-	if (genes.size() <= 12)
+	if (genes.size() <= ROWS * COLUMNS)
 	{
 		_models = std::move(genes);
 
