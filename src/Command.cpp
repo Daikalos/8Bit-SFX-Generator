@@ -21,8 +21,8 @@
 
 using namespace IESFX;
 
-Poke::Poke(RESID::reg8 o, RESID::reg8 v)
-	: offset(o), value(v) { }
+Poke::Poke(RESID::reg8 o, RESID::reg8 v) 
+	: offset(o), value(v) {}
 
 std::string Poke::print() const
 {
@@ -40,16 +40,19 @@ std::unique_ptr<Command> Poke::flip() const
 }
 bool Poke::equal_to(const Command* rhs) const
 {
-	const Poke* poke = dynamic_cast<const Poke*>(rhs);
-
-	if (poke == nullptr)
+	if (rhs->get_type() != CT_Poke)
 		return false;
+
+	const Poke* poke = static_cast<const Poke*>(rhs);
 
 	return this->offset == poke->offset && this->value == poke->value;
 }
+[[nodiscard]] CommandType Poke::get_type() const noexcept
+{
+	return CT_Poke;
+}
 
-Sample::Sample(size_t s)
-	: size(s) { }
+Sample::Sample(std::size_t s) : size(s) {}
 
 std::string Sample::print() const
 {
@@ -65,10 +68,15 @@ std::unique_ptr<Command> Sample::flip() const
 }
 bool Sample::equal_to(const Command* rhs) const
 {
-	const Sample* sample = dynamic_cast<const Sample*>(rhs);
-
-	if (sample == nullptr)
+	if (rhs->get_type() != CT_Sample)
 		return false;
 
+	const Sample* sample = static_cast<const Sample*>(rhs);
+
 	return this->size == sample->size;
+}
+
+[[nodiscard]] CommandType Sample::get_type() const noexcept
+{
+	return CT_Sample;
 }

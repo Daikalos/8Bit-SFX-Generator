@@ -38,8 +38,7 @@ void Evolution::add_model(SoundGene& gene)
 
 void Evolution::remove_model(const SoundGene& gene)
 {
-	_models.erase(std::remove_if(
-		std::execution::par_unseq, 
+	_models.erase(std::remove_if( 
 		_models.begin(), _models.end(), 
 		[&gene](const SoundGene& model)
 		{
@@ -70,7 +69,7 @@ int Evolution::execute(size_t max_generations, double max_quality)
 			std::execution::par_unseq,
 			_population.begin(),
 			_population.end(),
-			[&](SoundGene& candidate) // evaluate each candidate
+			[this](SoundGene& candidate) // evaluate each candidate
 			{
 				evaluate(candidate);
 			});
@@ -81,10 +80,7 @@ int Evolution::execute(size_t max_generations, double max_quality)
 			_population.begin(), _population.end());
 
 		double sum = 0.0;
-		std::for_each(
-			std::execution::par_unseq,
-			_population.begin(),
-			_population.begin() + AVERAGE_SAMPLE,
+		std::for_each(_population.begin(), _population.begin() + AVERAGE_SAMPLE,
 			[&sum](const SoundGene& gene)
 			{
 				sum += gene._fitness;
@@ -164,10 +160,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	if (c_range.size() == 0)
 		return;
 
-	std::for_each(
-		std::execution::par_unseq,
-		_models.begin(), _models.end(),
-		[&](const SoundGene& model)
+	std::for_each(_models.begin(), _models.end(),
+		[&candidate, &simi_mul, &c_range](const SoundGene& model)
 		{
 			std::vector<std::tuple<int, int, int>> m_range = model.range<int>();
 
@@ -216,20 +210,27 @@ void Evolution::evaluate(SoundGene& candidate)
 	double time = 0.0;
 	for (size_t i = 0; i < candidate.size(); ++i)
 	{
-		Poke* poke = dynamic_cast<Poke*>(candidate.get(i));
-		Sample* sample = dynamic_cast<Sample*>(candidate.get(i));
+		Command* command = candidate.get(i);
+		CommandType type = command->get_type();
 
-		if (sample != nullptr)
+		switch (type)
 		{
-			time += (double)util::time(sample->size);
-
-			if (poke_count == 0)
-				candidate._fitness += -smpl_mul; // no pokes given before sample is bad
-
-			poke_count = 0;
-		}
-		else if (poke != nullptr)
+		case CT_Poke:
 			++poke_count;
+			break;
+		case CT_Sample:
+			{
+				Sample* sample = static_cast<Sample*>(command);
+
+				time += (double)util::time(sample->size);
+
+				if (poke_count == 0)
+					candidate._fitness += -smpl_mul; // no pokes given before sample is bad
+
+				poke_count = 0;
+			}
+			break;
+		}
 	}
 
 	if (poke_count > 0)
@@ -249,7 +250,7 @@ void Evolution::selection()
 {
 	std::for_each(std::execution::par_unseq,
 		_population.begin(), _population.end(),
-		[&](SoundGene& gene)
+		[this](SoundGene& gene)
 		{
 			size_t i = &gene - _population.data();
 
@@ -262,7 +263,7 @@ void Evolution::selection()
 	_population.erase(std::remove_if(
 		std::execution::par_unseq,
 		_population.begin(), _population.end(),
-		[&](const SoundGene& gene)
+		[this](const SoundGene& gene)
 		{
 			return gene._dead && _population.size() > 2;
 		}), _population.end());
@@ -287,7 +288,7 @@ void Evolution::crossover()
 		SoundGene child0(_population[p0]); // deep copy
 		SoundGene child1(_population[p1]);
 
-		size_t gene_length = std::max<size_t>(_population[p0].size(), _population[p1].size());
+		size_t gene_length = std::max<size_t>(child0.size(), child1.size());
 
 		// K-POINT ALT 1
 		//
@@ -304,15 +305,14 @@ void Evolution::crossover()
 				n_points[j + 1] = util::random<size_t>(0, gene_length - 1) + 1;
 			}
 
-			std::sort(std::execution::par_unseq, // sort in ascending order
-				n_points.begin(), n_points.end());
+			std::sort(n_points.begin(), n_points.end()); // sort in ascending order
 
 			for (size_t j = 0; j < n_points.size(); j += 2)
 			{
 				size_t c0 = n_points[j];
 				size_t c1 = n_points[j + 1];
 
-				std::swap_ranges(std::execution::par_unseq,
+				std::swap_ranges(	
 					child0.begin() + c0,
 					child0.begin() + c1,
 					child1.begin() + c0);
@@ -354,7 +354,7 @@ void Evolution::mutation()
 	std::for_each(std::execution::par_unseq,
 		_population.begin() + (POPULATION_SIZE - _offspring_size),
 		_population.end(),
-		[&](SoundGene& gene) 
+		[this](SoundGene& gene) 
 		{
 			if (util::random() > _mutation_rate || gene.size() == 0)
 				return;
@@ -375,25 +375,38 @@ void Evolution::mutation()
 				if (util::random() <= ADD_MUTATION)
 					gene.insert(mp, { util::ropoke(), util::rvpoke() });
 
-				Poke* poke = dynamic_cast<Poke*>(gene.get(mp));
-				Sample* sample = dynamic_cast<Sample*>(gene.get(mp));
+				Command* command = gene.get(mp);
 
-				if (poke != nullptr)
+				if (command == nullptr)
+					continue;
+
+				CommandType type = command->get_type();
+
+				switch (type)
 				{
-					if (util::random() <= OFFSET_MUTATION)
-						poke->offset = util::ropoke();
+				case CT_Poke:
+					{
+						Poke* poke = static_cast<Poke*>(command);
 
-					int change = util::random_arg<int>(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5);
-					uint32_t abs = static_cast<uint32_t>(std::abs(change));
+						if (util::random() <= OFFSET_MUTATION)
+							poke->offset = util::ropoke();
 
-					poke->value += (poke->value > abs) ? change : abs;
-				}
-				else if (sample != nullptr)
-				{
-					int change = util::random_arg<int>(-50, -25, 25, 50);
-					size_t abs = static_cast<size_t>(std::abs(change));
+						int change = util::random_arg<int>(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5);
+						uint32_t abs = static_cast<uint32_t>(std::abs(change));
 
-					sample->size += (sample->size > abs) ? change : abs;
+						poke->value += (poke->value > abs) ? change : abs;
+					}
+					break;
+				case CT_Sample:
+					{
+						Sample* sample = static_cast<Sample*>(command);
+
+						int change = util::random_arg<int>(-50, -25, 25, 50);
+						size_t abs = static_cast<size_t>(std::abs(change));
+
+						sample->size += (sample->size > abs) ? change : abs;
+					}
+					break;
 				}
 			}
 

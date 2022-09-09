@@ -45,45 +45,13 @@ namespace IESFX
 		void clear();
 
 		template<class T, typename std::enable_if_t<std::is_base_of_v<Interpretable, T>>* = nullptr>
-		std::vector<T> read_file(const std::string& filename)
-		{
-			clear();
-
-			std::vector<T> result;
-			std::queue<std::string> lines;
-
-			std::string line;
-			std::ifstream file(filename);
-			if (file.is_open())
-			{
-				while (file.good())
-				{
-					getline(file, line);
-					if (line != "RUN")
-						lines.push(line);
-					else
-					{
-						result.push_back(T());
-						_ptr = &result[result.size() - 1];
-
-						tokenize(lines);
-
-						std::queue<std::string>().swap(lines);
-					}
-				}
-				file.close();
-			}
-			else
-				throw std::runtime_error("unable to open file");
-
-			return result;
-		}
+		std::vector<T> read_file(const std::string& filename);
 
 	private:
 		void tokenize(std::queue<std::string>& lines);
 
 	private:
-		void evaluate(const std::vector<std::string>& tokens);
+		void evaluate(std::vector<std::string>& tokens);
 
 		std::string peek();
 		std::string peek(int steps);
@@ -119,5 +87,39 @@ namespace IESFX
 		Interpreter& operator=(const Interpreter& rhs) = delete;
 	};
 
+	template<class T, typename std::enable_if_t<std::is_base_of_v<Interpretable, T>>*>
+	std::vector<T> Interpreter::read_file(const std::string& filename)
+	{
+		clear();
+
+		std::vector<T> result;
+		std::queue<std::string> lines;
+
+		std::string line;
+		std::ifstream file(filename);
+		if (file.is_open())
+		{
+			while (file.good())
+			{
+				getline(file, line);
+				if (line != "RUN")
+					lines.push(line);
+				else
+				{
+					result.push_back(T());
+					_ptr = &result[result.size() - 1];
+
+					tokenize(lines);
+
+					std::queue<std::string>().swap(lines);
+				}
+			}
+			file.close();
+		}
+		else
+			throw std::runtime_error("unable to open file");
+
+		return result;
+	}
 }
 

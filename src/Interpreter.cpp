@@ -26,9 +26,9 @@ void Interpreter::clear()
     _ptr = nullptr;
 }
 
-void Interpreter::evaluate(const std::vector<std::string>& tokens)
+void Interpreter::evaluate(std::vector<std::string>& tokens)
 {
-    _tokens = tokens;
+    _tokens = std::move(tokens);
     _position = 0;
 
     parse_Stmt();
@@ -231,8 +231,10 @@ bool Interpreter::is_variable(const std::string& token)
 
 int Interpreter::get_variable(const std::string& name)
 {
-    if (_variables.find(name) != _variables.end())
-        return _variables[name];
+    auto it = _variables.find(name);
+
+    if (it != _variables.end())
+        return it->second;
     else
         throw std::runtime_error("variable '" + name + "' is not defined");
 }

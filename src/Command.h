@@ -26,45 +26,61 @@
 
 namespace IESFX
 {
+	enum CommandType : short
+	{
+		CT_None = -1,
+
+		CT_Poke,
+		CT_Sample,
+
+		CT_Count
+	};
+
 	struct Command
 	{
-		Command() { }
-		virtual ~Command() { }
+		Command() = default;
+		virtual ~Command() = default;
 
-		virtual std::string print() const = 0;
-		virtual std::unique_ptr<Command> clone() const = 0;
-		virtual std::unique_ptr<Command> flip() const = 0;
+		[[nodiscard]] virtual std::string print() const = 0;
+		[[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
+		[[nodiscard]] virtual std::unique_ptr<Command> flip() const = 0;
 
-		virtual bool equal_to(const Command* rhs) const = 0;
+		[[nodiscard]] virtual bool equal_to(const Command* rhs) const = 0;
 
-		bool operator==(const Command* rhs) const { return equal_to(rhs); }
-		bool operator!=(const Command* rhs) const { return !equal_to(rhs); }
+		[[nodiscard]] virtual CommandType get_type() const noexcept { return CT_None; }
+
+		[[nodiscard]] bool operator==(const Command* rhs) const { return equal_to(rhs); }
+		[[nodiscard]] bool operator!=(const Command* rhs) const { return !equal_to(rhs); }
 	};
 
 	struct Poke : public Command
 	{
 		Poke(RESID::reg8 o, RESID::reg8 v);
 
-		std::string print() const override;
-		std::unique_ptr<Command> clone() const override;
-		std::unique_ptr<Command> flip() const override;
+		[[nodiscard]] std::string print() const override;
+		[[nodiscard]] std::unique_ptr<Command> clone() const override;
+		[[nodiscard]] std::unique_ptr<Command> flip() const override;
 
-		bool equal_to(const Command* rhs) const override;
+		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 
-		RESID::reg8 offset{ 0 }, value{ 0 };
+		[[nodiscard]] virtual CommandType get_type() const noexcept override;
+
+		RESID::reg8 offset{0}, value{0};
 	};
 
 	struct Sample : public Command
 	{
-		Sample(size_t s);
+		Sample(std::size_t s);
 
-		std::string print() const override;
-		std::unique_ptr<Command> clone() const override;
-		std::unique_ptr<Command> flip() const override;
+		[[nodiscard]] std::string print() const override;
+		[[nodiscard]] std::unique_ptr<Command> clone() const override;
+		[[nodiscard]] std::unique_ptr<Command> flip() const override;
 
-		bool equal_to(const Command* rhs) const override;
+		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 
-		size_t size{ 0 };
+		[[nodiscard]] virtual CommandType get_type() const noexcept override;
+
+		std::size_t size{0};
 	};
 }
 

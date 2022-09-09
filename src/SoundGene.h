@@ -49,7 +49,7 @@ namespace IESFX
 			std::vector<std::tuple<T, T, T>> result;
 			for (T i = 0, index = 0; i < size(); ++i)
 			{
-				if (dynamic_cast<Sample*>(get(i)) != nullptr)
+				if (get(i)->get_type() == CT_Sample)
 				{
 					result.push_back(std::make_tuple(index, i, i - index));
 					index = i + 1;
@@ -68,7 +68,7 @@ namespace IESFX
 		auto end()	 { return _gene.end(); }
 
 		Command* get(size_t index) const noexcept { return _gene[index].get(); }
-		Command* get(size_t index) noexcept	   { return _gene[index].get(); }
+		Command* get(size_t index) noexcept	{ return _gene[index].get(); }
 
 		void push(const Poke& poke)		{ _gene.push_back(poke.clone()); }
 		void push(const Sample& sample) { _gene.push_back(sample.clone()); }

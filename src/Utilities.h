@@ -92,11 +92,9 @@ namespace util
 	static std::vector<T> random(T size)
 	{
 		std::vector<T> result;
-		result.reserve(size);
+		result.resize(size);
 
-		for (T i = 0; i < size; ++i)
-			result.push_back(i);
-
+		std::iota(result.begin(), result.end(), 0);
 		std::shuffle(result.begin(), result.end(), dre);
 
 		return result;
