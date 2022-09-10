@@ -36,12 +36,13 @@ namespace IESFX
 		CT_Count
 	};
 
-	struct Command
+	class Command
 	{
+	public:
 		Command() = default;
 		virtual ~Command() = default;
 
-		[[nodiscard]] virtual std::string print() const = 0;
+		[[nodiscard]] virtual const std::string& print() const = 0;
 		[[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
 		[[nodiscard]] virtual std::unique_ptr<Command> flip() const = 0;
 
@@ -51,36 +52,56 @@ namespace IESFX
 
 		[[nodiscard]] bool operator==(const Command* rhs) const { return equal_to(rhs); }
 		[[nodiscard]] bool operator!=(const Command* rhs) const { return !equal_to(rhs); }
+
+	protected:
+		mutable std::string _print;
+		mutable bool _update_print{true};
 	};
 
-	struct Poke : public Command
+	class Poke : public Command
 	{
+	public:
 		Poke(RESID::reg8 o, RESID::reg8 v);
 
-		[[nodiscard]] std::string print() const override;
+		[[nodiscard]] const std::string& print() const override;
 		[[nodiscard]] std::unique_ptr<Command> clone() const override;
 		[[nodiscard]] std::unique_ptr<Command> flip() const override;
 
 		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 
-		[[nodiscard]] virtual CommandType get_type() const noexcept override;
+		[[nodiscard]] CommandType get_type() const noexcept override;
 
-		RESID::reg8 offset{0}, value{0};
+		[[nodiscard]] RESID::reg8 get_offset() const noexcept;
+		[[nodiscard]] RESID::reg8 get_value() const noexcept;
+
+		void set_offset(const RESID::reg8 offset);
+		void set_value(const RESID::reg8 value);
+
+		void add_value(const RESID::reg8 value);
+
+	private:
+		RESID::reg8 _offset{0}, _value{0};
 	};
 
-	struct Sample : public Command
+	class Sample : public Command
 	{
+	public:
 		Sample(std::size_t s);
 
-		[[nodiscard]] std::string print() const override;
+		[[nodiscard]] const std::string& print() const override;
 		[[nodiscard]] std::unique_ptr<Command> clone() const override;
 		[[nodiscard]] std::unique_ptr<Command> flip() const override;
 
 		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 
-		[[nodiscard]] virtual CommandType get_type() const noexcept override;
+		[[nodiscard]] CommandType get_type() const noexcept override;
 
-		std::size_t size{0};
+		[[nodiscard]] RESID::reg8 get_size() const noexcept;
+		void set_size(const std::size_t size);
+		void add_size(const std::size_t size);
+
+	private:
+		std::size_t _size{0};
 	};
 }
 

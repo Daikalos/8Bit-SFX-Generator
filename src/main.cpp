@@ -28,5 +28,5 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
     Application::SetCompatibleTextRenderingDefault(true);
     Application::Run(gcnew MainForm());
 
-    return 0;
+    return EXIT_SUCCESS;
 }

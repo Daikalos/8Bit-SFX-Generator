@@ -155,7 +155,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	// adjust fitness based on similiarity	TODO: FIX BIAS TOWARDS CERTAIN MODELS, EVERYONE HAS SIMILIARITY TO THE FIRST SEGMENT
 	// 
 
-	std::vector<std::tuple<int, int, int>> c_range = candidate.range<int>();
+	auto c_range = candidate.range();
 
 	if (c_range.size() == 0)
 		return;
@@ -163,7 +163,7 @@ void Evolution::evaluate(SoundGene& candidate)
 	std::for_each(_models.begin(), _models.end(),
 		[&candidate, &simi_mul, &c_range](const SoundGene& model)
 		{
-			std::vector<std::tuple<int, int, int>> m_range = model.range<int>();
+			auto m_range = model.range();
 
 			double score = 0.0;
 			for (int si = 0; si < std::min<int>(c_range.size(), m_range.size()); ++si) // do in reverse since only the last specified value matters
@@ -171,16 +171,16 @@ void Evolution::evaluate(SoundGene& candidate)
 				std::vector<bool> m_offsets(25, false);
 				for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 				{
-					Poke* m_poke = static_cast<Poke*>(model.get(j));
-					if (!m_offsets[m_poke->offset])
+					const Poke* m_poke = static_cast<const Poke*>(model.get(j));
+					if (!m_offsets[m_poke->get_offset()])
 					{
-						m_offsets[m_poke->offset] = true;
+						m_offsets[m_poke->get_offset()] = true;
 						for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 						{
 							Poke* c_poke = static_cast<Poke*>(candidate.get(k));
-							if (m_poke->offset == c_poke->offset)
+							if (m_poke->get_offset() == c_poke->get_offset())
 							{
-								double val_diff = std::abs((int)m_poke->value - (int)c_poke->value);
+								double val_diff = std::abs((int)m_poke->get_value() - (int)c_poke->get_value());
 								double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
 								score += val_ratio;
@@ -191,10 +191,10 @@ void Evolution::evaluate(SoundGene& candidate)
 					}
 				}
 
-				Sample* lhs_sample = static_cast<Sample*>(model.get(std::get<1>(m_range[si])));
-				Sample* rhs_sample = static_cast<Sample*>(candidate.get(std::get<1>(c_range[si])));
+				const Sample* lhs_sample = static_cast<const Sample*>(model.get(std::get<1>(m_range[si])));
+				const Sample* rhs_sample = static_cast<const Sample*>(candidate.get(std::get<1>(c_range[si])));
 
-				double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
+				double smpl_diff = std::abs((int)lhs_sample->get_size() - (int)rhs_sample->get_size());
 				double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 				score += smpl_ratio;
@@ -222,7 +222,7 @@ void Evolution::evaluate(SoundGene& candidate)
 			{
 				Sample* sample = static_cast<Sample*>(command);
 
-				time += (double)util::time(sample->size);
+				time += (double)util::time(sample->get_size());
 
 				if (poke_count == 0)
 					candidate._fitness += -smpl_mul; // no pokes given before sample is bad
@@ -373,7 +373,7 @@ void Evolution::mutation()
 					gene.set(mp, nullptr);
 
 				if (util::random() <= ADD_MUTATION)
-					gene.insert(mp, { util::ropoke(), util::rvpoke() });
+					gene.insert(mp, &Poke(util::ropoke(), util::rvpoke()));
 
 				Command* command = gene.get(mp);
 
@@ -389,12 +389,12 @@ void Evolution::mutation()
 						Poke* poke = static_cast<Poke*>(command);
 
 						if (util::random() <= OFFSET_MUTATION)
-							poke->offset = util::ropoke();
+							poke->set_offset(util::ropoke());
 
 						int change = util::random_arg<int>(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5);
 						uint32_t abs = static_cast<uint32_t>(std::abs(change));
 
-						poke->value += (poke->value > abs) ? change : abs;
+						poke->add_value((poke->get_value() > abs) ? change : abs);
 					}
 					break;
 				case CT_Sample:
@@ -404,7 +404,7 @@ void Evolution::mutation()
 						int change = util::random_arg<int>(-50, -25, 25, 50);
 						size_t abs = static_cast<size_t>(std::abs(change));
 
-						sample->size += (sample->size > abs) ? change : abs;
+						sample->add_size((sample->get_size() > abs) ? change : abs);
 					}
 					break;
 				}
@@ -418,8 +418,8 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 {
 	double result = 0.0;
 
-	std::vector<std::tuple<int, int, int>> lhs_range = lhs.range<int>();
-	std::vector<std::tuple<int, int, int>> rhs_range = rhs.range<int>();
+	auto lhs_range = lhs.range();
+	auto rhs_range = rhs.range();
 
 	if (lhs_range.size() == 0 && rhs_range.size() == 0)
 		return 1.0;
@@ -433,16 +433,16 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 		std::vector<bool> lhs_offsets(25, false);
 		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
 		{
-			Poke* lhs_poke = static_cast<Poke*>(lhs.get(j));
-			if (!lhs_offsets[lhs_poke->offset])
+			const Poke* lhs_poke = static_cast<const Poke*>(lhs.get(j));
+			if (!lhs_offsets[lhs_poke->get_offset()])
 			{
-				lhs_offsets[lhs_poke->offset] = true;
+				lhs_offsets[lhs_poke->get_offset()] = true;
 				for (int k = std::get<1>(rhs_range[si]) - 1; k >= std::get<0>(rhs_range[si]); --k)
 				{
-					Poke* rhs_poke = static_cast<Poke*>(rhs.get(k));
-					if (lhs_poke->offset == rhs_poke->offset)
+					const Poke* rhs_poke = static_cast<const Poke*>(rhs.get(k));
+					if (lhs_poke->get_offset() == rhs_poke->get_offset())
 					{
-						double val_diff = std::abs((int)lhs_poke->value - (int)rhs_poke->value);
+						double val_diff = std::abs((int)lhs_poke->get_value() - (int)rhs_poke->get_value());
 						double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
 						result += val_ratio;
@@ -453,10 +453,10 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 			}
 		}
 
-		Sample* lhs_sample = static_cast<Sample*>(lhs.get(std::get<1>(lhs_range[si])));
-		Sample* rhs_sample = static_cast<Sample*>(rhs.get(std::get<1>(rhs_range[si])));
+		const Sample* lhs_sample = static_cast<const Sample*>(lhs.get(std::get<1>(lhs_range[si])));
+		const Sample* rhs_sample = static_cast<const Sample*>(rhs.get(std::get<1>(rhs_range[si])));
 
-		double smpl_diff = std::abs((int)lhs_sample->size - (int)rhs_sample->size);
+		double smpl_diff = std::abs((int)lhs_sample->get_size() - (int)rhs_sample->get_size());
 		double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 		result += smpl_ratio;

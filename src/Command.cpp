@@ -22,13 +22,20 @@
 using namespace IESFX;
 
 Poke::Poke(RESID::reg8 o, RESID::reg8 v) 
-	: offset(o), value(v) {}
+	: _offset(o), _value(v) {}
 
-std::string Poke::print() const
+const std::string& Poke::print() const
 {
-	return std::string("poke " +
-		std::to_string(offset) + " " +
-		std::to_string(value));
+	if (_update_print)
+	{
+		_print = std::string("poke " +
+			std::to_string(_offset) + " " +
+			std::to_string(_value));
+
+		_update_print = false;
+	}
+
+	return _print;
 }
 std::unique_ptr<Command> Poke::clone() const
 {
@@ -45,18 +52,54 @@ bool Poke::equal_to(const Command* rhs) const
 
 	const Poke* poke = static_cast<const Poke*>(rhs);
 
-	return this->offset == poke->offset && this->value == poke->value;
+	return _offset == poke->_offset && _value == poke->_value;
 }
-[[nodiscard]] CommandType Poke::get_type() const noexcept
+CommandType Poke::get_type() const noexcept
 {
 	return CT_Poke;
 }
 
-Sample::Sample(std::size_t s) : size(s) {}
-
-std::string Sample::print() const
+RESID::reg8 Poke::get_offset() const noexcept
 {
-	return std::string("sample " + std::to_string(size));
+	return _offset;
+}
+RESID::reg8 Poke::get_value() const noexcept
+{
+	return _value;
+}
+
+void Poke::set_offset(const RESID::reg8 offset)
+{
+	_offset = offset;
+	_update_print = true;
+}
+void Poke::set_value(const RESID::reg8 value)
+{
+	_value = value;
+	_update_print = true;
+}
+
+void Poke::add_value(const RESID::reg8 value)
+{
+	set_value(_value + value);
+}
+
+//////////////////////////////
+
+Sample::Sample(std::size_t s) 
+	: _size(s) {}
+
+const std::string& Sample::print() const
+{
+	if (_update_print)
+	{
+		_print = std::string("sample " + 
+			std::to_string(_size));
+
+		_update_print = false;
+	}
+
+	return _print;
 }
 std::unique_ptr<Command> Sample::clone() const
 {
@@ -73,10 +116,25 @@ bool Sample::equal_to(const Command* rhs) const
 
 	const Sample* sample = static_cast<const Sample*>(rhs);
 
-	return this->size == sample->size;
+	return _size == sample->_size;
 }
 
-[[nodiscard]] CommandType Sample::get_type() const noexcept
+CommandType Sample::get_type() const noexcept
 {
 	return CT_Sample;
+}
+
+RESID::reg8 Sample::get_size() const noexcept
+{
+	return _size;
+}
+
+void Sample::set_size(const std::size_t size)
+{
+	_size = size;
+	_update_print = true;
+}
+void Sample::add_size(const std::size_t size)
+{
+	set_size(_size + size);
 }

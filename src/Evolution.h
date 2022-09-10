@@ -36,7 +36,6 @@ namespace IESFX
 	{
 	public:
 		Evolution(double mutation_rate, double mutation_size);
-		~Evolution() = default;
 
 		void set_mutation_rate(double value) { _mutation_rate = value; }
 		void set_mutation_size(double value) { _mutation_size = value; }

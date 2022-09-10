@@ -37,7 +37,7 @@ SoundData::~SoundData()
 
 std::vector<sf::Int16>& IESFX::SoundData::operator()(const SoundGene& gene)
 {
-	Interpreter().read_str(this, gene.output());
+	Interpreter().read_str(this, gene.print());
 	_samples.resize(util::get_size(_size), 0);
 
 	for (auto& comm : _commands)
