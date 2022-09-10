@@ -28,6 +28,7 @@
 #include <regex>
 #include <map>
 #include <sstream>
+#include <string_view>
 
 #include "Interpretable.h"
 
@@ -53,10 +54,9 @@ namespace IESFX
 	private:
 		void evaluate(std::vector<std::string>& tokens);
 
-		std::string peek();
-		std::string peek(int steps);
+		std::string peek(const int steps = 0);
 
-		void consume(const std::string& token);
+		void consume(const std::string_view& token);
 
 		void parse_Stmt();
 		void parse_AssgStmt();

@@ -34,12 +34,7 @@ void Interpreter::evaluate(std::vector<std::string>& tokens)
     parse_Stmt();
 }
 
-std::string Interpreter::peek()
-{
-    return peek(0);
-}
-
-std::string Interpreter::peek(int steps)
+std::string Interpreter::peek(const int steps)
 {
     if (_position + steps >= _tokens.size())
         return "\u0003"; // End of text
@@ -50,21 +45,21 @@ std::string Interpreter::peek(int steps)
     return _tokens[_position + steps];
 }
 
-void Interpreter::consume(const std::string& token)
+void Interpreter::consume(const std::string_view& token)
 {
     std::string next_token = peek();
 
     if (next_token.empty())
         throw std::runtime_error("Consumed past last token");
     if (next_token != token)
-        throw std::runtime_error("Could not consume token '" + token + "'");
+        throw std::runtime_error("Could not consume token '" + std::string(token) + "'");
 
     ++_position;
 }
 
 void Interpreter::parse_Stmt()
 {
-    std::string next_token = peek();
+    const std::string next_token = peek();
     if (is_variable(next_token))
     {
         consume(next_token);
@@ -94,11 +89,9 @@ void Interpreter::parse_AssgStmt()
 }
 void Interpreter::parse_PokeStmt()
 {
-    std::string next_token = peek();
-
     unsigned int offset = 0;
     {
-        std::string next_token = peek();
+        const std::string next_token = peek();
         consume(next_token);
 
         if (is_integer(next_token))
@@ -109,7 +102,7 @@ void Interpreter::parse_PokeStmt()
 
     unsigned int value = 0;
     {
-        std::string next_token = peek();
+        const std::string next_token = peek();
         consume(next_token);
 
         if (is_integer(next_token))
@@ -122,7 +115,7 @@ void Interpreter::parse_PokeStmt()
 }
 void Interpreter::parse_SampleStmt()
 {
-    std::string next_token = peek();
+    const std::string next_token = peek();
     consume(next_token);
 
     if (is_integer(next_token))
