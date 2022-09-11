@@ -19,6 +19,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 #include <fstream>
 
 #ifdef NATIVE_CODE
@@ -52,7 +53,7 @@ namespace IESFX
 		bool retry();
 
 		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
-		std::vector<SoundGene> output(size_t size, size_t step);
+		std::vector<SoundGene> output(size_t size, size_t step) const;
 
 		bool save(const std::string& filename) const;
 		int load(const std::string& filename);

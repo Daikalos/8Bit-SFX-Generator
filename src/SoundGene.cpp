@@ -40,9 +40,7 @@ void SoundGene::resize(const size_t size)
 }
 void SoundGene::shrink()
 {
-	_gene.erase(std::remove_if(
-		std::execution::par_unseq,
-		_gene.begin(), _gene.end(),
+	_gene.erase(std::remove_if(_gene.begin(), _gene.end(),
 		[](const std::unique_ptr<Command>& command)
 		{
 			return command.get() == nullptr;

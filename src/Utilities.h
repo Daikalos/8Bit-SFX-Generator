@@ -27,20 +27,22 @@
 
 #include <random>
 #include <chrono>
+#include <vector>
+#include <array>
 
 #include "Config.h"
 
 namespace util
 {
 	template<class T>
-	static double scale(T value, T min, T max)
+	static constexpr double scale(T value, T min, T max)
 	{
 		return (value - min) / static_cast<double>(max - min);
 	}
 
 #ifdef NATIVE_CODE
 	template<class T>
-	static double map(T x, T in_min, T in_max, T out_min, T out_max)
+	static constexpr double map(T x, T in_min, T in_max, T out_min, T out_max)
 	{
 		return ((out_max - out_min) / static_cast<double>(in_max - in_min)) * (x - in_min) + out_min;
 	}
@@ -51,25 +53,28 @@ namespace util
 		return size;
 	}
 
-	static int get_cycles(size_t size)
+	static int get_cycles(const size_t size)
 	{
 		return std::lround((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
-	static size_t get_size(size_t size)
+	static constexpr size_t get_size(const size_t size)
 	{
 		return size * IESFX::SAMPLES_PER_CLOCK;
 	}
 
-	static float time(size_t size)
+	static constexpr float time(const size_t size)
 	{
 		return get_size(size) / (float)IESFX::SAMPLE_RATE;
 	}
 
 	template<typename T> 
-	static T clamp(T val, const T min, const T max)
+	static constexpr T clamp(T val, const T min, const T max)
 	{
-		val = (val < min) ? min : val;
-		val = (val > max) ? max : val;
+		if (val < min)
+			return min;
+		if (val > max)
+			return max;
+
 		return val;
 	}
 
@@ -81,18 +86,17 @@ namespace util
 		std::uniform_real_distribution<T> uid(min, max);
 		return (T)uid(dre);
 	}
-	template<typename T, typename std::enable_if_t<!std::is_floating_point_v<T>>* = nullptr>
+	template<typename T, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	static T random(T min, T max)
 	{
 		std::uniform_int_distribution<T> uid(min, max);
 		return (T)uid(dre);
 	}
 
-	template<typename T, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	static std::vector<T> random(T size)
+	template<typename T, std::size_t sz, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	static auto random()
 	{
-		std::vector<T> result;
-		result.resize(size);
+		std::array<T, sz> result;
 
 		std::iota(result.begin(), result.end(), 0);
 		std::shuffle(result.begin(), result.end(), dre);

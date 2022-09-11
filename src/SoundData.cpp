@@ -43,7 +43,7 @@ std::vector<sf::Int16>& IESFX::SoundData::operator()(const SoundGene& gene)
 	for (auto& comm : _commands)
 		comm();
 
-	memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU));
+	memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU)); // sounds usually have some large spike in the beginning... cause is unknown
 
 	return _samples;
 }
