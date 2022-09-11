@@ -46,7 +46,7 @@ namespace IESFX
 
 		bool active() const { return _active; }
 
-		void add_model(SoundGene& gene);
+		void add_model(const SoundGene& gene);
 		void remove_model(const SoundGene& gene);
 
 		void reset();

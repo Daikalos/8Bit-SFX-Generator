@@ -78,7 +78,7 @@ namespace IESFX
 		std::vector<std::string> _tokens;
 
 		std::string _var; // Current evaluated variable that is to be assigned a value
-		std::map<std::string, int> _variables;
+		std::unordered_map<std::string, int> _variables;
 
 		Interpretable* _ptr{nullptr};
 

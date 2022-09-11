@@ -20,17 +20,16 @@
 
 using namespace IESFX;
 
-void Sound::create_buffer(SoundGene& gene)
+void Sound::create_buffer(const SoundGene& gene)
 {
 	_gene = gene;
 
-	std::vector<sf::Int16> buffer(SoundData()(gene));
+	std::vector<sf::Int16> buffer = SoundData().GetSamples(gene);
 
 	if (buffer.size() <= 128)
 		buffer.resize(128, 0);
 
-	_buffer.loadFromSamples(buffer.data(), buffer.size(), 1, SAMPLE_RATE);
-	_sound.setBuffer(_buffer);
+	load_buffer(buffer.data(), buffer.size());
 }
 
 void Sound::load_buffer(const sf::Int16* samples, sf::Uint64 sample_count, unsigned int channel_count, unsigned int sample_rate)
@@ -59,6 +58,29 @@ void Sound::pause()
 void Sound::stop()
 {
 	_sound.stop();
+}
+
+const SoundGene& Sound::get() const 
+{ 
+	return _gene; 
+}
+
+const sf::Int16* Sound::buffer_samples() const 
+{ 
+	return _buffer.getSamples(); 
+}
+sf::Uint64 Sound::buffer_count() const 
+{ 
+	return _buffer.getSampleCount();
+}
+
+float Sound::time() const 
+{ 
+	return _sound.getPlayingOffset().asSeconds(); 
+}
+float Sound::duration() const 
+{ 
+	return _buffer.getDuration().asSeconds(); 
 }
 
 bool Sound::save(const std::string& filename) const

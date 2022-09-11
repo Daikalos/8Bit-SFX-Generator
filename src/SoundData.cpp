@@ -22,7 +22,7 @@
 using namespace IESFX;
 
 SoundData::SoundData()
-	: _sid(new RESID::SID()), _size(0), _index(0)
+	: _sid(std::make_unique<RESID::SID>())
 {
 	_sid->set_chip_model(CHIP_MODEL);
 
@@ -30,20 +30,18 @@ SoundData::SoundData()
 	_sid->enable_external_filter(true);
 }
 
-SoundData::~SoundData()
+const std::vector<sf::Int16>& SoundData::GetSamples(const SoundGene& gene)
 {
-	delete _sid;
-}
+	if (_samples.empty())
+	{
+		Interpreter().read_str(this, gene.print());
+		_samples.resize(util::get_size(_size), 0);
 
-std::vector<sf::Int16>& IESFX::SoundData::operator()(const SoundGene& gene)
-{
-	Interpreter().read_str(this, gene.print());
-	_samples.resize(util::get_size(_size), 0);
+		for (auto& comm : _commands)
+			comm();
 
-	for (auto& comm : _commands)
-		comm();
-
-	memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU)); // sounds usually have some large spike in the beginning... cause is unknown
+		memset(_samples.data(), 0, std::min<size_t>(_samples.size(), 1024LLU)); // sounds usually have some large spike in the beginning... cause is unknown
+	}
 
 	return _samples;
 }
@@ -58,7 +56,7 @@ void SoundData::read_sample(size_t size)
 	_size += size;
 }
 
-void IESFX::SoundData::poke(RESID::reg8 offset, RESID::reg8 value)
+void SoundData::poke(RESID::reg8 offset, RESID::reg8 value)
 {
 	_sid->write(offset, value);
 }

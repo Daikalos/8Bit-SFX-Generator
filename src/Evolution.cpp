@@ -31,7 +31,7 @@ Evolution::Evolution(double mutation_rate, double mutation_size)
 		interpreter.read_str(&_models[i], examples[random[i]]);
 }
 
-void Evolution::add_model(SoundGene& gene)
+void Evolution::add_model(const SoundGene& gene)
 {
 	_models.push_back(gene);
 }

@@ -239,8 +239,9 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
         std::vector<std::string> tokens;
 
         std::string line = lines.front();
-        std::string stmt = std::string();
+        std::string stmt;
 
+        stmt.reserve(line.size());
         for (const char& c : line)
         {
             if (c == ' ')
@@ -248,7 +249,7 @@ void Interpreter::tokenize(std::queue<std::string>& lines)
                 if (!stmt.empty())
                 {
                     tokens.push_back(stmt);
-                    stmt = std::string();
+                    stmt.clear();
                 }
             }
             else

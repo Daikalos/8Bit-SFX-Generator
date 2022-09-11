@@ -20,6 +20,7 @@
 
 #include <resid/sid.h>
 #include <SFML/Config.hpp>
+#include <memory>
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -37,30 +38,33 @@ namespace IESFX
 	{
 	public:
 		SoundData();
-		~SoundData();
 
-		std::vector<sf::Int16>& operator()(const SoundGene& gene);
+		const std::vector<sf::Int16>& GetSamples(const SoundGene& gene);
 
-	protected:
+	private:
+		template<typename Func>
+		void enqueue(Func&& func);
+
+		void poke(RESID::reg8 offset, RESID::reg8 value);
+		void sample(size_t size);
+
 		void read_poke(RESID::reg8 offset, RESID::reg8 value) override;
 		void read_sample(size_t size) override;
 
 	private:
-		void poke(RESID::reg8 offset, RESID::reg8 value);
-		void sample(size_t size);
-
-		void enqueue(std::function<void()> action)
-		{
-			_commands.push_back(action);
-		}
-
-	private:
-		RESID::SID* _sid;
+		std::unique_ptr<RESID::SID> _sid;
 
 		std::vector<std::function<void()>> _commands;
 		std::vector<sf::Int16> _samples;
 
-		size_t _size;
-		int _index;
+		size_t _size{0};
+		int	_index{0};
+
 	};
+
+	template<typename Func>
+	void SoundData::enqueue(Func&& func)
+	{
+		_commands.emplace_back(std::forward<Func>(func));
+	}
 }

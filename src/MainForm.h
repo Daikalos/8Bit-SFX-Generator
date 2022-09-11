@@ -969,7 +969,7 @@ namespace IESFX
 		}
 		void player_update(Sound* sounds)
 		{
-			size_t offset = 35;
+			constexpr std::size_t offset = 35;
 
 			for (int i = 0; i < _soundUCs->Length; ++i)
 			{
