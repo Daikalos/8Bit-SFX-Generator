@@ -34,7 +34,7 @@
 
 namespace IESFX
 {
-	class Interpreter
+	class Interpreter final
 	{
 	public:
 		Interpreter() = default;

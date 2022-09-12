@@ -113,10 +113,10 @@ void Player::pause()
 		_sound->pause();
 }
 
-void Player::update(std::vector<SoundGene>& genes)
+void Player::update(std::vector<const SoundGene*>& genes)
 {
 	for (int i = 0; i < genes.size(); ++i)
-		_sounds[i].create_buffer(genes[i]);
+		_sounds[i].create_buffer(*genes[i]);
 
 	_callback_update(_sounds);
 }

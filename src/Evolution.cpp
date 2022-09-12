@@ -49,7 +49,7 @@ void Evolution::remove_model(const SoundGene& gene)
 int Evolution::execute(size_t max_generations, double max_quality)
 {
 	if (_models.size() == 0)
-		return -1;
+		return EXIT_FAILURE;
 
 	_active = true;
 
@@ -65,10 +65,11 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	while (_generations < _max_generations)
 	{
-		std::for_each(
-			std::execution::par_unseq,
-			_population.begin(),
-			_population.end(),
+		if (_shutdown)
+			return EXIT_SUCCESS;
+
+		std::for_each(std::execution::par_unseq, 
+			_population.begin(), _population.end(),
 			[this](SoundGene& candidate) // evaluate each candidate
 			{
 				evaluate(candidate);
@@ -76,15 +77,17 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 		// sort in descending order by fitness value to allow for a rank-based selection
 		//
-		std::sort(std::execution::par_unseq,
-			_population.begin(), _population.end());
+		std::sort(std::execution::par_unseq, 
+			_proxy.begin(), _proxy.end(), 
+			[](const Wrapper& lhs, const Wrapper& rhs)
+			{
+				return lhs > rhs;
+			});
 
-		double sum = std::accumulate(
-			_population.begin(), 
-			_population.begin() + AVERAGE_SAMPLE, 0.0, 
-			[](const double val, const SoundGene& gene)
+		double sum = std::accumulate(_proxy.begin(), _proxy.begin() + AVERAGE_SAMPLE, 0.0,
+			[](const double val, const Wrapper& wrap)
 			{ 
-				return val + gene._fitness;
+				return val + wrap.gene->_fitness;
 			});
 
 		_quality = (sum / AVERAGE_SAMPLE);
@@ -104,8 +107,13 @@ int Evolution::execute(size_t max_generations, double max_quality)
 	// sort before finished
 	//
 	std::sort(std::execution::par_unseq,
-		_population.begin(), _population.end());
+		_population.begin(), _population.end(),
+		[](const SoundGene& lhs, const SoundGene& rhs)
+		{
+			return lhs > rhs;
+		});
 
+	_proxy.clear();
 	_models.clear();
 
 	_generations = 0;
@@ -113,12 +121,14 @@ int Evolution::execute(size_t max_generations, double max_quality)
 
 	_active = false;
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void Evolution::initialize()
 {
 	_population = std::vector<SoundGene>(POPULATION_SIZE);
+	_proxy = std::vector<Wrapper>(POPULATION_SIZE);
+
 	_population.resize(POPULATION_SIZE - _models.size());
 
 	std::for_each(
@@ -141,8 +151,16 @@ void Evolution::initialize()
 			}
 		});
 
-	for (size_t i = 0; i < _models.size(); ++i)
-		_population.push_back(_models[i]);
+	_population.insert(_population.end(), _models.begin(), _models.end());
+
+	std::for_each(
+		std::execution::par_unseq,
+		_population.begin(), _population.end(),
+		[this](SoundGene& gene)
+		{
+			const std::size_t i = std::distance(_population.data(), &gene);
+			_proxy[i].gene = &gene;
+		});
 }
 
 void Evolution::evaluate(SoundGene& candidate)
@@ -253,16 +271,17 @@ void Evolution::evaluate(SoundGene& candidate)
 
 void Evolution::selection()
 {
-	std::for_each(std::execution::par_unseq,
-		_population.begin(), _population.end(),
-		[this](SoundGene& gene)
+	std::for_each(
+		std::execution::par_unseq,
+		_proxy.begin(), _proxy.end(),
+		[this](const Wrapper& wrap)
 		{
-			const size_t i = &gene - _population.data();
+			const size_t i = &wrap - _proxy.data();
 
 			double chance = (i + 1) / (double)POPULATION_SIZE;
 
 			if (util::random() + 0.4 <= chance) // +0.4 to give better chance for lower fitness to survive
-				gene._dead = true;
+				wrap.gene->_dead = true;
 		});
 
 	_population.erase(std::remove_if(
@@ -273,13 +292,35 @@ void Evolution::selection()
 			return gene._dead && _population.size() > 2;
 		}), _population.end());
 
+	std::for_each(
+		std::execution::par_unseq,
+		_population.begin(), _population.end(),
+		[this](SoundGene& gene)
+		{
+			const std::size_t i = std::distance(_population.data(), &gene);
+			_proxy[i].gene = &gene;
+		});
+
+	_proxy.resize(_population.size());
+
 	if (_population.size() % 2 != 0) // remove worst lone parent to keep things even for creating offspring
+	{
+		auto it = std::min_element(_proxy.begin(), _proxy.end());
+
+		std::iter_swap(it, _proxy.end() - 1);
+		_proxy.pop_back();
+
+		const SoundGene* worst = it->gene;
+		const std::size_t i = worst - _population.data();
+
+		std::iter_swap(_population.begin() + i, _population.end() - 1);
 		_population.pop_back();
+	}
 }
 
 void Evolution::crossover()
 {
-	size_t elite = _population.size();
+	const size_t elite = _population.size();
 	_offspring_size = POPULATION_SIZE - elite;
 
 	while (_population.size() != POPULATION_SIZE)
@@ -327,8 +368,8 @@ void Evolution::crossover()
 			child1.shrink();
 		}
 
-		_population.push_back(std::move(child0)); // add new children to the population
-		_population.push_back(std::move(child1));
+		_proxy.emplace_back(_population.emplace_back(std::move(child0))); // add new children to the population
+		_proxy.emplace_back(_population.emplace_back(std::move(child1)));
 
 		// SINGLE POINT ALT 2 
 		//
@@ -357,8 +398,7 @@ void Evolution::crossover()
 void Evolution::mutation()
 {
 	std::for_each(std::execution::par_unseq,
-		_population.begin() + (POPULATION_SIZE - _offspring_size),
-		_population.end(),
+		_population.begin() + (POPULATION_SIZE - _offspring_size), _population.end(),
 		[this](SoundGene& gene) 
 		{
 			if (util::random() > _mutation_rate || gene.size() == 0)
@@ -498,17 +538,17 @@ bool Evolution::retry()
 	return true;
 }
 
-std::vector<SoundGene> Evolution::output(size_t size, size_t step) const
+std::vector<const SoundGene*> Evolution::output(size_t size, size_t step) const
 {
-	std::vector<SoundGene> genes;
+	std::vector<const SoundGene*> genes;
 	genes.reserve(size);
 
 	for (size_t i = 0; i < size; ++i)
 	{
 		if ((step + i) < 0 || (step + i) >= _population.size())
-			return std::vector<SoundGene>();
+			return std::vector<const SoundGene*>();
 
-		genes.push_back(_population[step + i]);
+		genes.push_back(&_population[step + i]);
 	}
 
 	return genes;
@@ -546,14 +586,14 @@ int Evolution::load(const std::string& filename)
 	{
 		_models = std::move(genes);
 
-		if (_models.size() != 0)
+		if (!_models.empty())
 			return 0;
 	}
 	else if (genes.size() >= USABLE_POPULATION)
 	{
 		_population = std::move(genes);
 
-		if (_population.size() != 0)
+		if (!_population.empty())
 			return 1;
 	}
 

@@ -34,7 +34,7 @@
 
 namespace IESFX
 {
-	class SoundData : public Interpretable
+	class SoundData final : public Interpretable
 	{
 	public:
 		SoundData();

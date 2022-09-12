@@ -60,7 +60,7 @@ namespace IESFX
 		void play();
 		void pause();
 
-		void update(std::vector<SoundGene>& genes);
+		void update(std::vector<const SoundGene*>& genes);
 
 		size_t position() { return _position; }
 		bool active() { return _is_playing; }

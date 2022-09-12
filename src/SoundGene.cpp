@@ -28,6 +28,11 @@ SoundGene::SoundGene(const SoundGene& rhs)
 	for (size_t i = 0; i < rhs.size(); ++i)
 		_gene.push_back(rhs.get(i)->clone());
 }
+SoundGene::SoundGene(SoundGene&& rhs) noexcept
+	: _gene(std::move(rhs._gene)), _fitness(rhs._fitness), _dead(rhs._dead)
+{
+
+}
 
 std::size_t SoundGene::size() const
 {
@@ -137,6 +142,10 @@ void SoundGene::flip(const size_t index)
 }
 
 bool SoundGene::operator<(const SoundGene& rhs) const
+{
+	return _fitness < rhs._fitness;
+}
+bool SoundGene::operator>(const SoundGene& rhs) const
 {
 	return _fitness > rhs._fitness;
 }

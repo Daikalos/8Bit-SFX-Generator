@@ -58,7 +58,7 @@ namespace IESFX
 		mutable bool _update_print{true};
 	};
 
-	class Poke : public Command
+	class Poke final : public Command
 	{
 	public:
 		Poke(RESID::reg8 o, RESID::reg8 v);
@@ -83,7 +83,7 @@ namespace IESFX
 		RESID::reg8 _offset{0}, _value{0};
 	};
 
-	class Sample : public Command
+	class Sample final : public Command
 	{
 	public:
 		Sample(std::size_t s);

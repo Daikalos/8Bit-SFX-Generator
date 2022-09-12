@@ -246,107 +246,24 @@ namespace IESFX
 #pragma endregion
 
 	public:
-		void reset()
-		{
-			if (_selected)
-			{
-				_evolution->remove_model(_sound->get());
-				stripTool->BackColor = Color::White;
+		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void exportButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void soundWave_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e);
+		System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e);
 
-				_selected = false;
-			}
-		}
-		void set_color(Color color)
-		{
-			try
-			{
-				if (InvokeRequired)
-					Invoke(gcnew set_color_del(this, &SoundUC::sc), color);
-				else
-					sc(color);
-			}
-			catch (ObjectDisposedException^ exception)
-			{
-				// smells like shit
-			}
-		}
-		void add_data(array<short>^ samples)
-		{
-			if (InvokeRequired)
-				Invoke(gcnew add_data_del(this, &SoundUC::ad), samples);
-			else
-				ad(samples);
-		}
-		void set_time(float time, float duration)
-		{
-			if (InvokeRequired)
-				Invoke(gcnew set_time_del(this, &SoundUC::st), time, duration);
-			else
-				st(time, duration);
-		}
+		void reset();
+		void set_color(Color color);
+		void add_data(array<short>^ samples);
+		void set_time(float time, float duration);
 
-	private: 
+		void sc(Color color);
+		void ad(array<short>^ samples);
+		void st(float time, float duration);
+
+	private:
 		delegate void set_color_del(Color);
 		delegate void add_data_del(array<short>^);
 		delegate void set_time_del(float, float);
-
-		void sc(Color color)
-		{
-			soundWave->BackColor = color;
-		}
-		void ad(array<short>^ samples)
-		{
-			soundWave->Series[0]->Points->DataBindY(samples);
-		}
-		void st(float time, float duration)
-		{
-			timeLabel->Text = String::Format(System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(time), 1)) + "s";
-			durationLabel->Text = "/ " + String::Format(System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", Decimal::Round(System::Decimal(duration), 1)) + "s";
-		}
-
-		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!_player->active() || _player->position() != _id)
-				_player->play(_id);
-		}
-		System::Void exportButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			SaveFileDialog saveFileDialog;
-			saveFileDialog.Filter = "WAV File|*.wav|TXT File|*.txt";
-			saveFileDialog.Title = "Export";
-
-			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
-			{
-				if (!_player[_id]->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
-					MessageBox::Show("Could not export.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-			}
-		}
-		System::Void soundWave_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
-		{
-			if (e->Button != System::Windows::Forms::MouseButtons::Left)
-				return;
-
-			if (_evolution->active())
-			{
-				MessageBox::Show("System is not ready yet.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				return;
-			}
-
-			if (_selected = !_selected)
-			{
-				_evolution->add_model(_sound->get());
-				stripTool->BackColor = Color::LightBlue;
-			}
-			else
-			{
-				_evolution->remove_model(_sound->get());
-				stripTool->BackColor = Color::White;
-			}
-		}
-		System::Void timer_Tick(System::Object^ sender, System::EventArgs^ e)
-		{
-			st(_sound->time(), _sound->duration());
-		}
 
 	private:
 		size_t _id;

@@ -32,13 +32,13 @@
 
 namespace IESFX
 {
-	class SoundGene : public Interpretable
+	class SoundGene final : public Interpretable
 	{
 	public:
 		SoundGene() = default;
-		~SoundGene() = default;
 
 		SoundGene(const SoundGene& rhs);
+		SoundGene(SoundGene&& rhs) noexcept;
 
 		size_t size() const;
 
@@ -64,6 +64,7 @@ namespace IESFX
 		auto end() { return _gene.end(); }
 
 		bool operator<(const SoundGene& rhs) const;
+		bool operator>(const SoundGene& rhs) const;
 		bool operator==(const SoundGene& rhs) const;
 
 		SoundGene& operator=(const SoundGene& rhs);

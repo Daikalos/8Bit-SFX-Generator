@@ -560,519 +560,64 @@ namespace IESFX
 #pragma endregion
 
 	private: 
-		System::Void MainForm_Shown(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!initialize())
-				throw gcnew WarningException("failed to initialize system");
+		System::Void MainForm_Shown(System::Object^ sender, System::EventArgs^ e);
+		System::Void MainForm_Activated(System::Object^ sender, System::EventArgs^ e);
+		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e);
+		System::Void MainForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e);
 
-#if !BUILD
-			Heatmap::heatmap_3();
-#endif
-		}
-		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!ready())
-				return;
+		System::Void saveButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-			SaveFileDialog saveFileDialog;
-			saveFileDialog.Filter = "TXT File|*.txt";
-			saveFileDialog.Title = "Save current population";
+		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-			if (saveFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
-			{
-				update_status("Loading...");
+		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-				if (!_evolution->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
-					MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void retryButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-				update_status("Ready");
+		System::Void showPrevButton_Click(System::Object^ sender, System::EventArgs^ e);
+		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-				this->ActiveControl = nullptr;
-				this->Focus();
-			}
-		}
-		System::Void loadButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			if (!ready())
-				return;
+		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e);
+		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e);
 
-			OpenFileDialog openFileDialog;
-			openFileDialog.Filter = "TXT File|*.txt";
-			openFileDialog.Title = "Load a population";
+		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e);
 
-			if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
-			{
-				update_status("Loading...");
+		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e);
 
-				switch (_evolution->load(msclr::interop::marshal_as<std::string>(openFileDialog.FileName)))
-				{
-				case 0:
-				{
-					for (int i = 0; i < _soundUCs->Length; ++i)
-						_soundUCs[i]->reset();
+		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e);
 
-					_player->reset();
-
-					Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
-				}
-				break;
-				case 1:
-				{
-					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
-
-					if (genes.size() != 0)
-					{
-						for (int i = 0; i < _soundUCs->Length; ++i)
-							_soundUCs[i]->reset();
-
-						_player->reset();
-						_player->update(genes);
-
-						_prev = _old_step = _step = 0;
-						_color = Color::White;
-					}
-					else
-						MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				}
-				break;
-				default:
-					MessageBox::Show("Failed to load file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-					break;
-				}
-
-				update_evolution_status(_step + "/" + USABLE_POPULATION);
-				update_status("Ready");
-
-				this->ActiveControl = nullptr;
-				this->Focus();
-			}
-		}
-
-		System::Void playButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			if (!ready())
-				return;
-
-			if (_player->is_playing())
-				_player->iterate();
-
-			_player->set_is_playing(true);
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-		System::Void pauseButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			if (!ready())
-				return;
-
-			_player->set_is_playing(false);
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-		System::Void evolveButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!ready())
-				return;
-
-			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Do you wish to evolve using the selected candidates?",
-				"Evolve?",
-				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
-
-			if (result == System::Windows::Forms::DialogResult::Yes)
-			{
-				_player->reset();
-				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
-			}
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-		System::Void resetButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			if (!ready())
-				return;
-
-			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Resetting will discard all progress and present new random candidates.", 
-				"Reset?",
-				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
-
-			if (result == System::Windows::Forms::DialogResult::Yes)
-			{
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
-
-				_player->reset();
-				_evolution->reset();
-
-				Task::Factory->StartNew(gcnew Action(this, &MainForm::execute_evolution));
-
-				this->ActiveControl = nullptr;
-				this->Focus();
-			}
-		}
-		System::Void retryButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!ready())
-				return;
-
-			System::Windows::Forms::DialogResult result = MessageBox::Show(
-				"Retry will bring you back to your previous population.",
-				"Retry?",
-				MessageBoxButtons::YesNo, MessageBoxIcon::Question);
-
-			if (result == System::Windows::Forms::DialogResult::Yes)
-			{
-				update_status("Loading...");
-
-				if (_evolution->retry())
-				{
-					std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, _old_step);
-
-					if (genes.size() != 0)
-					{
-						for (int i = 0; i < _soundUCs->Length; ++i)
-							_soundUCs[i]->reset();
-
-						_player->reset();
-						_player->update(genes);
-
-						_prev = 0;
-						_step = _old_step;
-						_color = Color::White;
-					}
-					else
-						MessageBox::Show("No new candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				}
-				else
-					MessageBox::Show("No previous population to go back to.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-				update_evolution_status(_step + "/" + USABLE_POPULATION);
-				update_status("Ready");
-
-				this->ActiveControl = nullptr;
-				this->Focus();
-			}
-		}
-
-		System::Void showPrevButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (!ready())
-				return;
-
-			update_status("Loading...");
-
-			int next_step = _step - _soundUCs->Length;
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
-				(next_step = (next_step < 0) ? USABLE_POPULATION - _soundUCs->Length : next_step));
-
-			if (genes.size() != 0)
-			{
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
-
-				_player->reset();
-				_player->update(genes);
-
-				_step = next_step;
-			}
-			else
-				MessageBox::Show("No (previous) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-			update_evolution_status(_step + "/" + USABLE_POPULATION);
-			update_status("Ready");
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-		System::Void showNextButton_Click(System::Object^ sender, System::EventArgs^ e) 
-		{
-			if (!ready())
-				return;
-
-			update_status("Loading...");
-
-			int next_step = _step + _soundUCs->Length;
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 
-				(next_step = (next_step >= USABLE_POPULATION) ? 0 : next_step));
-			
-			if (genes.size() != 0)
-			{
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
-
-				_player->reset();
-				_player->update(genes);
-
-				_step = next_step;
-			}
-			else
-				MessageBox::Show("No (further) candidates could be presented.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-			update_evolution_status(_step + "/" + USABLE_POPULATION);
-			update_status("Ready");
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-		System::Void mutationSizeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-		{
-			mutationSizeLabel->Text = "- " + String::Format(
-				System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}", 
-				Decimal::Round(System::Decimal(mutation_size() * 100), 1)) + "%";
-
-			_evolution->set_mutation_size(mutation_size());
-		}
-		System::Void mutationRateSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e)
-		{
-			mutationRateLabel->Text = "- " + String::Format(
-				System::Globalization::CultureInfo::InvariantCulture, "{0:0.0}",
-				Decimal::Round(System::Decimal(mutation_rate() * 100), 1)) + "%";
-
-			_evolution->set_mutation_rate(mutation_rate());
-		}
-
-		System::Void volumeSlider_ValueChanged(System::Object^ sender, System::EventArgs^ e) 
-		{
-			_player->set_volume(volume());
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-		System::Void helpButton_Click(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (_info == nullptr || _info->IsDisposed)
-				_info = gcnew InfoForm();
-
-			if (!_info->Visible)
-				_info->Show();
-
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-		System::Void statusTimer_Tick(System::Object^ sender, System::EventArgs^ e)
-		{
-			if (_evolution->active())
-			{
-				update_evolution_status(
-					"Generation: " + String::Format(System::Globalization::CultureInfo::InvariantCulture, 
-						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->generation() * 100), 1)) + 
-					"% | Quality: " + String::Format(System::Globalization::CultureInfo::InvariantCulture,
-						"{0:0.0}", Decimal::Round(System::Decimal(_evolution->quality() * 100), 1)) + "%");
-			}
-		}
-
-		System::Void MainForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
-		{
-			_player->_callback_play -= play;
-			_player->_callback_done -= done;
-			_player->_callback_update -= update;
-
-			for (int i = 0; i < _soundUCs->Length; ++i)
-				delete _soundUCs[i];
-
-			_player->shutdown();
-		}
-
-		System::Void MainForm_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e)
-		{
-			switch (e->KeyCode)
-			{
-			case Keys::Left:
-			{
-				showPrevButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Right:
-			{
-				showNextButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Up:
-			{
-				playButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Down:
-			{
-				pauseButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Enter:
-			{
-				evolveButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Back:
-			{
-				retryButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			case Keys::Delete:
-			{
-				resetButton_Click(sender, e);
-				e->Handled = true;
-			}
-			break;
-			}
-		}
-
-		System::Void MainForm_Activated(System::Object^ sender, System::EventArgs^ e)
-		{
-			this->ActiveControl = nullptr;
-		}
-
-		System::Void mutationRateSlider_Enter(System::Object^ sender, System::EventArgs^ e)
-		{
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-		System::Void mutationSizeSlider_Enter(System::Object^ sender, System::EventArgs^ e)
-		{
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-		System::Void volumeSlider_Enter(System::Object^ sender, System::EventArgs^ e)
-		{
-			this->ActiveControl = nullptr;
-			this->Focus();
-		}
-
-	private:
-		void player_next()
-		{
-			int next = static_cast<int>(_player->position());
-
-			_soundUCs[_prev]->set_color(_color);
-			_color = _soundUCs[next]->soundWave->BackColor;
-			_soundUCs[next]->set_color(Color::FromArgb(255, 185, 185, 185));
-
-			_prev = next;
-		}
-		void player_done()
-		{
-			_soundUCs[_prev]->set_color(_color);
-		}
-		void player_update(Sound* sounds)
-		{
-			constexpr std::size_t offset = 35;
-
-			for (int i = 0; i < _soundUCs->Length; ++i)
-			{
-				size_t size = sounds[i].buffer_count();
-				const sf::Int16* buffer = sounds[i].buffer_samples();
-
-				array<short>^ samples = gcnew array<short>(size / offset);
-
-				for (size_t i = 0, j = 0; i < samples->Length && j < size; ++i, j += offset)
-					samples[i] = buffer[j];
-
-				_soundUCs[i]->add_data(samples);
-			}
-		}
-
-		bool ready()
-		{
-			if (_evolution->active())
-			{
-				MessageBox::Show("System is not ready yet.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				return false;
-			}
-			return true;
-		}
-
-		void update_status(String^ status)
-		{
-			if (this->InvokeRequired)
-				Invoke(gcnew update_status_del(this, &MainForm::us), status);
-			else
-				us(status);
-		}
-		void us(String^ status)
-		{
-			statusLabel->Text = status;
-			Refresh();
-		}
-
-		void update_evolution_status(String^ status)
-		{
-			if (this->InvokeRequired)
-				Invoke(gcnew update_status_del(this, &MainForm::ues), status);
-			else
-				ues(status);
-		}
-		void ues(String^ status)
-		{
-			evolutionStatusLabel->Text = status;
-			Refresh();
-		}
-
-		void execute_evolution()
-		{
-			update_status("Loading...");
-
-			int result = _evolution->execute();
-
-			if (result != 0)
-			{
-				switch (result)
-				{
-				case -1:
-					MessageBox::Show("Please select candidates for evolution first.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-					break;
-				}
-				update_status("Ready");
-				return;
-			}
-
-			std::vector<SoundGene> genes = _evolution->output(_soundUCs->Length, 0);
-
-			if (genes.size() != 0)
-			{
-				for (int i = 0; i < _soundUCs->Length; ++i)
-					_soundUCs[i]->reset();
-
-				_player->reset();
-				_player->update(genes);
-
-				_old_step = _step;
-
-				_prev = _step = 0;
-				_color = Color::White;
-			}
-			else
-				MessageBox::Show("Population could be created.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-
-			update_evolution_status(_step + "/" + USABLE_POPULATION);
-
-			update_status("Ready");
-		}
+		System::Void mutationRateSlider_Enter(System::Object^ sender, System::EventArgs^ e);
+		System::Void mutationSizeSlider_Enter(System::Object^ sender, System::EventArgs^ e);
+		System::Void volumeSlider_Enter(System::Object^ sender, System::EventArgs^ e);
 
 	public:
-		inline double mutation_size() { return util::scale(mutationSizeSlider->Value, 0, mutationSizeSlider->Maximum); }
-		inline double mutation_rate() { return util::scale(mutationRateSlider->Value, 0, mutationRateSlider->Maximum); }
-		inline float volume() { return (float)util::scale(volumeSlider->Value, volumeSlider->Minimum, volumeSlider->Maximum); }
+		double mutation_size();
+		double mutation_rate();
+		float volume();
+
+	private:
+		void player_next();
+		void player_done();
+		void player_update(Sound* sounds);
+
+		bool ready();
+
+		void update_status(String^ status);
+		void us(String^ status);
+
+		void update_evolution_status(String^ status);
+		void ues(String^ status);
+
+		void evolution_loop();
+
+	private:
+		bool initialize();
 
 	private:
 		delegate void update_status_del(String^ status);
 		delegate void update_evolution_status_del(String^ status);
-
-	private:
-		bool initialize();
 
 	private:
 		int _prev, _step, _old_step;
@@ -1082,7 +627,12 @@ namespace IESFX
 		InfoForm^ _info;
 
 		Player^ _player;
+
+		Thread^ _evolution_thread;
 		Evolution* _evolution;
+
+		volatile bool _run_evolution{false};
+		volatile bool _shutdown{false};
 
 		Player::callback_play^ play;
 		Player::callback_done^ done;

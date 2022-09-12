@@ -31,7 +31,7 @@
 
 namespace IESFX
 {
-	class Sound
+	class Sound final
 	{
 	public:
 		// only create buffer after write
@@ -62,6 +62,6 @@ namespace IESFX
 		sf::Sound _sound;
 		sf::SoundBuffer _buffer;
 
-		SoundGene _gene;
+		const SoundGene* _gene;
 	};
 }

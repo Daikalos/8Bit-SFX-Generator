@@ -22,7 +22,7 @@ using namespace IESFX;
 
 void Sound::create_buffer(const SoundGene& gene)
 {
-	_gene = gene;
+	_gene = &gene;
 
 	std::vector<sf::Int16> buffer = SoundData().GetSamples(gene);
 
@@ -62,7 +62,7 @@ void Sound::stop()
 
 const SoundGene& Sound::get() const 
 { 
-	return _gene; 
+	return *_gene; 
 }
 
 const sf::Int16* Sound::buffer_samples() const 
@@ -106,7 +106,7 @@ bool Sound::save_wav(const std::string& filename) const
 }
 bool Sound::save_txt(const std::string& filename) const
 {
-	if (_gene.size() == 0)
+	if (!_gene->size())
 		return false;
 
 	std::ofstream out;
@@ -114,8 +114,8 @@ bool Sound::save_txt(const std::string& filename) const
 
 	out << "// DO NOT REMOVE OR ADD ANY 'RUN' COMMANDS\n";
 
-	for (size_t i = 0; i < _gene.size(); ++i)
-		out << _gene.get(i)->print() + '\n';
+	for (size_t i = 0; i < _gene->size(); ++i)
+		out << _gene->get(i)->print() + '\n';
 
 	out << "RUN";
 

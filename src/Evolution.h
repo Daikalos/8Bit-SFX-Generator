@@ -33,8 +33,30 @@
 
 namespace IESFX
 {
-	class Evolution
+	class Evolution final
 	{
+	private:
+		struct Wrapper final
+		{
+			Wrapper() = default;
+			Wrapper(Wrapper& wrap) = default;
+			Wrapper(Wrapper&& wrap) = default;
+			Wrapper& operator=(Wrapper& wrap) = default;
+
+			Wrapper(SoundGene& gene) : gene(&gene) {}
+
+			bool operator<(const Wrapper& rhs) const
+			{
+				return *gene < *rhs.gene;
+			}
+			bool operator>(const Wrapper& rhs) const
+			{
+				return *gene > *rhs.gene;
+			}
+
+			SoundGene* gene{nullptr};
+		};
+
 	public:
 		Evolution(double mutation_rate, double mutation_size);
 
@@ -44,7 +66,8 @@ namespace IESFX
 		double generation() const { return (_max_generations == 0) ? 0.0 : _generations / (double)_max_generations; }
 		double quality() const { return (_max_quality == 0) ? 0.0 : _quality / _max_quality; }
 
-		bool active() const { return _active; }
+		bool active() const noexcept { return _active; }
+		void shutdown() { _shutdown = true; }
 
 		void add_model(const SoundGene& gene);
 		void remove_model(const SoundGene& gene);
@@ -53,7 +76,7 @@ namespace IESFX
 		bool retry();
 
 		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
-		std::vector<SoundGene> output(size_t size, size_t step) const;
+		std::vector<const SoundGene*> output(size_t size, size_t step) const;
 
 		bool save(const std::string& filename) const;
 		int load(const std::string& filename);
@@ -95,12 +118,14 @@ namespace IESFX
 			_mutation_rate, 
 			_mutation_size;
 		bool
-			_active{false};
+			_active{false},
+			_shutdown{false};
 
-		std::vector<SoundGene> _population;
-		std::vector<SoundGene> _models;
+		std::vector<SoundGene>	_population;
+		std::vector<SoundGene>	_models;
+		std::vector<Wrapper>	_proxy;
 
-		std::vector<SoundGene> _old_population;
+		std::vector<SoundGene>	_old_population;
 	};
 }
 
