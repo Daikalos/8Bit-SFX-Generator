@@ -307,13 +307,12 @@ void Evolution::selection()
 	{
 		auto it = std::min_element(_proxy.begin(), _proxy.end());
 
-		std::iter_swap(it, _proxy.end() - 1);
+		*it = _proxy.back();
 		_proxy.pop_back();
 
-		const SoundGene* worst = it->gene;
-		const std::size_t i = worst - _population.data();
+		const std::size_t i = it->gene - _population.data();
 
-		std::iter_swap(_population.begin() + i, _population.end() - 1);
+		_population[i] = std::move(_population.back());
 		_population.pop_back();
 	}
 }
