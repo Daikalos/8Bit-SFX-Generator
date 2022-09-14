@@ -177,7 +177,10 @@ void Evolution::evaluate(SoundGene& candidate)
 	const auto c_range = candidate.range();
 
 	if (c_range.size() == 0)
+	{
+		candidate._fitness = -DBL_MAX; // this candidate is invalid
 		return;
+	}
 
 	std::for_each(_models.begin(), _models.end(),
 		[&candidate, &simi_mul, &c_range](const SoundGene& model)
@@ -256,14 +259,11 @@ void Evolution::evaluate(SoundGene& candidate)
 		}
 	}
 
-	if (poke_count > 0)
-		candidate._fitness += -poke_count * smpl_mul; // pokes but no sample given is bad
+	candidate._fitness += -poke_count * smpl_mul; // pokes but no sample given is bad
 
 	// adjust fitness based on length of audio
 	//
-	if (time <= DBL_EPSILON)
-		candidate._fitness = -DBL_MAX; // length of zero means no audio, extremely bad candidate
-	else if (time < 0.2)
+	if (time < 0.2)
 		candidate._fitness += -(0.2 / time) * time_mul;
 	else if (time > 1.4)
 		candidate._fitness += -(time / 1.4) * time_mul;
