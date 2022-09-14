@@ -93,12 +93,13 @@ namespace util
 		return (T)uid(dre);
 	}
 
-	template<typename T, std::size_t sz, typename std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	static auto random()
+	template<typename T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+	static auto random_vec(const std::size_t N, std::size_t S = 0)
 	{
-		std::array<T, sz> result;
+		std::vector<T> result;
+		result.resize(N);
 
-		std::iota(result.begin(), result.end(), 0);
+		std::iota(result.begin(), result.end(), S);
 		std::shuffle(result.begin(), result.end(), dre);
 
 		return result;

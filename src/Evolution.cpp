@@ -24,7 +24,7 @@ using namespace IESFX;
 Evolution::Evolution(double mutation_rate, double mutation_size)
 	: _mutation_rate(mutation_rate), _mutation_size(mutation_size), _models(std::vector<SoundGene>(MODEL_SAMPLES))
 {
-	const auto random = util::random<std::size_t, util::arr_size(examples)>();
+	const auto random = util::random_vec<std::size_t>(util::arr_size(examples));
 
 	Interpreter interpreter;
 	for (int i = 0; i < MODEL_SAMPLES; ++i)
@@ -138,7 +138,7 @@ void Evolution::initialize()
 		{
 			gene.push({ 24, 14 }); // always volume on
 
-			auto offsets = util::random<RESID::reg8, 24>();
+			auto offsets = util::random_vec<RESID::reg8>(24);
 
 			for (int s = util::random(1, 6); s > 0; --s)
 			{
@@ -147,7 +147,7 @@ void Evolution::initialize()
 					gene.push({ offsets[p], util::rvpoke() });
 				}
 				gene.push({ util::rsample() });
-				offsets = util::random<RESID::reg8, 24>();
+				offsets = util::random_vec<RESID::reg8>(24);
 			}
 		});
 
@@ -276,7 +276,7 @@ void Evolution::selection()
 		_proxy.begin(), _proxy.end(),
 		[this](const Wrapper& wrap)
 		{
-			const size_t i = &wrap - _proxy.data();
+			const size_t i = &wrap - _proxy.data(); // rank selection
 
 			double chance = (i + 1) / (double)POPULATION_SIZE;
 
@@ -322,16 +322,41 @@ void Evolution::crossover()
 	const size_t elite = _population.size();
 	_offspring_size = POPULATION_SIZE - elite;
 
+	std::size_t spiral = 0;
 	while (_population.size() != POPULATION_SIZE)
 	{
-		size_t p0 = 0, p1 = 0, exit = 0; // exit for fail-safe
+		if (++spiral >= std::numeric_limits<std::uint16_t>::max())
+			throw std::runtime_error("infinite loop has occured");
 
-		p0 = util::random<size_t>(0, elite - 1);
-		do p1 = util::random<size_t>(0, elite - 1);
-		while (p0 == p1 || (similiarity(_population[p0], _population[p1]) > 0.1 && ++exit < 128)); // two random parents from the elite
+		const SoundGene
+			*first_parent = nullptr, 
+			*second_parent = nullptr;
 
-		SoundGene child0(_population[p0]); // deep copy
-		SoundGene child1(_population[p1]);
+		const std::size_t p0 = util::random<size_t>(0, elite - 1);
+		std::size_t p1 = 0;
+
+		std::size_t exit = 0; // exit for fail-safe
+		while (++exit < std::numeric_limits<std::uint8_t>::max())
+		{
+			p1 = util::random<size_t>(0, elite - 1); // two random parents from the elite
+
+			if (p0 == p1)
+				continue;
+
+			first_parent = &_population[p0];
+			second_parent = &_population[p1];
+
+			if (similiarity(*first_parent, *second_parent) > 0.1)
+				continue;
+
+			break;
+		}
+
+		if (p0 == p1 || first_parent == nullptr || second_parent == nullptr) // sanity checks
+			continue;
+
+		SoundGene child0(*first_parent); // deep copy
+		SoundGene child1(*second_parent);
 
 		const size_t gene_length = std::max<size_t>(child0.size(), child1.size());
 
@@ -398,17 +423,20 @@ void Evolution::mutation()
 {
 	std::for_each(std::execution::par_unseq,
 		_population.begin() + (POPULATION_SIZE - _offspring_size), _population.end(),
-		[this](SoundGene& gene) 
+		[this](SoundGene& gene)
 		{
-			if (util::random() > _mutation_rate || gene.size() == 0)
+			if (util::random() > _mutation_rate || gene.size() <= 1)
 				return;
 
-			int size = std::ceil(gene.size() / (1.0 / _mutation_size));
-			int length = util::random(1, size);
+			const int size = std::ceil(gene.size() / (1.0 / _mutation_size));
+			const int length = util::random(1, size); // determine number of points to mutate
 
-			for (int j = 0; j < length; ++j)
+			std::vector<int> rnd_points = util::random_vec<int>(gene.size() - 1, 1);
+			const std::size_t min = std::min<std::size_t>(rnd_points.size(), length);
+
+			for (int i = 0; i < min; ++i)
 			{
-				size_t mp = (gene.size() > 1) ? util::random<size_t>(1, gene.size() - 1) : 0;
+				const size_t mp = rnd_points[i];
 
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
@@ -519,7 +547,7 @@ void Evolution::reset()
 
 	_models = std::vector<SoundGene>(MODEL_SAMPLES); // clear
 
-	const auto random = util::random<std::size_t, util::arr_size(examples)>();
+	const auto random = util::random_vec<std::size_t>(util::arr_size(examples));
 
 	Interpreter interpreter;
 	for (int i = 0; i < MODEL_SAMPLES; ++i)

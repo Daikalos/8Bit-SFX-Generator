@@ -36,7 +36,7 @@ namespace IESFX
 	class Evolution final
 	{
 	private:
-		struct Wrapper final
+		struct Wrapper final // wrapper around gene ptr to allow for getting the index in a for_each loop
 		{
 			Wrapper() = default;
 			Wrapper(Wrapper& wrap) = default;
@@ -82,12 +82,11 @@ namespace IESFX
 		int load(const std::string& filename);
 
 	private:
-
 		// initialize the population
 		//
 		void initialize();
 
-		// evaluate each candidates fitness
+		// evaluate the candidate's fitness
 		//
 		void evaluate(SoundGene& candidate);
 
