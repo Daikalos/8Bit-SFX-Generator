@@ -34,111 +34,18 @@ SoundGene::SoundGene(SoundGene&& rhs) noexcept
 
 }
 
-std::size_t SoundGene::size() const
-{
-	return _gene.size();
-}
-
-void SoundGene::resize(const size_t size)
-{
-	_gene.resize(size);
-}
-void SoundGene::shrink()
-{
-	_gene.erase(std::remove_if(_gene.begin(), _gene.end(),
-		[](const std::unique_ptr<Command>& command)
-		{
-			return command.get() == nullptr;
-		}), _gene.end());
-}
-
-std::string SoundGene::print() const
-{
-	std::string output;
-	output.reserve(_gene.size() * 13); // 13 for an average size of each line
-
-	for (const auto& s : _gene)
-		output += s->print() + '\n';
-
-	return output;
-}
-
 SoundGene& SoundGene::operator=(const SoundGene& rhs)
 {
 	_fitness = rhs._fitness;
 	_dead = rhs._dead;
 
-	std::vector<std::unique_ptr<Command>> new_gene;
+	_gene.clear();
+	_gene.reserve(rhs.size());
 
-	new_gene.reserve(rhs.size());
-	for (size_t i = 0; i < rhs.size(); ++i)
-		new_gene.push_back(rhs.get(i)->clone());
-
-	_gene = std::move(new_gene);
+	for (const Command::Ptr& ptr : rhs)
+		_gene.push_back(ptr->clone());
 
 	return *this;
-}
-
-const Command* SoundGene::get(const size_t index) const
-{ 
-	return _gene[index].get();
-}
-Command* SoundGene::get(const size_t index)
-{ 
-	return _gene[index].get(); 
-}
-
-void SoundGene::push(const Poke& poke)
-{ 
-	_gene.push_back(poke.clone()); 
-}
-void SoundGene::push(const Sample& sample)
-{ 
-	_gene.push_back(sample.clone()); 
-}
-
-void SoundGene::set(const size_t index, std::nullptr_t)
-{
-	_gene[index].reset();
-}
-void SoundGene::set(const size_t index, const unsigned int offset, const unsigned int value)
-{
-	Command* command = _gene[index].get();
-
-	if (command->get_type() == CT_Poke)
-	{
-		Poke* poke = static_cast<Poke*>(command);
-
-		poke->set_offset(offset);
-		poke->set_value(value);
-	}
-}
-void SoundGene::set(const size_t index, const size_t size)
-{
-	Command* command = _gene[index].get();
-
-	if (command->get_type() == CT_Sample)
-		static_cast<Sample*>(command)->set_size(size);
-}
-void SoundGene::set(const size_t index, const Command* cmd)
-{
-	Command* command = _gene[index].get();
-
-	if (command->get_type() == cmd->get_type())
-		*command = *cmd;
-}
-
-void SoundGene::insert(const size_t pos, const Command* command)
-{
-	_gene.insert(_gene.begin() + pos, command->clone());
-}
-
-void SoundGene::flip(const size_t index)
-{
-	const Command* command = get(index);
-
-	if (command)
-		_gene[index] = std::move(command->flip());
 }
 
 bool SoundGene::operator<(const SoundGene& rhs) const
@@ -161,6 +68,97 @@ bool SoundGene::operator==(const SoundGene& rhs) const
 	}
 
 	return true;
+}
+
+std::size_t SoundGene::size() const
+{
+	return _gene.size();
+}
+
+void SoundGene::resize(const std::size_t size)
+{
+	_gene.resize(size);
+}
+void SoundGene::shrink()
+{
+	_gene.erase(std::remove_if(_gene.begin(), _gene.end(),
+		[](const Command::Ptr& command)
+		{
+			return command.get() == nullptr;
+		}), _gene.end());
+}
+
+std::string SoundGene::print() const
+{
+	std::string output;
+	output.reserve(_gene.size() * 13); // 13 for an average size of each line
+
+	for (const auto& s : _gene)
+		output += s->print() + '\n';
+
+	return output;
+}
+
+const Command* SoundGene::get(const std::size_t index) const
+{ 
+	return _gene[index].get();
+}
+Command* SoundGene::get(const std::size_t index)
+{ 
+	return _gene[index].get(); 
+}
+
+void SoundGene::push(const Poke& poke)
+{ 
+	_gene.push_back(poke.clone()); 
+}
+void SoundGene::push(const Sample& sample)
+{ 
+	_gene.push_back(sample.clone()); 
+}
+
+void SoundGene::set(const std::size_t index, std::nullptr_t)
+{
+	_gene[index].reset();
+}
+void SoundGene::set(const std::size_t index, const unsigned int offset, const unsigned int value)
+{
+	Command* command = _gene[index].get();
+
+	if (command->get_type() == CT_Poke)
+	{
+		Poke* poke = static_cast<Poke*>(command);
+
+		poke->set_offset(offset);
+		poke->set_value(value);
+	}
+}
+void SoundGene::set(const std::size_t index, const std::size_t size)
+{
+	Command* command = _gene[index].get();
+
+	if (command->get_type() == CT_Sample)
+		static_cast<Sample*>(command)->set_size(size);
+}
+void SoundGene::set(const std::size_t index, const Command* cmd)
+{
+	Command* command = _gene[index].get();
+
+	if (command->get_type() == cmd->get_type())
+		*command = *cmd;
+}
+
+void SoundGene::insert(const std::size_t pos, const Command* command)
+{
+	_gene.insert(_gene.begin() + pos, command->clone());
+}
+
+void SoundGene::flip(const std::size_t index)
+{
+	const Command* command = get(index);
+
+	if (command)
+		_gene[index] = command->flip();
 }
 
 std::vector<std::tuple<int, int, int>> SoundGene::range() const

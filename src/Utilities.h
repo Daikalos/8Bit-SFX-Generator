@@ -47,22 +47,22 @@ namespace util
 		return ((out_max - out_min) / static_cast<double>(in_max - in_min)) * (x - in_min) + out_min;
 	}
 
-	template<class T, size_t size>
-	static constexpr size_t arr_size(const T(&)[size])
+	template<class T, std::size_t size>
+	static constexpr std::size_t arr_size(const T(&)[size])
 	{
 		return size;
 	}
 
-	static int get_cycles(const size_t size)
+	static int get_cycles(const std::size_t size)
 	{
 		return std::lround((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));
 	}
-	static constexpr size_t get_size(const size_t size)
+	static constexpr std::size_t get_size(const std::size_t size)
 	{
 		return size * IESFX::SAMPLES_PER_CLOCK;
 	}
 
-	static constexpr float time(const size_t size)
+	static constexpr float time(const std::size_t size)
 	{
 		return get_size(size) / (float)IESFX::SAMPLE_RATE;
 	}
@@ -114,7 +114,7 @@ namespace util
 
 	static RESID::reg8 ropoke() { return util::random(0U, IESFX::POKE_OFFSET); }
 	static RESID::reg8 rvpoke() { return util::random(IESFX::POKE_MIN_VALUE, IESFX::POKE_MAX_VALUE); }
-	static size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
+	static std::size_t rsample() { return util::random(IESFX::MIN_SAMPLE_SIZE, IESFX::MAX_SAMPLE_SIZE); }
 
 	static double random() { return util::random(0.0, 1.0); }
 #endif

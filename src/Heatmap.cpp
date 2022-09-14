@@ -25,13 +25,13 @@ using namespace IESFX;
 
 void Heatmap::heatmap_0()
 {
-	const size_t width = 1024;
-	const size_t height = 1024;
+	const std::size_t width = 1024;
+	const std::size_t height = 1024;
 
 	const sf::Int16 bounds_height = 17000;
-	const size_t bounds_width = SAMPLE_RATE * 1.5;
+	const std::size_t bounds_width = SAMPLE_RATE * 1.5;
 
-	const size_t size = 10000;
+	const std::size_t size = 10000;
 
 	double max = 0;
 
@@ -116,10 +116,10 @@ void Heatmap::heatmap_0()
 
 void Heatmap::heatmap_1()
 {
-	const size_t width = 161;
-	const size_t height = 161;
+	const std::size_t width = 161;
+	const std::size_t height = 161;
 
-	const size_t size = 248;
+	const std::size_t size = 248;
 
 	double max = DBL_MIN;
 
@@ -231,10 +231,10 @@ void Heatmap::heatmap_1()
 
 void Heatmap::heatmap_2()
 {
-	const size_t width = 256;
-	const size_t height = 256;
+	const std::size_t width = 256;
+	const std::size_t height = 256;
 
-	const size_t samples = 256;
+	const std::size_t samples = 256;
 
 	double max = DBL_MIN;
 
@@ -341,10 +341,10 @@ void Heatmap::heatmap_2()
 
 void Heatmap::heatmap_3()
 {
-	const size_t width = 256;
-	const size_t height = 256;
+	const std::size_t width = 256;
+	const std::size_t height = 256;
 
-	const size_t samples = 624;
+	const std::size_t samples = 624;
 
 	double max = DBL_MIN;
 

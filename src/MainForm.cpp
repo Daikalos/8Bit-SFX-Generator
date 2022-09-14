@@ -22,7 +22,7 @@ using namespace IESFX;
 
 bool MainForm::initialize()
 {
-	const size_t size = ROWS * COLUMNS;
+	const std::size_t size = ROWS * COLUMNS;
 
 	_evolution = new Evolution(mutation_rate(), mutation_size());
 
@@ -223,10 +223,10 @@ System::Void MainForm::playButton_Click(System::Object^ sender, System::EventArg
 	if (!ready())
 		return;
 
-	if (_player->is_playing())
+	if (_player->active())
 		_player->iterate();
 
-	_player->set_is_playing(true);
+	_player->set_active(true);
 
 	this->ActiveControl = nullptr;
 	this->Focus();
@@ -236,7 +236,7 @@ System::Void MainForm::pauseButton_Click(System::Object^ sender, System::EventAr
 	if (!ready())
 		return;
 
-	_player->set_is_playing(false);
+	_player->set_active(false);
 
 	this->ActiveControl = nullptr;
 	this->Focus();

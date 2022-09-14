@@ -234,9 +234,8 @@ void Evolution::evaluate(SoundGene& candidate)
 	int poke_count = 0;
 	double time = 0.0;
 
-	for (size_t i = 0; i < candidate.size(); ++i)
+	for (const Command::Ptr& command : candidate)
 	{
-		const Command* command = candidate.get(i);
 		const CommandType type = command->get_type();
 
 		switch (type)
@@ -246,7 +245,7 @@ void Evolution::evaluate(SoundGene& candidate)
 			break;
 		case CT_Sample:
 			{
-				const Sample* sample = static_cast<const Sample*>(command);
+				const Sample* sample = static_cast<const Sample*>(command.get());
 
 				time += (double)util::time(sample->get_size());
 
@@ -276,7 +275,7 @@ void Evolution::selection()
 		_proxy.begin(), _proxy.end(),
 		[this](const Wrapper& wrap)
 		{
-			const size_t i = &wrap - _proxy.data(); // rank selection
+			const std::size_t i = &wrap - _proxy.data(); // rank selection
 
 			double chance = (i + 1) / (double)POPULATION_SIZE;
 
@@ -319,7 +318,7 @@ void Evolution::selection()
 
 void Evolution::crossover()
 {
-	const size_t elite = _population.size();
+	const std::size_t elite = _population.size();
 	_offspring_size = POPULATION_SIZE - elite;
 
 	std::size_t spiral = 0;
@@ -358,7 +357,7 @@ void Evolution::crossover()
 		SoundGene child0(*first_parent); // deep copy
 		SoundGene child1(*second_parent);
 
-		const size_t gene_length = std::max<size_t>(child0.size(), child1.size());
+		const std::size_t gene_length = std::max<size_t>(child0.size(), child1.size());
 
 		// K-POINT ALT 1
 		//
@@ -436,7 +435,7 @@ void Evolution::mutation()
 
 			for (int i = 0; i < min; ++i)
 			{
-				const size_t mp = rnd_points[i];
+				const std::size_t mp = rnd_points[i];
 
 				if (util::random() <= COMMAND_MUTATION)
 					gene.flip(mp);
@@ -535,7 +534,7 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 		result += smpl_ratio;
 	}
 
-	const size_t size = std::max<size_t>(lhs.size(), rhs.size());
+	const std::size_t size = std::max<size_t>(lhs.size(), rhs.size());
 
 	return (result / size);
 }
@@ -565,7 +564,7 @@ bool Evolution::retry()
 	return true;
 }
 
-std::vector<const SoundGene*> Evolution::output(size_t size, size_t step) const
+std::vector<const SoundGene*> Evolution::output(size_t size,std::size_t step) const
 {
 	std::vector<const SoundGene*> genes;
 	genes.reserve(size);

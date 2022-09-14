@@ -39,12 +39,16 @@ namespace IESFX
 	class Command
 	{
 	public:
+		using Ptr = std::unique_ptr<Command>;
+
+	public:
 		Command() = default;
 		virtual ~Command() = default;
 
 		[[nodiscard]] virtual const std::string& print() const = 0;
-		[[nodiscard]] virtual std::unique_ptr<Command> clone() const = 0;
-		[[nodiscard]] virtual std::unique_ptr<Command> flip() const = 0;
+
+		[[nodiscard]] virtual Ptr clone() const = 0;
+		[[nodiscard]] virtual Ptr flip() const = 0;
 
 		[[nodiscard]] virtual bool equal_to(const Command* rhs) const = 0;
 
@@ -64,8 +68,9 @@ namespace IESFX
 		Poke(RESID::reg8 o, RESID::reg8 v);
 
 		[[nodiscard]] const std::string& print() const override;
-		[[nodiscard]] std::unique_ptr<Command> clone() const override;
-		[[nodiscard]] std::unique_ptr<Command> flip() const override;
+
+		[[nodiscard]] Ptr clone() const override;
+		[[nodiscard]] Ptr flip() const override;
 
 		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 
@@ -89,8 +94,9 @@ namespace IESFX
 		Sample(std::size_t s);
 
 		[[nodiscard]] const std::string& print() const override;
-		[[nodiscard]] std::unique_ptr<Command> clone() const override;
-		[[nodiscard]] std::unique_ptr<Command> flip() const override;
+
+		[[nodiscard]] Ptr clone() const override;
+		[[nodiscard]] Ptr flip() const override;
 
 		[[nodiscard]] bool equal_to(const Command* rhs) const override;
 

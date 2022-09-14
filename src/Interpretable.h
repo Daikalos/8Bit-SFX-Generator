@@ -23,8 +23,7 @@ namespace IESFX
 	class Interpretable
 	{
 	public:
-		Interpretable() { }
-		virtual ~Interpretable() { }
+		virtual ~Interpretable() = default;
 
 	protected:
 		virtual void read_poke(unsigned int offset, unsigned int value) = 0;

@@ -35,7 +35,7 @@ namespace IESFX
 	public ref class SoundUC : public System::Windows::Forms::UserControl
 	{
 	public:
-		SoundUC(Player^ player, Evolution* evolution, size_t id)
+		SoundUC(Player^ player, Evolution* evolution, std::size_t id)
 		{
 			InitializeComponent();
 

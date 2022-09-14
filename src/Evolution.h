@@ -76,7 +76,7 @@ namespace IESFX
 		bool retry();
 
 		int execute(size_t max_generations = GENERATIONS, double max_quality = QUALITY);
-		std::vector<const SoundGene*> output(size_t size, size_t step) const;
+		std::vector<const SoundGene*> output(size_t size,std::size_t step) const;
 
 		bool save(const std::string& filename) const;
 		int load(const std::string& filename);

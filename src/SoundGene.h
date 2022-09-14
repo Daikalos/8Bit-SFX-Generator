@@ -40,35 +40,40 @@ namespace IESFX
 		SoundGene(const SoundGene& rhs);
 		SoundGene(SoundGene&& rhs) noexcept;
 
-		size_t size() const;
-
-		void resize(const size_t size);
-		void shrink();
-
-		const Command* get(const size_t index) const;
-		Command* get(const size_t index);
-
-		void push(const Poke& poke);
-		void push(const Sample& sample);
-
-		void set(const size_t index, std::nullptr_t);
-		void set(const size_t index, const unsigned int offset, const unsigned int value);
-		void set(const size_t index, const size_t size);
-		void set(const size_t index, const Command* cmd);
-
-		void insert(const size_t pos, const Command* command);
-
-		void flip(const size_t index);
-
-		auto begin() { return _gene.begin(); }
-		auto end() { return _gene.end(); }
+		SoundGene& operator=(const SoundGene& rhs);
 
 		bool operator<(const SoundGene& rhs) const;
 		bool operator>(const SoundGene& rhs) const;
 		bool operator==(const SoundGene& rhs) const;
 
-		SoundGene& operator=(const SoundGene& rhs);
+	public:
+		size_t size() const;
 
+		void resize(const std::size_t size);
+		void shrink();
+
+		const Command* get(const std::size_t index) const;
+		Command* get(const std::size_t index);
+
+		void push(const Poke& poke);
+		void push(const Sample& sample);
+
+		void set(const std::size_t index, std::nullptr_t);
+		void set(const std::size_t index, const unsigned int offset, const unsigned int value);
+		void set(const std::size_t index, const std::size_t size);
+		void set(const std::size_t index, const Command* cmd);
+
+		void insert(const std::size_t pos, const Command* command);
+
+		void flip(const std::size_t index);
+
+		auto begin() noexcept { return _gene.begin(); }
+		auto end() noexcept { return _gene.end(); }
+
+		auto begin() const noexcept { return _gene.begin(); }
+		auto end() const noexcept { return _gene.end(); }
+
+	public:
 		std::string print() const;
 		std::vector<std::tuple<int, int, int>> range() const;
 
@@ -77,7 +82,7 @@ namespace IESFX
 		void read_sample(size_t size) override;
 
 	private:
-		std::vector<std::unique_ptr<Command>> _gene;
+		std::vector<Command::Ptr> _gene;
 		double _fitness{0.0};
 		bool _dead{false};
 

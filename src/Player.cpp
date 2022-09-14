@@ -20,7 +20,7 @@
 
 using namespace IESFX;
 
-Player::Player(Evolution* evolution, size_t size, float volume)
+Player::Player(Evolution* evolution, std::size_t size, float volume)
 	: _size(size), _volume(volume), _evolution(evolution)
 {
 	_thread = gcnew Thread(gcnew ThreadStart(this, &Player::player_loop));
@@ -36,6 +36,39 @@ Player::Player(Evolution* evolution, size_t size, float volume)
 Player::~Player()
 {
 	delete[] _sounds;
+}
+
+Sound* Player::operator[](std::size_t i)
+{
+	return &_sounds[i];
+}
+
+std::size_t Player::position() 
+{ 
+	return _position;
+}
+bool Player::active() 
+{ 
+	return _is_playing; 
+}
+
+void Player::set_volume(float volume)
+{
+	if (volume == _volume)
+		return;
+
+	_volume = volume;
+
+	for (int i = 0; i < _size; ++i)
+		_sounds[i].set_volume(_volume);
+}
+void Player::set_active(bool value)
+{
+	if (value && _is_playing)
+		return;
+
+	value ? play() : pause();
+	_is_playing = value;
 }
 
 void Player::shutdown()
@@ -73,26 +106,7 @@ void Player::reset()
 	_sound = nullptr;
 }
 
-void Player::set_volume(float volume)
-{
-	if (volume == _volume)
-		return;
-
-	_volume = volume;
-
-	for (int i = 0; i < _size; ++i)
-		_sounds[i].set_volume(_volume);
-}
-void Player::set_is_playing(bool value)
-{
-	if (value && _is_playing)
-		return;
-
-	value ? play() : pause();
-	_is_playing = value;
-}
-
-Sound* Player::play(size_t id)
+Sound* Player::play(std::size_t id)
 {
 	Sound* sound = &_sounds[id];
 
@@ -113,7 +127,7 @@ void Player::pause()
 		_sound->pause();
 }
 
-void Player::update(std::vector<const SoundGene*>& genes)
+void Player::update(const std::vector<const SoundGene*>& genes)
 {
 	for (int i = 0; i < genes.size(); ++i)
 		_sounds[i].create_buffer(*genes[i]);

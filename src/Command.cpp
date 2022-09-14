@@ -37,14 +37,16 @@ const std::string& Poke::print() const
 
 	return _print;
 }
-std::unique_ptr<Command> Poke::clone() const
+
+Command::Ptr Poke::clone() const
 {
 	return std::make_unique<Poke>(*this);
 }
-std::unique_ptr<Command> Poke::flip() const
+Command::Ptr Poke::flip() const
 {
 	return std::make_unique<Sample>(Sample(util::rsample()));
 }
+
 bool Poke::equal_to(const Command* rhs) const
 {
 	if (rhs->get_type() != CT_Poke)
@@ -54,6 +56,7 @@ bool Poke::equal_to(const Command* rhs) const
 
 	return _offset == poke->_offset && _value == poke->_value;
 }
+
 CommandType Poke::get_type() const noexcept
 {
 	return CT_Poke;
@@ -101,14 +104,16 @@ const std::string& Sample::print() const
 
 	return _print;
 }
-std::unique_ptr<Command> Sample::clone() const
+
+Command::Ptr Sample::clone() const
 {
 	return std::make_unique<Sample>(*this);
 }
-std::unique_ptr<Command> Sample::flip() const
+Command::Ptr Sample::flip() const
 {
 	return std::make_unique<Poke>(Poke(util::ropoke(), util::rvpoke()));
 }
+
 bool Sample::equal_to(const Command* rhs) const
 {
 	if (rhs->get_type() != CT_Sample)

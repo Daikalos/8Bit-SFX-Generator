@@ -24,21 +24,21 @@ namespace IESFX
 {
 	static constexpr RESID::chip_model CHIP_MODEL = RESID::chip_model::MOS6581;
 
-	static constexpr size_t CLOCK_FREQ = 985248;
-	static constexpr size_t SAMPLE_RATE = 44100;
+	static constexpr std::size_t CLOCK_FREQ = 985248;
+	static constexpr std::size_t SAMPLE_RATE = 44100;
 
-	static constexpr size_t SAMPLES_PER_CLOCK = static_cast<size_t>(CLOCK_FREQ / (double)SAMPLE_RATE);
+	static constexpr std::size_t SAMPLES_PER_CLOCK = static_cast<size_t>(CLOCK_FREQ / (double)SAMPLE_RATE);
 
-	static constexpr size_t ROWS = 3;
-	static constexpr size_t COLUMNS = 4;
+	static constexpr std::size_t ROWS = 3;
+	static constexpr std::size_t COLUMNS = 4;
 
-	static constexpr size_t POPULATION_SIZE = 1800;
-	static constexpr size_t USABLE_POPULATION = 960;
-	static constexpr size_t GENERATIONS = 80;
+	static constexpr std::size_t POPULATION_SIZE = 1800;
+	static constexpr std::size_t USABLE_POPULATION = 960;
+	static constexpr std::size_t GENERATIONS = 80;
 	static constexpr double QUALITY = 3.0;
 
 	static constexpr int N_POINTS = 3;
-	static constexpr size_t MODEL_SAMPLES = 3;
+	static constexpr std::size_t MODEL_SAMPLES = 3;
 
 	static constexpr double REMOVE_MUTATION = 0.075;
 	static constexpr double ADD_MUTATION = 0.075;
@@ -48,10 +48,10 @@ namespace IESFX
 	static constexpr RESID::reg8 POKE_OFFSET = 23;
 	static constexpr RESID::reg8 POKE_MIN_VALUE = 1;
 	static constexpr RESID::reg8 POKE_MAX_VALUE = 140;
-	static constexpr size_t MIN_SAMPLE_SIZE = 256;
-	static constexpr size_t MAX_SAMPLE_SIZE = 1400;
+	static constexpr std::size_t MIN_SAMPLE_SIZE = 256;
+	static constexpr std::size_t MAX_SAMPLE_SIZE = 1400;
 
-	static constexpr size_t AVERAGE_SAMPLE = 512;
+	static constexpr std::size_t AVERAGE_SAMPLE = 512;
 
 	#define BUILD true
 }

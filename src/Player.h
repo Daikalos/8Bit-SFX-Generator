@@ -42,33 +42,29 @@ namespace IESFX
 	public ref class Player
 	{
 	public:
-		Player(Evolution* evolution, size_t size, float volume);
+		Player(Evolution* evolution, std::size_t size, float volume);
 		~Player();
+
+		Sound* operator[](std::size_t i);
+
+	public:
+		std::size_t position();
+		bool active();
+
+		void set_volume(float volume);
+		void set_active(bool value);
+
+		Sound* play(std::size_t id);
 
 		void shutdown();
 		void iterate();
 
-		bool is_playing() { return _is_playing; }
-
 		void reset();
-
-		void set_volume(float volume);
-		void set_is_playing(bool value);
-
-		Sound* play(size_t id);
 
 		void play();
 		void pause();
 
-		void update(std::vector<const SoundGene*>& genes);
-
-		size_t position() { return _position; }
-		bool active() { return _is_playing; }
-
-		Sound* operator[](size_t i)
-		{
-			return &_sounds[i];
-		}
+		void update(const std::vector<const SoundGene*>& genes);
 
 	public:
 		delegate void callback_play(); // called everytime a sound is played

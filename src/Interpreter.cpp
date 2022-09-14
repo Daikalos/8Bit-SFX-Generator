@@ -120,7 +120,7 @@ void Interpreter::parse_SampleStmt()
 
     if (is_integer(next_token))
     {
-        size_t size = std::stoi(next_token);
+       std::size_t size = std::stoi(next_token);
         _ptr->read_sample(size);
     }
     else

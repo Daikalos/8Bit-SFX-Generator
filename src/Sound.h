@@ -46,17 +46,17 @@ namespace IESFX
 		void pause();
 		void stop();
 
-		const SoundGene& get() const;
+		float time() const;
+		float duration() const;
 
 		const sf::Int16* buffer_samples() const;
 		sf::Uint64 buffer_count() const;
 
-		float time() const;
-		float duration() const;
-
 		bool save(const std::string& filename) const;
 		bool save_wav(const std::string& filename) const;
 		bool save_txt(const std::string& filename) const;
+
+		const SoundGene& get() const;
 
 	private:
 		sf::Sound _sound;
