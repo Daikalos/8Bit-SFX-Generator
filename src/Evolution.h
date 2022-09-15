@@ -107,18 +107,18 @@ namespace IESFX
 		double similiarity(const SoundGene& lhs, const SoundGene& rhs);
 
 	private:
-		size_t 
-			_offspring_size{0},
-			_generations{0},
-			_max_generations{0};
+		std::size_t 
+			_offspring_size		{0},
+			_generations		{0},
+			_max_generations	{0};
 		double 
-			_quality{0.0},
-			_max_quality{0.0},
+			_quality			{0.0},
+			_max_quality		{0.0},
 			_mutation_rate, 
 			_mutation_size;
 		bool
-			_active{false},
-			_shutdown{false};
+			_active				{false},
+			_shutdown			{false};
 
 		std::vector<SoundGene>	_population;
 		std::vector<SoundGene>	_models;

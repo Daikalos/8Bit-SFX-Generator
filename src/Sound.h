@@ -56,7 +56,7 @@ namespace IESFX
 		bool save_wav(const std::string& filename) const;
 		bool save_txt(const std::string& filename) const;
 
-		const SoundGene& get() const;
+		const SoundGene& get_gene() const;
 
 	private:
 		sf::Sound _sound;

@@ -103,6 +103,7 @@ namespace IESFX
 		[[nodiscard]] CommandType get_type() const noexcept override;
 
 		[[nodiscard]] RESID::reg8 get_size() const noexcept;
+
 		void set_size(const std::size_t size);
 		void add_size(const std::size_t size);
 

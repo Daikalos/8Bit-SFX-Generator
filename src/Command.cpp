@@ -44,7 +44,7 @@ Command::Ptr Poke::clone() const
 }
 Command::Ptr Poke::flip() const
 {
-	return std::make_unique<Sample>(Sample(util::rsample()));
+	return std::make_unique<Sample>(util::rsample());
 }
 
 bool Poke::equal_to(const Command* rhs) const
@@ -111,7 +111,7 @@ Command::Ptr Sample::clone() const
 }
 Command::Ptr Sample::flip() const
 {
-	return std::make_unique<Poke>(Poke(util::ropoke(), util::rvpoke()));
+	return std::make_unique<Poke>(util::ropoke(), util::rvpoke());
 }
 
 bool Sample::equal_to(const Command* rhs) const
@@ -133,7 +133,6 @@ RESID::reg8 Sample::get_size() const noexcept
 {
 	return _size;
 }
-
 void Sample::set_size(const std::size_t size)
 {
 	_size = size;

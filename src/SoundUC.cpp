@@ -50,12 +50,12 @@ System::Void SoundUC::soundWave_MouseDown(System::Object^ sender, System::Window
 
 	if (_selected = !_selected)
 	{
-		_evolution->add_model(_sound->get());
+		_evolution->add_model(_sound->get_gene());
 		stripTool->BackColor = Color::LightBlue;
 	}
 	else
 	{
-		_evolution->remove_model(_sound->get());
+		_evolution->remove_model(_sound->get_gene());
 		stripTool->BackColor = Color::White;
 	}
 }
@@ -68,7 +68,7 @@ void SoundUC::reset()
 {
 	if (_selected)
 	{
-		_evolution->remove_model(_sound->get());
+		_evolution->remove_model(_sound->get_gene());
 		stripTool->BackColor = Color::White;
 
 		_selected = false;

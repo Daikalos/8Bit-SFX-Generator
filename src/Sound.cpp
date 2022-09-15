@@ -60,7 +60,7 @@ void Sound::stop()
 	_sound.stop();
 }
 
-const SoundGene& Sound::get() const 
+const SoundGene& Sound::get_gene() const
 { 
 	return *_gene; 
 }

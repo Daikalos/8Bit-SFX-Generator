@@ -22,7 +22,7 @@
 using namespace IESFX;
 
 Evolution::Evolution(double mutation_rate, double mutation_size)
-	: _mutation_rate(mutation_rate), _mutation_size(mutation_size), _models(std::vector<SoundGene>(MODEL_SAMPLES))
+	: _mutation_rate(mutation_rate), _mutation_size(mutation_size), _models(MODEL_SAMPLES)
 {
 	const auto random = util::random_vec<std::size_t>(util::arr_size(examples));
 
