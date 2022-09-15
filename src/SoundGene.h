@@ -54,9 +54,9 @@ namespace IESFX
 
 		bool exists(std::size_t index) const;
 
-		template<class T = Command>
+		template<class T = Command, std::enable_if_t<std::is_base_of_v<Command, T>, bool> = true>
 		const T& get(const std::size_t index) const;
-		template<class T = Command>
+		template<class T = Command, std::enable_if_t<std::is_base_of_v<Command, T>, bool> = true>
 		T& get(const std::size_t index);
 
 		void push(const Poke& poke);
@@ -93,12 +93,12 @@ namespace IESFX
 		friend class Evolution;
 	};
 
-	template<class T> //requires std::is_base_of_v<Command, T>
+	template<class T, std::enable_if_t<std::is_base_of_v<Command, T>, bool>>
 	const T& SoundGene::get(const std::size_t index) const
 	{
 		return *static_cast<const T*>(_gene[index].get());
 	}
-	template<class T>
+	template<class T, std::enable_if_t<std::is_base_of_v<Command, T>, bool>>
 	T& SoundGene::get(const std::size_t index)
 	{
 		return *static_cast<T*>(_gene[index].get());
