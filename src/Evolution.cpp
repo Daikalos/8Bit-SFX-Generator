@@ -196,16 +196,16 @@ void Evolution::evaluate(SoundGene& candidate)
 				memset(m_offsets.data(), false, m_offsets.size());
 				for (int j = std::get<1>(m_range[si]) - 1; j >= std::get<0>(m_range[si]); --j)
 				{
-					const Poke* m_poke = static_cast<const Poke*>(model.get(j));
-					if (!m_offsets[m_poke->get_offset()])
+					const Poke& m_poke = model.get<Poke>(j);
+					if (!m_offsets[m_poke.get_offset()])
 					{
-						m_offsets[m_poke->get_offset()] = true;
+						m_offsets[m_poke.get_offset()] = true;
 						for (int k = std::get<1>(c_range[si]) - 1; k >= std::get<0>(c_range[si]); --k)
 						{
-							const Poke* c_poke = static_cast<const Poke*>(candidate.get(k));
-							if (m_poke->get_offset() == c_poke->get_offset())
+							const Poke& c_poke = candidate.get<Poke>(k);
+							if (m_poke.get_offset() == c_poke.get_offset())
 							{
-								const double val_diff = std::abs((int)m_poke->get_value() - (int)c_poke->get_value());
+								const double val_diff = std::abs((int)m_poke.get_value() - (int)c_poke.get_value());
 								const double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
 								score += val_ratio;
@@ -216,10 +216,10 @@ void Evolution::evaluate(SoundGene& candidate)
 					}
 				}
 
-				const Sample* lhs_sample = static_cast<const Sample*>(model.get(std::get<1>(m_range[si])));
-				const Sample* rhs_sample = static_cast<const Sample*>(candidate.get(std::get<1>(c_range[si])));
+				const Sample& lhs_sample = model.get<Sample>(std::get<1>(m_range[si]));
+				const Sample& rhs_sample = candidate.get<Sample>(std::get<1>(c_range[si]));
 
-				const double smpl_diff = std::abs((int)lhs_sample->get_size() - (int)rhs_sample->get_size());
+				const double smpl_diff = std::abs((int)lhs_sample.get_size() - (int)rhs_sample.get_size());
 				const double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 				score += smpl_ratio;
@@ -437,43 +437,42 @@ void Evolution::mutation()
 			{
 				const std::size_t mp = rnd_points[i];
 
-				if (util::random() <= COMMAND_MUTATION)
-					gene.flip(mp);
-
 				if (util::random() <= REMOVE_MUTATION)
 					gene.set(mp, nullptr);
 
 				if (util::random() <= ADD_MUTATION)
-					gene.insert(mp, &Poke(util::ropoke(), util::rvpoke()));
+					gene.insert(mp, Poke(util::ropoke(), util::rvpoke()));
 
-				Command* command = gene.get(mp);
-
-				if (command == nullptr)
+				if (!gene.exists(mp))
 					continue;
 
-				CommandType type = command->get_type();
+				if (util::random() <= COMMAND_MUTATION)
+					gene.flip(mp);
+
+				Command& command = gene.get(mp);
+				CommandType type = command.get_type();
 
 				switch (type)
 				{
 				case CT_Poke:
 					{
-						Poke* poke = static_cast<Poke*>(command);
+						Poke* poke = static_cast<Poke*>(&command);
 
 						if (util::random() <= OFFSET_MUTATION)
 							poke->set_offset(util::ropoke());
 
 						int change = util::random_arg<int>(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5);
-						uint32_t abs = static_cast<uint32_t>(std::abs(change));
+						std::uint32_t abs = static_cast<std::uint32_t>(std::abs(change));
 
 						poke->add_value((poke->get_value() > abs) ? change : abs);
 					}
 					break;
 				case CT_Sample:
 					{
-						Sample* sample = static_cast<Sample*>(command);
+						Sample* sample = static_cast<Sample*>(&command);
 
 						int change = util::random_arg<int>(-50, -25, 25, 50);
-						size_t abs = static_cast<size_t>(std::abs(change));
+						std::size_t abs = static_cast<std::size_t>(std::abs(change));
 
 						sample->add_size((sample->get_size() > abs) ? change : abs);
 					}
@@ -505,16 +504,16 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 		memset(lhs_offsets.data(), false, lhs_offsets.size());
 		for (int j = std::get<1>(lhs_range[si]) - 1; j >= std::get<0>(lhs_range[si]); --j)
 		{
-			const Poke* lhs_poke = static_cast<const Poke*>(lhs.get(j));
-			if (!lhs_offsets[lhs_poke->get_offset()])
+			const Poke& lhs_poke = lhs.get<Poke>(j);
+			if (!lhs_offsets[lhs_poke.get_offset()])
 			{
-				lhs_offsets[lhs_poke->get_offset()] = true;
+				lhs_offsets[lhs_poke.get_offset()] = true;
 				for (int k = std::get<1>(rhs_range[si]) - 1; k >= std::get<0>(rhs_range[si]); --k)
 				{
-					const Poke* rhs_poke = static_cast<const Poke*>(rhs.get(k));
-					if (lhs_poke->get_offset() == rhs_poke->get_offset())
+					const Poke& rhs_poke = rhs.get<Poke>(k);
+					if (lhs_poke.get_offset() == rhs_poke.get_offset())
 					{
-						const double val_diff = std::abs((int)lhs_poke->get_value() - (int)rhs_poke->get_value());
+						const double val_diff = std::abs((int)lhs_poke.get_value() - (int)rhs_poke.get_value());
 						const double val_ratio = 1.0 / (0.33 * val_diff + 1.0);
 
 						result += val_ratio;
@@ -525,10 +524,10 @@ double Evolution::similiarity(const SoundGene& lhs, const SoundGene& rhs)
 			}
 		}
 
-		const Sample* lhs_sample = static_cast<const Sample*>(lhs.get(std::get<1>(lhs_range[si])));
-		const Sample* rhs_sample = static_cast<const Sample*>(rhs.get(std::get<1>(rhs_range[si])));
+		const Sample& lhs_sample = lhs.get<Sample>(std::get<1>(lhs_range[si]));
+		const Sample& rhs_sample = rhs.get<Sample>(std::get<1>(rhs_range[si]));
 
-		const double smpl_diff = std::abs((int)lhs_sample->get_size() - (int)rhs_sample->get_size());
+		const double smpl_diff = std::abs((int)lhs_sample.get_size() - (int)rhs_sample.get_size());
 		const double smpl_ratio = 1.0 / (0.01 * smpl_diff + 1.0);
 
 		result += smpl_ratio;
@@ -592,7 +591,7 @@ bool Evolution::save(const std::string& filename) const
 	for (size_t i = 0; i < _population.size(); ++i)
 	{
 		for (size_t j = 0; j < _population[i].size(); ++j)
-			out << _population[i].get(j)->print() + '\n';
+			out << _population[i].get(j).print() + '\n';
 
 		out << "RUN\n";
 	}

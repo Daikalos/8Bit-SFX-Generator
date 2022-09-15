@@ -52,8 +52,12 @@ namespace IESFX
 		void resize(const std::size_t size);
 		void shrink();
 
-		const Command* get(const std::size_t index) const;
-		Command* get(const std::size_t index);
+		bool exists(std::size_t index) const;
+
+		template<class T = Command>
+		const T& get(const std::size_t index) const;
+		template<class T = Command>
+		T& get(const std::size_t index);
 
 		void push(const Poke& poke);
 		void push(const Sample& sample);
@@ -61,9 +65,9 @@ namespace IESFX
 		void set(const std::size_t index, std::nullptr_t);
 		void set(const std::size_t index, const unsigned int offset, const unsigned int value);
 		void set(const std::size_t index, const std::size_t size);
-		void set(const std::size_t index, const Command* cmd);
+		void set(const std::size_t index, const Command& cmd);
 
-		void insert(const std::size_t pos, const Command* command);
+		void insert(const std::size_t pos, const Command& command);
 
 		void flip(const std::size_t index);
 
@@ -88,4 +92,15 @@ namespace IESFX
 
 		friend class Evolution;
 	};
+
+	template<class T> //requires std::is_base_of_v<Command, T>
+	const T& SoundGene::get(const std::size_t index) const
+	{
+		return *static_cast<const T*>(_gene[index].get());
+	}
+	template<class T>
+	T& SoundGene::get(const std::size_t index)
+	{
+		return *static_cast<T*>(_gene[index].get());
+	}
 }

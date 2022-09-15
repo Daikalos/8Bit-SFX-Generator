@@ -154,6 +154,8 @@ System::Void MainForm::saveButton_Click(System::Object^ sender, System::EventArg
 
 		if (!_evolution->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
 			MessageBox::Show("Failed to save file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		else
+			MessageBox::Show("Population was succesfully saved at:\n" + saveFileDialog.FileName, "Save", MessageBoxButtons::OK, MessageBoxIcon::Information);
 
 		update_status("Ready");
 

@@ -50,12 +50,12 @@ namespace IESFX
 		[[nodiscard]] virtual Ptr clone() const = 0;
 		[[nodiscard]] virtual Ptr flip() const = 0;
 
-		[[nodiscard]] virtual bool equal_to(const Command* rhs) const = 0;
+		[[nodiscard]] virtual bool equal_to(const Command& rhs) const = 0;
 
 		[[nodiscard]] virtual CommandType get_type() const noexcept { return CT_None; }
 
-		[[nodiscard]] bool operator==(const Command* rhs) const { return equal_to(rhs); }
-		[[nodiscard]] bool operator!=(const Command* rhs) const { return !equal_to(rhs); }
+		[[nodiscard]] bool operator==(const Command& rhs) const { return equal_to(rhs); }
+		[[nodiscard]] bool operator!=(const Command& rhs) const { return !equal_to(rhs); }
 
 	protected:
 		mutable std::string _print;
@@ -72,7 +72,7 @@ namespace IESFX
 		[[nodiscard]] Ptr clone() const override;
 		[[nodiscard]] Ptr flip() const override;
 
-		[[nodiscard]] bool equal_to(const Command* rhs) const override;
+		[[nodiscard]] bool equal_to(const Command& rhs) const override;
 
 		[[nodiscard]] CommandType get_type() const noexcept override;
 
@@ -98,7 +98,7 @@ namespace IESFX
 		[[nodiscard]] Ptr clone() const override;
 		[[nodiscard]] Ptr flip() const override;
 
-		[[nodiscard]] bool equal_to(const Command* rhs) const override;
+		[[nodiscard]] bool equal_to(const Command& rhs) const override;
 
 		[[nodiscard]] CommandType get_type() const noexcept override;
 

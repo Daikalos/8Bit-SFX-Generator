@@ -35,6 +35,8 @@ System::Void SoundUC::exportButton_Click(System::Object^ sender, System::EventAr
 	{
 		if (!_player[_id]->save(msclr::interop::marshal_as<std::string>(saveFileDialog.FileName)))
 			MessageBox::Show("Could not export.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		else
+			MessageBox::Show("Sound effect was succesfully saved at:\n" + saveFileDialog.FileName, "Save", MessageBoxButtons::OK, MessageBoxIcon::Information);
 	}
 }
 System::Void SoundUC::soundWave_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e)
