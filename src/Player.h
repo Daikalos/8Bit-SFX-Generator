@@ -80,20 +80,20 @@ namespace IESFX
 
 	private:
 		size_t 
-			_position{0}, 
+			_position	{0}, 
 			_size;
 		bool 
-			_is_playing{false}, 
-			_shutdown{false},
-			_iterate{false};
+			_is_playing	{false}, 
+			_shutdown	{false},
+			_iterate	{false};
 		float 
-			_volume{0.0};
+			_volume		{0.0};
 
 		Evolution* 
-			_evolution;
+			_evolution	{nullptr};
 		Sound
-			*_sounds{nullptr},
-			*_sound{nullptr};
+			*_sounds	{nullptr},
+			*_sound		{nullptr};
 
 		Thread^ _thread;
 		Object^ _object;

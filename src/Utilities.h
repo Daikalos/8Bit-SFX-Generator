@@ -47,12 +47,6 @@ namespace util
 		return ((out_max - out_min) / static_cast<double>(in_max - in_min)) * (x - in_min) + out_min;
 	}
 
-	template<class T, std::size_t size>
-	static constexpr std::size_t arr_size(const T(&)[size])
-	{
-		return size;
-	}
-
 	static int get_cycles(const std::size_t size)
 	{
 		return std::lround((double)IESFX::CLOCK_FREQ / ((double)IESFX::SAMPLE_RATE / size));

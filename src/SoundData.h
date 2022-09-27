@@ -57,8 +57,8 @@ namespace IESFX
 		std::vector<std::function<void()>> _commands;
 		std::vector<sf::Int16> _samples;
 
-		size_t _size{0};
-		int	_index{0};
+		size_t _size	{0};
+		int	_index		{0};
 
 	};
 

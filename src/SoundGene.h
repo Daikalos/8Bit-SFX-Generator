@@ -87,8 +87,8 @@ namespace IESFX
 
 	private:
 		std::vector<Command::Ptr> _gene;
-		double _fitness{0.0};
-		bool _dead{false};
+		double _fitness	{0.0};
+		bool _dead		{false};
 
 		friend class Evolution;
 	};
