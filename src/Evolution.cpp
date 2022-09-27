@@ -188,7 +188,7 @@ void Evolution::evaluate(SoundGene& candidate)
 			double score = 0.0;
 
 			const auto m_range = model.range();
-			const int min = std::min<int>(c_range.size(), m_range.size());
+			const int min = std::min<int>((int)c_range.size(), (int)m_range.size());
 
 			std::array<bool, 25> m_offsets;
 			for (int si = 0; si < min; ++si) // do in reverse since only the last specified value matters
@@ -427,7 +427,7 @@ void Evolution::mutation()
 			if (util::random() > _mutation_rate || gene.size() <= 1)
 				return;
 
-			const int size = std::ceil(gene.size() / (1.0 / _mutation_size));
+			const int size = (int)std::ceil(gene.size() / (1.0 / _mutation_size));
 			const int length = util::random(1, size); // determine number of points to mutate
 
 			std::vector<int> rnd_points = util::random_vec<int>(gene.size() - 1, 1);

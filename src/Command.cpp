@@ -62,11 +62,11 @@ CommandType Poke::get_type() const noexcept
 	return CT_Poke;
 }
 
-RESID::reg8 Poke::get_offset() const noexcept
+const RESID::reg8& Poke::get_offset() const noexcept
 {
 	return _offset;
 }
-RESID::reg8 Poke::get_value() const noexcept
+const RESID::reg8& Poke::get_value() const noexcept
 {
 	return _value;
 }
@@ -129,7 +129,7 @@ CommandType Sample::get_type() const noexcept
 	return CT_Sample;
 }
 
-RESID::reg8 Sample::get_size() const noexcept
+const std::size_t& Sample::get_size() const noexcept
 {
 	return _size;
 }

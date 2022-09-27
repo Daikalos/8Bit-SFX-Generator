@@ -112,25 +112,4 @@ namespace util
 
 	static double random() { return util::random(0.0, 1.0); }
 #endif
-
-#if _DEBUG
-	template<class T>
-	static void print(const T& output)
-	{
-		std::wstring woutput = std::to_wstring(output);
-		OutputDebugString(woutput.c_str());
-	}
-
-	static void print(const std::wstring& output)
-	{
-		OutputDebugString(output.c_str());
-	}
-	static void print(const std::string& output)
-	{
-		print(std::wstring_convert<std::codecvt_utf16<wchar_t>>().from_bytes(output));
-	}
-
-	static void print(const wchar_t* output) { print(std::wstring(output)); }
-	static void print(const char* output) { print(std::string(output)); }
-#endif
 }

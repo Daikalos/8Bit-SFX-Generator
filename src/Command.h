@@ -76,8 +76,9 @@ namespace IESFX
 
 		[[nodiscard]] CommandType get_type() const noexcept override;
 
-		[[nodiscard]] RESID::reg8 get_offset() const noexcept;
-		[[nodiscard]] RESID::reg8 get_value() const noexcept;
+	public:
+		[[nodiscard]] const RESID::reg8& get_offset() const noexcept;
+		[[nodiscard]] const RESID::reg8& get_value() const noexcept;
 
 		void set_offset(const RESID::reg8 offset);
 		void set_value(const RESID::reg8 value);
@@ -102,9 +103,11 @@ namespace IESFX
 
 		[[nodiscard]] CommandType get_type() const noexcept override;
 
-		[[nodiscard]] RESID::reg8 get_size() const noexcept;
+	public:
+		[[nodiscard]] const std::size_t& get_size() const noexcept;
 
 		void set_size(const std::size_t size);
+
 		void add_size(const std::size_t size);
 
 	private:

@@ -22,7 +22,7 @@
 using namespace IESFX;
 
 [STAThread]
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+int APIENTRY wWinMain(_In_ HINSTANCE hInst, _In_opt_ HINSTANCE hInstPrev, _In_ LPWSTR cmdline, _In_ int cmdshow)
 {
     Application::EnableVisualStyles();
     Application::SetCompatibleTextRenderingDefault(true);
